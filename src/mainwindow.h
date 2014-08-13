@@ -24,6 +24,7 @@ public slots:
     void displayGraphic();
     void printFunc();
     void exportpdf();
+    void Capture();
 private:
     Ui::MainWindow *ui;
     QAction *newAct;
@@ -39,6 +40,7 @@ private:
     QAction *disActGraphic;
     QAction *printAct;
     QAction *printPdfAct;
+    QAction *mainAct;
     QAction *ghptaAct;
     QAction *aboutAct;
     QAction *aboutQtAct;

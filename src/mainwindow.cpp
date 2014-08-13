@@ -3,12 +3,23 @@
 #include "disassaydata.h"
 #include "deviceinfo.h"
 #include "ui_mainwindow.h"
+#include "QDockWidget"
+#include "qcapture.h"
 #include "qlog.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QDockWidget *dock = new QDockWidget(this);
+    dock->setFeatures (QDockWidget::NoDockWidgetFeatures);
+    addDockWidget(Qt::LeftDockWidgetArea, dock);
+
+    mainAct = new QAction(QIcon(":/images/config.png"), tr("&Config"), this);
+    mainAct->setStatusTip(tr("Export pdf file"));
+    connect(mainAct, SIGNAL(triggered()), this, SLOT(Capture()));
+    ui->mainToolBar->addAction(mainAct);
+
     disdataAct = new QAction(QIcon(":/images/player_pause.png"), tr("&Pause"), this);
     disdataAct->setStatusTip(tr("Display db info"));
     connect(disdataAct, SIGNAL(triggered()), this, SLOT(displayData()));
@@ -33,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(printPdfAct, SIGNAL(triggered()), this, SLOT(exportpdf()));
     ui->mainToolBar->addAction(printPdfAct);
 
+    QCapture *capture = new QCapture();
+    setCentralWidget (capture);
 }
 
 MainWindow::~MainWindow()
@@ -40,6 +53,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::Capture()
+{
+    QCapture *capture = new QCapture();
+    setCentralWidget (capture);
+}
 void MainWindow::displayData()
 {
   //Display *p_mdisp = new Display;

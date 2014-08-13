@@ -59,7 +59,8 @@ SOURCES += \
     src/qdispgraphic.cpp \
     src/deviceinfo.cpp \
     src/disassaydata.cpp \
-    src/exportobject.cpp
+    src/exportobject.cpp \
+    src/qcapture.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -72,7 +73,8 @@ HEADERS  += \
     src/qdispgraphic.h \
     src/deviceinfo.h \
     src/disassaydata.h \
-    src/exportobject.h
+    src/exportobject.h \
+    src/qcapture.h
 
 FORMS    += \
     ui/mainwindow.ui \
@@ -80,7 +82,8 @@ FORMS    += \
     ui/qlogin.ui \
     ui/qdispgraphic.ui \
     ui/DeviceInfo.ui \
-    ui/disassaydata.ui
+    ui/disassaydata.ui \
+    ui/capture.ui
 
 RESOURCES += \
     res.qrc

@@ -13,7 +13,7 @@
   <property name="font">
    <font>
     <family>宋体</family>
-    <pointsize>12</pointsize>
+    <pointsize>14</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -37,22 +37,82 @@
      <x>0</x>
      <y>0</y>
      <width>775</width>
-     <height>23</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuNULL">
     <property name="title">
-     <string>NULL</string>
+     <string>Device</string>
     </property>
+    <addaction name="action_System"/>
    </widget>
    <widget class="QMenu" name="menuNULL_2">
     <property name="title">
-     <string>NULL</string>
+     <string>DataBase</string>
+    </property>
+    <addaction name="actionDataBase"/>
+    <addaction name="actionExport_Db"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionSystem"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuCapture">
+    <property name="title">
+     <string>Capture</string>
+    </property>
+    <addaction name="actionStart_Capture"/>
+    <addaction name="actionStop_Capture"/>
+    <addaction name="actionEnable_Log_Window"/>
+   </widget>
    <addaction name="menuNULL"/>
+   <addaction name="menuCapture"/>
    <addaction name="menuNULL_2"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuAbout"/>
   </widget>
+  <action name="action_System">
+   <property name="text">
+    <string>Config</string>
+   </property>
+  </action>
+  <action name="actionDataBase">
+   <property name="text">
+    <string>BackUp DB</string>
+   </property>
+  </action>
+  <action name="actionExport_Db">
+   <property name="text">
+    <string>Export Db</string>
+   </property>
+  </action>
+  <action name="actionSystem">
+   <property name="text">
+    <string>System</string>
+   </property>
+  </action>
+  <action name="actionStart_Capture">
+   <property name="text">
+    <string>Start Capture</string>
+   </property>
+  </action>
+  <action name="actionStop_Capture">
+   <property name="text">
+    <string>Stop Capture</string>
+   </property>
+  </action>
+  <action name="actionEnable_Log_Window">
+   <property name="text">
+    <string>Enable Log Window</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

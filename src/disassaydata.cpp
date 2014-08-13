@@ -39,8 +39,10 @@ DisAssayData::DisAssayData(QDialog *parent) :
         }
     }
     QObject::connect(ui->pushButton_Query, SIGNAL(clicked()), this, SLOT(FilterQuery()));
+    QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(UpdateDate()));
+    timer.start (1000);
 //    QObject::connect (ui->pushButton_export, SIGNAL(clicked()),this, SLOT(ExportExcel()));
-    QObject::connect (ui->pushButton_export, SIGNAL(clicked()),this, SLOT(UpdateDate()));
+//    QObject::connect (ui->pushButton_export, SIGNAL(clicked()),this, SLOT(UpdateDate()));
 }
 
 DisAssayData::~DisAssayData()
@@ -84,18 +86,16 @@ void DisAssayData::DebugInfo ()
 }
 void DisAssayData::UpdateDate ()
 {
-//    QSqlQuery query;
-//    QString sql;
-//    QTextStream stream(&sql);
-//    QDateTime time;
-//    time = QDateTime::currentDateTime ();
-//    stream << "Insert into AssayData (DeviceId, AssayTime, PipeId, PipeType, Ch4) values(1,'"
-//             << time.toString ("yyyy/M/d/mm:ss") << "',0,00," << qrand()%1000 << ")";
-//    query.exec(sql);
-//    mModel->select();
-//    timer.start (1000);
-     timer.start(0);
-     QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(ExportExcel()));
+    QSqlQuery query;
+    QString sql;
+    QTextStream stream(&sql);
+    QDateTime time;
+    time = QDateTime::currentDateTime ();
+    stream << "Insert into AssayData (DeviceId, AssayTime, PipeId, PipeType, Ch4) values("
+             <<qrand()%10 << ",'"<< time.toString ("yyyy/M/d/mm:ss") << "',0,00," << qrand()%1000 << ")";
+    query.exec(sql);
+    mModel->select();
+    timer.start (1000);
 }
 void DisAssayData::ExportExcel ()
 {
