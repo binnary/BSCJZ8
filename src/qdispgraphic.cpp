@@ -1,0 +1,223 @@
+#include "qdispgraphic.h"
+#include <qwt_plot_layout.h>
+#include <qwt_plot_curve.h>
+#include <qwt_scale_draw.h>
+#include <qwt_scale_widget.h>
+#include <qwt_legend.h>
+#include <qwt_legend_label.h>
+#include <qwt_plot_canvas.h>
+#include <qwt_plot_panner.h>
+#include <qwt_plot_magnifier.h>
+#include "ui_qdispgraphic.h"
+#include <QPointF>
+#include <QVector>
+
+class TimeScaleDraw: public QwtScaleDraw
+{
+public:
+    TimeScaleDraw( const QTime &base ):
+        baseTime( base )
+    {
+    }
+    virtual QwtText label( double v ) const
+    {
+        QTime upTime = baseTime.addSecs( static_cast<int>( v ) );
+        return upTime.toString();
+    }
+private:
+    QTime baseTime;
+};
+
+class Background: public QwtPlotItem
+{
+public:
+    Background()
+    {
+        setZ( 0.0 );
+    }
+
+    virtual int rtti() const
+    {
+        return QwtPlotItem::Rtti_PlotUserItem;
+    }
+
+    virtual void draw( QPainter *painter,
+        const QwtScaleMap &, const QwtScaleMap &yMap,
+        const QRectF &canvasRect ) const
+    {
+        QColor c( Qt::white );
+        QRectF r = canvasRect;
+
+        for ( int i = 100; i > 0; i -= 10 )
+        {
+            r.setBottom( yMap.transform( i - 10 ) );
+            r.setTop( yMap.transform( i ) );
+            painter->fillRect( r, c );
+
+            c = c.dark( 110 );
+        }
+    }
+};
+
+QDispgraphic::QDispgraphic(QWidget *parent) :
+     QWidget(parent),
+    ui(new Ui::QDispgraphic)
+{
+    ui->setupUi(this);
+    mModel = new QSqlTableModel();
+    mModel->setTable("AssayData");
+    mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    mModel->select();
+    InitPlot ();
+}
+QDispgraphic::~QDispgraphic()
+{
+    delete ui;
+    QList<DispCurve*>::iterator it;
+    for (it=mCurveList.begin (); it!=mCurveList.end (); it++){
+        delete *it;
+    }
+
+}
+
+void QDispgraphic::InitPlot()
+{
+    ui->qwtPlot->setAutoFillBackground( true );
+    ui->qwtPlot->setPalette( palette ());
+    ui->qwtPlot->setAutoReplot( true );
+
+    QwtPlotCanvas *canvas = new QwtPlotCanvas();
+    canvas->setLineWidth( 0 );
+    canvas->setFrameStyle( QFrame::Box | QFrame::Plain );
+    canvas->setBorderRadius( 15 );
+
+//    QPalette canvasPalette( Qt::white );
+//    canvasPalette.setColor( QPalette::Foreground, QColor( 133, 190, 232 ) );
+//    canvasPalette.setColor( palette ());
+    canvas->setPalette( palette ());
+    ui->qwtPlot->setCanvas( canvas );
+    // panning with the left mouse button
+//  ( void ) new QwtPlotPanner( canvas );
+
+    // zoom in/out with the wheel
+//    ( void ) new QwtPlotMagnifier( canvas );
+
+
+    QwtLegend *legend = new QwtLegend;
+    legend->setDefaultItemMode( QwtLegendData::Checkable );
+    ui->qwtPlot->insertLegend( legend, QwtPlot::RightLegend );
+
+    ui->qwtPlot->setAxisTitle( QwtPlot::xBottom, "X-->" );
+    ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0,20);
+    ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0, mModel->rowCount ());
+    ui->qwtPlot->setAxisLabelRotation( QwtPlot::xBottom, -50.0 );
+    ui->qwtPlot->setAxisLabelAlignment( QwtPlot::xBottom, Qt::AlignLeft | Qt::AlignBottom );
+
+    ui->qwtPlot->setAxisTitle( QwtPlot::yLeft, "Y-->" );
+    ui->qwtPlot->setAxisScale( QwtPlot::yLeft, 0, 1000);
+    InitCurve("Ch4", Qt::red);
+    queryData("Ch4");
+    InitCurve("O2", Qt::blue);
+    connect( legend, SIGNAL( checked( const QVariant &, bool, int ) ),
+        SLOT( legendChecked( const QVariant &, bool ) ) );
+}
+void QDispgraphic::printFunc()
+{
+//    QPrinter printer( QPrinter::HighResolution );
+
+//    QString docName = this->windowTitle ();
+//    if ( !docName.isEmpty() )
+//    {
+//        docName.replace ( QRegExp ( QString::fromLatin1 ( "\n" ) ), tr ( " -- " ) );
+//        printer.setDocName ( docName );
+//    }
+
+//    printer.setCreator( "Bode example" );
+//    printer.setOrientation( QPrinter::Landscape );
+
+//    QPrintDialog dialog( &printer );
+//    if ( dialog.exec() )
+//    {
+//        QwtPlotRenderer renderer;
+
+//        if ( printer.colorMode() == QPrinter::GrayScale )
+//        {
+//            renderer.setDiscardFlag( QwtPlotRenderer::DiscardBackground );
+//            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasBackground );
+//            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasFrame );
+//            renderer.setLayoutFlag( QwtPlotRenderer::FrameWithScales );
+//        }
+
+//        renderer.renderTo(this, printer );
+//    }
+
+}
+void QDispgraphic::exportpdf()
+{
+
+}
+
+void QDispgraphic::queryData(QString name)
+{
+    QVector<QPointF> temp;
+    int count = 0;
+    while((count++) < mModel->rowCount ()){
+         temp.push_back (QPointF(count,
+                                 mModel->record (count).value (name).toInt ()));
+    }
+    ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0, count);
+    QList<DispCurve*>::iterator it;
+    for (it=mCurveList.begin (); it!=mCurveList.end (); it++){
+        if (((DispCurve*)*it)->title().text() == name){
+            ((DispCurve*)*it)->setSamples (temp);
+        }
+
+    }
+
+}
+void QDispgraphic::queryData(QString X, QString Y)
+{
+   QVector<QPointF> temp;
+   int count = 1;
+   while((count++) < mModel->rowCount ()){
+        temp.push_back (QPointF(mModel->record (count).value (X).toInt (),
+                                mModel->record (count).value (Y).toInt ()));
+   }
+   ui->qwtPlot->replot ();
+}
+void QDispgraphic::legendChecked( const QVariant &itemInfo, bool on )
+{
+    QwtPlotItem *plotItem = ui->qwtPlot->infoToItem( itemInfo );
+    if ( plotItem )
+        showCurve( plotItem, on );
+}
+
+void QDispgraphic::showCurve( QwtPlotItem *item, bool on )
+{
+    item->setVisible( on );
+
+    QwtLegend *lgd = qobject_cast<QwtLegend *>( ui->qwtPlot->legend() );
+
+    QList<QWidget *> legendWidgets =
+        lgd->legendWidgets( ui->qwtPlot->itemToInfo( item ) );
+
+    if ( legendWidgets.size() == 1 )
+    {
+        QwtLegendLabel *legendLabel =
+            qobject_cast<QwtLegendLabel *>( legendWidgets[0] );
+
+        if ( legendLabel )
+            legendLabel->setChecked( on );
+    }
+
+    ui->qwtPlot->replot();
+}
+void QDispgraphic::InitCurve(QString name, QColor color)
+{
+    DispCurve *curve = NULL;
+    curve = new DispCurve(name);
+    curve->setPen(color);
+    curve->setZ( curve->z() - 2 );
+    curve->attach(ui->qwtPlot);
+    mCurveList.push_back (curve);
+}
