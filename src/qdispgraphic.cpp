@@ -11,53 +11,54 @@
 #include "ui_qdispgraphic.h"
 #include <QPointF>
 #include <QVector>
-
-class TimeScaleDraw: public QwtScaleDraw
-{
-public:
-    TimeScaleDraw( const QTime &base ):
-        baseTime( base )
-    {
-    }
-    virtual QwtText label( double v ) const
-    {
-        QTime upTime = baseTime.addSecs( static_cast<int>( v ) );
-        return upTime.toString();
-    }
-private:
-    QTime baseTime;
-};
-
-class Background: public QwtPlotItem
-{
-public:
-    Background()
-    {
-        setZ( 0.0 );
-    }
-
-    virtual int rtti() const
-    {
-        return QwtPlotItem::Rtti_PlotUserItem;
-    }
-
-    virtual void draw( QPainter *painter,
-        const QwtScaleMap &, const QwtScaleMap &yMap,
-        const QRectF &canvasRect ) const
-    {
-        QColor c( Qt::white );
-        QRectF r = canvasRect;
-
-        for ( int i = 100; i > 0; i -= 10 )
-        {
-            r.setBottom( yMap.transform( i - 10 ) );
-            r.setTop( yMap.transform( i ) );
-            painter->fillRect( r, c );
-
-            c = c.dark( 110 );
-        }
-    }
-};
+#include <QSqlRecord>
+//
+//class TimeScaleDraw: public QwtScaleDraw
+//{
+//public:
+//    TimeScaleDraw( const QTime &base ):
+//        baseTime( base )
+//    {
+//    }
+//    virtual QwtText label( double v ) const
+//    {
+//        QTime upTime = baseTime.addSecs( static_cast<int>( v ) );
+//        return upTime.toString();
+//    }
+//private:
+//    QTime baseTime;
+//};
+//
+//class Background: public QwtPlotItem
+//{
+//public:
+//    Background()
+//    {
+//        setZ( 0.0 );
+//    }
+//
+//    virtual int rtti() const
+//    {
+//        return QwtPlotItem::Rtti_PlotUserItem;
+//    }
+//
+//    virtual void draw( QPainter *painter,
+//        const QwtScaleMap &, const QwtScaleMap &yMap,
+//        const QRectF &canvasRect ) const
+//    {
+//        QColor c( Qt::white );
+//        QRectF r = canvasRect;
+//
+//        for ( int i = 100; i > 0; i -= 10 )
+//        {
+//            r.setBottom( yMap.transform( i - 10 ) );
+//            r.setTop( yMap.transform( i ) );
+//            painter->fillRect( r, c );
+//
+//            c = c.dark( 110 );
+//        }
+//    }
+//};
 
 QDispgraphic::QDispgraphic(QWidget *parent) :
      QWidget(parent),

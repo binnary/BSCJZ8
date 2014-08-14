@@ -7,7 +7,8 @@
 QT += core gui printsupport
 QT += serialport
 QT += sql
-QT +=axcontainer
+QT += axcontainer
+QT += concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TRANSLATIONS += lang_CN.ts\
@@ -20,8 +21,8 @@ PLUGINSPATH +=./
 QWT_ROOT="C:/Qt/qwt-6.1.0"
 #LIBS += -lqwtd
 include ($${QWT_ROOT}/qwtfunctions.pri)
-INCPATH += $${QWT_ROOT}/src src
-DEPENDPATH += $${QWT_ROOT}/src src
+INCPATH += $${QWT_ROOT}/src src src/print src/export
+DEPENDPATH += $${QWT_ROOT}/src src src/print src/export
 
 contains (QWT_CONFIG, QwtFramework){
          LIBS += -F$${QWT_ROOT}/lib
@@ -59,8 +60,10 @@ SOURCES += \
     src/qdispgraphic.cpp \
     src/deviceinfo.cpp \
     src/disassaydata.cpp \
-    src/exportobject.cpp \
-    src/qcapture.cpp
+    src/qcapture.cpp \
+    src/norwegianwoodstyle.cpp \
+    src/export/exportobject.cpp \
+    src/print/qprintobject.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -69,12 +72,13 @@ HEADERS  += \
     src/qlogin.h \
     src/qserial.h \
     src/qprotocolbase.h \
-    src/Stdafx.h \
     src/qdispgraphic.h \
     src/deviceinfo.h \
     src/disassaydata.h \
-    src/exportobject.h \
-    src/qcapture.h
+    src/qcapture.h \
+    src/norwegianwoodstyle.h \
+    src/export/exportobject.h \
+    src/print/qprintobject.h
 
 FORMS    += \
     ui/mainwindow.ui \

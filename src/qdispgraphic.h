@@ -1,7 +1,6 @@
 #ifndef QDISPGRAPHIC_H
 #define QDISPGRAPHIC_H
 
-#include "Stdafx.h"
 #include "qwt_plot.h"
 #include "qwt_plot_curve.h"
 #include <qwt_plot_canvas.h>

@@ -44,8 +44,6 @@ private:
     QAction *ghptaAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
-    //Display mdisp;
-    //QDispgraphic mDispGraphic;
 
 };
 

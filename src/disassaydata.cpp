@@ -1,10 +1,10 @@
 #include "disassaydata.h"
 #include "exportobject.h"
 #include "ui_disassaydata.h"
-#include <QProgressDialog>
-#include <QFileDialog>
-#include <ActiveQt/QAXObject>
-
+#include "exportobject.h"
+#include <QTextStream>
+#include <QSqlQuery>
+#include <QSqlRecord>
 DisAssayData::DisAssayData(QDialog *parent) :
     QDialog(parent),
     ui(new Ui::DisAssayData)
@@ -39,10 +39,13 @@ DisAssayData::DisAssayData(QDialog *parent) :
         }
     }
     QObject::connect(ui->pushButton_Query, SIGNAL(clicked()), this, SLOT(FilterQuery()));
-    QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(UpdateDate()));
-    timer.start (1000);
-//    QObject::connect (ui->pushButton_export, SIGNAL(clicked()),this, SLOT(ExportExcel()));
-//    QObject::connect (ui->pushButton_export, SIGNAL(clicked()),this, SLOT(UpdateDate()));
+
+//       ExportObject ExObj;
+//       QString html;
+//       ExportToDocument(html);
+//       ExObj.ExportPdf (html);
+//       ExObj.ExportExcel (html);
+//
 }
 
 DisAssayData::~DisAssayData()
@@ -95,49 +98,32 @@ void DisAssayData::UpdateDate ()
              <<qrand()%10 << ",'"<< time.toString ("yyyy/M/d/mm:ss") << "',0,00," << qrand()%1000 << ")";
     query.exec(sql);
     mModel->select();
-    timer.start (1000);
 }
-void DisAssayData::ExportExcel ()
+void DisAssayData::ExportToDocument(QString &html)
 {
-    QString fileName = QFileDialog::getSaveFileName(this, \
-              QObject::tr("Save <a href=\"http://www.it165.net/edu/ebg/\" target=\"_blank\" \
-              class=\"keylink\">excel</a>"), \
-              ".", tr("Microsoft Office 2003 (*.xls)"));
-            //获取保存路径
-    if (fileName.isEmpty()) {
-        QMessageBox::critical(0, tr("错误"), tr("要保存的文件名为空！"));
-        return;
-    }
-    //建立Excel对象
-    QAxObject *excel = new QAxObject("Excel.Application");
+    QSqlQuery query;
+    QString sql("PRAGMA table_info ('AssayData')");
 
-    excel->dynamicCall("SetVisible(bool)", true); //如果为了看自己的程序到底怎样工作，可以设置为true  www.it165.net
-    excel->setProperty("Visible", false);
-    QAxObject *workbooks = excel->querySubObject("WorkBooks");
-    workbooks->dynamicCall("Add");
-    QAxObject *workbook = excel->querySubObject("ActiveWorkBook");
-    QAxObject *worksheet = workbook->querySubObject("Worksheets(int)", 1);
-    int count = 0;
-    QProgressDialog dlg;
-    QObject::connect (this, SIGNAL(signalCount(int)), &dlg, SLOT(setValue(int)));
-    dlg.exec ();
-    QAxObject *cellX;
-    char XX[]={"ABCDEFGHIGKLMNOPQRSTUVWXYZ"};
-    qDebug() << "Column: " << mModel->columnCount () << ", Row:" << mModel->rowCount ();
-    for(count=1; count <mModel->rowCount ();count++){
-        emit signalCount ((count*100)/mModel->rowCount ());
-        for(int i=0;i<mModel->columnCount ();i++){
-           QString X=XX[i]+QString::number(count);//设置要操作的单元格，如A1
-           cellX = worksheet->querySubObject("Range(QVariant, QVariant)",X);//获取单元格
-           cellX->dynamicCall("SetValue(const QVariant&)",QVariant(mModel->record (count).value (i)));
+    html = "<table border=\"1\" cellspacing=\"0\">\n";
+    html += "<tr>";
+
+    query.exec(sql);
+    while(query.next ()){//setheader
+       html += "<th bgcolor=\"lightgray\"><font size=\"+1\"><b><i>";
+       html += query.value ("name").toString ();
+       html += "</i></b></font></th>\n";
+    }
+    html += "</tr>\n";
+
+    int row,col;
+    for(row=1; row <mModel->rowCount (); row++){
+        html += "<tr>";
+        for(col=0; col <mModel->columnCount (); col++){
+             html+= "<td>" + mModel->record (row).value (col).toString ()+ "</td>";
         }
+        html += "</tr>\n";
     }
+    html += "</table>";
 
-
-    workbook->dynamicCall("SaveAs(const QString&)", QDir::toNativeSeparators(fileName));
-    QMessageBox::information(this, tr("OK"), tr("保存成功！"));
-    workbook->dynamicCall("Close()");
-    worksheet->clear();//释放所有工作表
-    excel->dynamicCall("Quit()");
-    delete excel;//释放excel
+      return ;
 }

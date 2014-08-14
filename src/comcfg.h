@@ -1,8 +1,9 @@
 #ifndef COMCFG_H
 #define COMCFG_H
 
-#include "Stdafx.h"
 #include <QSerialPortInfo>
+#include <QDialog>
+#include <QSettings>
 namespace Ui {
 class ComCfg;
 }

@@ -1,11 +1,22 @@
-#include "Stdafx.h"
+#include <QApplication>
+#include <QDebug>
 #include "mainwindow.h"
+#include "norwegianwoodstyle.h"
+#include <QStyleFactory>
 #include "qlog.h"
 //#define __DEBUG__
 int main(int argc, char *argv[])
 {
+//    Q_INIT_RESOURCE(styles);
     QApplication a(argc, argv);
-    QApplication::setStyle ("windowsxp");
+    //NorwegianWood Windows WindowsXP Fusion WindowsVista
+    QApplication::setStyle(QStyleFactory::create("Windows"));
+    QApplication::setStyle(("Fusion"));
+    QApplication::setStyle(QStyleFactory::create("WindowsXP"));
+    QApplication::setStyle(new NorwegianWoodStyle);
+    QApplication::setStyle(QStyleFactory::create("WindowsVista"));
+    QApplication::setStyle(QStyleFactory::create("Fusion"));
+//    qDebug() <<QStyleFactorykeys ();
 #ifdef __DEBUG__
     qInstallMessageHandler(MessageOutput);
 #endif
@@ -16,6 +27,7 @@ int main(int argc, char *argv[])
     path =dir.currentPath () + QString("/memory.db");
     dir.fromNativeSeparators (path);
     db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
+//    db.setDatabaseName("db\\platform.db");
     db.open();
     MainWindow w;
     w.show();

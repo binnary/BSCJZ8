@@ -1,11 +1,13 @@
 #ifndef DEVICEINFO_H
 #define DEVICEINFO_H
 
-#include "Stdafx.h"
 #include <QModelIndex>
+#include <QMessageBox>
+#include <QSqlError>
 #include <QWidget>
 #include <QDialog>
-#include <QDockWidget>
+//#include <QDockWidget>
+#include <QSqlTableModel>
 
 namespace Ui {
 class DeviceInfo;

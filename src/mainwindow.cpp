@@ -3,9 +3,11 @@
 #include "disassaydata.h"
 #include "deviceinfo.h"
 #include "ui_mainwindow.h"
+#include "ui_disassaydata.h"
 #include "QDockWidget"
 #include "qcapture.h"
 #include "qlog.h"
+#include <QPrintDialog>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -81,33 +83,35 @@ void MainWindow::displayGraphic()
 
 void MainWindow::printFunc()
 {
-    QPrinter printer( QPrinter::HighResolution );
+//    QPrinter printer( QPrinter::HighResolution );
 
-    QString docName = this->windowTitle ();
-    if ( !docName.isEmpty() )
-    {
-        docName.replace ( QRegExp ( QString::fromLatin1 ( "\n" ) ), tr ( " -- " ) );
-        printer.setDocName ( docName );
-    }
+//    DisAssayData *mDevInfo = new DisAssayData();
+//    mDevInfo->print(&printer);
+//    return;
+//    QString docName = this->windowTitle ();
+//    if ( !docName.isEmpty() )
+//    {
+//        docName.replace ( QRegExp ( QString::fromLatin1 ( "\n" ) ), tr ( " -- " ) );
+//        printer.setDocName ( docName );
+//    }
 
-    printer.setCreator( "Bode example" );
-    printer.setOrientation( QPrinter::Landscape );
+//    printer.setCreator( "Bode example" );
+//    printer.setOrientation( QPrinter::Landscape );
+//    QPrintDialog dialog( &printer );
+//    if ( dialog.exec() )
+//    {
+//        //QwtPlotRenderer renderer;
 
-    QPrintDialog dialog( &printer );
-    if ( dialog.exec() )
-    {
-        QwtPlotRenderer renderer;
+//        //if ( printer.colorMode() == QPrinter::GrayScale )
+//        //{
+//        //    renderer.setDiscardFlag( QwtPlotRenderer::DiscardBackground );
+//        //    renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasBackground );
+//        //    renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasFrame );
+//        //    renderer.setLayoutFlag( QwtPlotRenderer::FrameWithScales );
+//        //}
 
-        if ( printer.colorMode() == QPrinter::GrayScale )
-        {
-            renderer.setDiscardFlag( QwtPlotRenderer::DiscardBackground );
-            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasBackground );
-            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasFrame );
-            renderer.setLayoutFlag( QwtPlotRenderer::FrameWithScales );
-        }
-
-//        renderer.renderTo(this, printer );
-    }
+////        renderer.renderTo(this, printer );
+//    }
 
 }
 void MainWindow::exportpdf()
