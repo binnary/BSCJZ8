@@ -12,53 +12,6 @@
 #include <QPointF>
 #include <QVector>
 #include <QSqlRecord>
-//
-//class TimeScaleDraw: public QwtScaleDraw
-//{
-//public:
-//    TimeScaleDraw( const QTime &base ):
-//        baseTime( base )
-//    {
-//    }
-//    virtual QwtText label( double v ) const
-//    {
-//        QTime upTime = baseTime.addSecs( static_cast<int>( v ) );
-//        return upTime.toString();
-//    }
-//private:
-//    QTime baseTime;
-//};
-//
-//class Background: public QwtPlotItem
-//{
-//public:
-//    Background()
-//    {
-//        setZ( 0.0 );
-//    }
-//
-//    virtual int rtti() const
-//    {
-//        return QwtPlotItem::Rtti_PlotUserItem;
-//    }
-//
-//    virtual void draw( QPainter *painter,
-//        const QwtScaleMap &, const QwtScaleMap &yMap,
-//        const QRectF &canvasRect ) const
-//    {
-//        QColor c( Qt::white );
-//        QRectF r = canvasRect;
-//
-//        for ( int i = 100; i > 0; i -= 10 )
-//        {
-//            r.setBottom( yMap.transform( i - 10 ) );
-//            r.setTop( yMap.transform( i ) );
-//            painter->fillRect( r, c );
-//
-//            c = c.dark( 110 );
-//        }
-//    }
-//};
 
 QDispgraphic::QDispgraphic(QWidget *parent) :
      QWidget(parent),
@@ -70,6 +23,10 @@ QDispgraphic::QDispgraphic(QWidget *parent) :
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->select();
     InitPlot ();
+    InitCurve("Ch4", Qt::red);
+    queryData("Ch4");
+//    InitCurve("O2", Qt::blue);
+
 }
 QDispgraphic::~QDispgraphic()
 {
@@ -104,9 +61,6 @@ void QDispgraphic::InitPlot()
 //    ( void ) new QwtPlotMagnifier( canvas );
 
 
-    QwtLegend *legend = new QwtLegend;
-    legend->setDefaultItemMode( QwtLegendData::Checkable );
-    ui->qwtPlot->insertLegend( legend, QwtPlot::RightLegend );
 
     ui->qwtPlot->setAxisTitle( QwtPlot::xBottom, "X-->" );
     ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0,20);
@@ -116,11 +70,11 @@ void QDispgraphic::InitPlot()
 
     ui->qwtPlot->setAxisTitle( QwtPlot::yLeft, "Y-->" );
     ui->qwtPlot->setAxisScale( QwtPlot::yLeft, 0, 1000);
-    InitCurve("Ch4", Qt::red);
-    queryData("Ch4");
-    InitCurve("O2", Qt::blue);
-    connect( legend, SIGNAL( checked( const QVariant &, bool, int ) ),
-        SLOT( legendChecked( const QVariant &, bool ) ) );
+//    QwtLegend *legend = new QwtLegend;
+//    legend->setDefaultItemMode( QwtLegendData::Checkable );
+//    ui->qwtPlot->insertLegend( legend, QwtPlot::RightLegend );
+//    connect( legend, SIGNAL( checked( const QVariant &, bool, int ) ),
+//        SLOT( legendChecked( const QVariant &, bool ) ) );
 }
 void QDispgraphic::printFunc()
 {

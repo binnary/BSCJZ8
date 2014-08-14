@@ -53,7 +53,7 @@ void NorwegianWoodStyle::polish(QPalette &palette)
     QColor brown(212, 140, 95);
     QColor beige(236, 182, 120);
     QColor slightlyOpaqueBlack(0, 0, 0, 63);
-
+     return ;
     QPixmap backgroundImage(":/images/woodbackground.png");
     QPixmap buttonImage(":/images/woodbutton.png");
     QPixmap midImage = buttonImage;

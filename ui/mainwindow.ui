@@ -17,18 +17,36 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Platform</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_2"/>
+   <layout class="QGridLayout" name="gridLayout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>48</width>
+     <height>48</height>
+    </size>
+   </property>
    <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
+    <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionCapture"/>
+   <addaction name="separator"/>
+   <addaction name="actionPreview_Table"/>
+   <addaction name="separator"/>
+   <addaction name="actionPreview_Graphic"/>
+   <addaction name="separator"/>
+   <addaction name="action_DevConfig"/>
+   <addaction name="separator"/>
+   <addaction name="actionExit"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -42,16 +60,34 @@
    </property>
    <widget class="QMenu" name="menuNULL">
     <property name="title">
-     <string>Device</string>
+     <string>System</string>
     </property>
-    <addaction name="action_System"/>
+    <addaction name="action_DevConfig"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuNULL_2">
     <property name="title">
      <string>DataBase</string>
     </property>
+    <widget class="QMenu" name="menuPreview_Data">
+     <property name="title">
+      <string>Preview</string>
+     </property>
+     <addaction name="actionPreview_Table"/>
+     <addaction name="actionPreview_Graphic"/>
+    </widget>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionExcel"/>
+     <addaction name="actionPdf"/>
+    </widget>
+    <addaction name="menuPreview_Data"/>
+    <addaction name="menuExport"/>
+    <addaction name="separator"/>
     <addaction name="actionDataBase"/>
-    <addaction name="actionExport_Db"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -68,8 +104,10 @@
     <property name="title">
      <string>Capture</string>
     </property>
+    <addaction name="actionCapture"/>
     <addaction name="actionStart_Capture"/>
     <addaction name="actionStop_Capture"/>
+    <addaction name="separator"/>
     <addaction name="actionEnable_Log_Window"/>
    </widget>
    <addaction name="menuNULL"/>
@@ -78,19 +116,18 @@
    <addaction name="menuSettings"/>
    <addaction name="menuAbout"/>
   </widget>
-  <action name="action_System">
+  <action name="action_DevConfig">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/config.png</normaloff>:/images/config.png</iconset>
+   </property>
    <property name="text">
-    <string>Config</string>
+    <string>Device Config</string>
    </property>
   </action>
   <action name="actionDataBase">
    <property name="text">
     <string>BackUp DB</string>
-   </property>
-  </action>
-  <action name="actionExport_Db">
-   <property name="text">
-    <string>Export Db</string>
    </property>
   </action>
   <action name="actionSystem">
@@ -99,11 +136,19 @@
    </property>
   </action>
   <action name="actionStart_Capture">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/startcapture.png</normaloff>:/images/startcapture.png</iconset>
+   </property>
    <property name="text">
     <string>Start Capture</string>
    </property>
   </action>
   <action name="actionStop_Capture">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/stopcapture.png</normaloff>:/images/stopcapture.png</iconset>
+   </property>
    <property name="text">
     <string>Stop Capture</string>
    </property>
@@ -113,8 +158,108 @@
     <string>Enable Log Window</string>
    </property>
   </action>
+  <action name="actionExport_Pdf">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/exportpdf.png</normaloff>:/images/exportpdf.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Pdf</string>
+   </property>
+  </action>
+  <action name="actionExport_Excel">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/exportexcel.png</normaloff>:/images/exportexcel.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Excel</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/fileprint.png</normaloff>:/images/fileprint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/application-exit.png</normaloff>:/images/application-exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionPreview_Table">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/previe_table.png</normaloff>:/images/previe_table.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preview By Table</string>
+   </property>
+  </action>
+  <action name="actionPreview_Graphic">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/previe_graphic.png</normaloff>:/images/previe_graphic.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preview By Graphic</string>
+   </property>
+  </action>
+  <action name="actionExcel">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/exportexcel.png</normaloff>:/images/exportexcel.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Excel</string>
+   </property>
+  </action>
+  <action name="actionPdf">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/exportpdf.png</normaloff>:/images/exportpdf.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Pdf</string>
+   </property>
+  </action>
+  <action name="actionCapture">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/images/capture.png</normaloff>:/images/capture.png</iconset>
+   </property>
+   <property name="text">
+    <string>Capture</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../res.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>387</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

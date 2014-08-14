@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     path =dir.currentPath () + QString("/memory.db");
     dir.fromNativeSeparators (path);
-    db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
-//    db.setDatabaseName("db\\platform.db");
+//    db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
+    db.setDatabaseName("db\\platform.db");
     db.open();
     MainWindow w;
     w.show();

@@ -87,7 +87,10 @@ FORMS    += \
     ui/qdispgraphic.ui \
     ui/DeviceInfo.ui \
     ui/disassaydata.ui \
-    ui/capture.ui
+    ui/capture.ui \
+    ui/AddNewDev.ui
 
 RESOURCES += \
     res.qrc
+
+OTHER_FILES +=

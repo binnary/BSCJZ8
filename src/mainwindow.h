@@ -4,8 +4,11 @@
 #include <QMainWindow>
 #include <QAction>
 #include <QActionGroup>
+#include <QDockWidget>
 #include "qdispgraphic.h"
 #include "deviceinfo.h"
+#include "disassaydata.h"
+#include "qcapture.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,22 +22,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 public slots:
+    void DevConfig();
     void displayData();
-    void displayItems();
     void displayGraphic();
-    void printFunc();
-    void exportpdf();
     void Capture();
 private:
     Ui::MainWindow *ui;
-    QAction *newAct;
-    QAction *openAct;
-    QAction *saveAct;
-    QAction *saveAsAct;
     QAction *exitAct;
-    QAction *cutAct;
-    QAction *copyAct;
-    QAction *pasteAct;
     QAction *disdataAct;
     QAction *disitemsAct;
     QAction *disActGraphic;
@@ -44,7 +38,6 @@ private:
     QAction *ghptaAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
-
 };
 
 #endif // MAINWINDOW_H

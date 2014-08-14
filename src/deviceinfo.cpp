@@ -1,5 +1,25 @@
 #include "deviceinfo.h"
 #include "ui_deviceinfo.h"
+#include "ui_AddNewDev.h"
+
+namespace Ui {
+class AddNewDevice;
+}
+class AddDevice:public QDialog
+{
+public:
+    explicit AddDevice(QDialog *parent = 0):
+        QDialog(parent),
+        ui(new Ui::AddNewDevice)
+    {
+        ui->setupUi(this);
+    }
+    ~AddDevice(){
+        delete ui;
+    }
+
+  Ui::AddNewDevice *ui;
+};
 
 DeviceInfo::DeviceInfo(QDialog *parent) :
     QDialog(parent),
@@ -41,9 +61,19 @@ void DeviceInfo::DbAdd()
 {
    int rowNum = mModel->rowCount(); //获得表的行数
    mModel->insertRow(rowNum); //添加一行
-   int id= 10;
-   mModel->setData(mModel->index(rowNum,0),id);
-   //model->submitAll(); //可以直接提交
+   AddDevice dev(this);// = new AddDevice(this);
+   if (dev.exec () == QDialog::Rejected){
+       return;
+   }
+   mModel->setData(mModel->index(rowNum,0), dev.ui->comboBox_devType->currentText ());
+   mModel->setData(mModel->index(rowNum,1), dev.ui->lineEdit_devId->text ());
+   mModel->setData(mModel->index(rowNum,2), dev.ui->comboBox_PipeIdType->currentText ());
+   QString checkable("0");
+   if (dev.ui->checkBox_Resizeable->isChecked ()){
+       checkable = "1";
+   }
+   mModel->setData(mModel->index(rowNum,3), checkable);
+   mModel->submitAll(); //commit
 }
 void DeviceInfo::DbDel()
 {

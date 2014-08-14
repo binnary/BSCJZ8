@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
+    <width>1050</width>
     <height>527</height>
    </rect>
   </property>
@@ -63,14 +63,21 @@
      <item>
       <widget class="QPushButton" name="pushButton_Query">
        <property name="text">
-        <string>查询</string>
+        <string>Query</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_export">
+      <widget class="QPushButton" name="pushButton_print">
        <property name="text">
-        <string>导出</string>
+        <string>Print</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_Export">
+       <property name="text">
+        <string>Export Excel</string>
        </property>
       </widget>
      </item>

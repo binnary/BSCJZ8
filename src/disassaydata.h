@@ -21,6 +21,8 @@ signals:
 public slots:
     void FilterQuery();
     void UpdateDate();
+    void print();
+    void ExportExcel();
 private:
     Ui::DisAssayData *ui;
     QSqlTableModel *mModel;

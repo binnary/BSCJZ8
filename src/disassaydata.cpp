@@ -5,6 +5,8 @@
 #include <QTextStream>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include "exportobject.h"
+#include "qprintobject.h"
 DisAssayData::DisAssayData(QDialog *parent) :
     QDialog(parent),
     ui(new Ui::DisAssayData)
@@ -39,13 +41,8 @@ DisAssayData::DisAssayData(QDialog *parent) :
         }
     }
     QObject::connect(ui->pushButton_Query, SIGNAL(clicked()), this, SLOT(FilterQuery()));
-
-//       ExportObject ExObj;
-//       QString html;
-//       ExportToDocument(html);
-//       ExObj.ExportPdf (html);
-//       ExObj.ExportExcel (html);
-//
+    QObject::connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()));
+    QObject::connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()));
 }
 
 DisAssayData::~DisAssayData()
@@ -126,4 +123,37 @@ void DisAssayData::ExportToDocument(QString &html)
     html += "</table>";
 
       return ;
+}
+void DisAssayData::ExportExcel()
+{
+    ExportObject expobj;
+    QString html;
+    ExportToDocument(html);
+    expobj.ExportExcel (html);
+}
+void DisAssayData::print()
+{
+    QString headertext =
+        "<table width=\"100%\">"
+        "  <tr>"
+        "    <td align=\"left\"><strong>%1</strong></td>"
+        "    <td align=\"right\"><strong>&date;</strong></td>"
+        "  </tr>"
+        "</table>";
+
+    QString footertext = "<p align=\"right\"><strong>&page;</strong></p>";
+
+   QPrintObject printobj(this);
+   QString html;
+   QTextDocument doc;
+   ExportToDocument(html);
+   doc.setHtml (html);
+//   expobj.ExportExcel(html);
+   printobj.setHeaderSize(10);
+   printobj.setFooterSize(10);
+   printobj.setDateFormat("MMMM dd yyyy");
+   printobj.setHeaderText(headertext.arg("temp"));
+   printobj.setFooterText(footertext);
+   QString tmp("example print");
+   printobj.print(&doc);
 }
