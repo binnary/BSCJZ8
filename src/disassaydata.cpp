@@ -21,6 +21,7 @@ DisAssayData::DisAssayData(QDialog *parent) :
     mModel->setTable("AssayData");
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->select();
+
 //    stream << "PRAGMA table_info ('" << "DeviceInfo" << "')";
     QSqlQuery query;
     //QString sql;

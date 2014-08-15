@@ -1,19 +1,20 @@
 <RCC>
-  <qresource prefix="/">
-    <file>images/clear.png</file>
-    <file>images/config.png</file>
-    <file>images/exportpdf.png</file>
-    <file>images/fileprint.png</file>
-    <file>images/woodbackground.png</file>
-    <file>images/woodbutton.png</file>
-    <file>images/application-exit.png</file>
-    <file>images/exportexcel.png</file>
-    <file>images/printpreview.png</file>
-    <file>images/capture.png</file>
-    <file>images/preferences-system.png</file>
-    <file>images/startcapture.png</file>
-    <file>images/stopcapture.png</file>
-    <file>images/previe_graphic.png</file>
-    <file>images/previe_table.png</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>images/clear.png</file>
+        <file>images/config.png</file>
+        <file>images/exportpdf.png</file>
+        <file>images/fileprint.png</file>
+        <file>images/woodbackground.png</file>
+        <file>images/woodbutton.png</file>
+        <file>images/application-exit.png</file>
+        <file>images/exportexcel.png</file>
+        <file>images/printpreview.png</file>
+        <file>images/capture.png</file>
+        <file>images/preferences-system.png</file>
+        <file>images/startcapture.png</file>
+        <file>images/stopcapture.png</file>
+        <file>images/previe_graphic.png</file>
+        <file>images/previe_table.png</file>
+        <file>images/about.png</file>
+    </qresource>
 </RCC>

@@ -26,6 +26,7 @@ public slots:
     void displayData();
     void displayGraphic();
     void Capture();
+    void About();
 private:
     Ui::MainWindow *ui;
     QAction *exitAct;

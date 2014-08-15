@@ -3,6 +3,7 @@
 #include "mainwindow.h"
 #include "norwegianwoodstyle.h"
 #include <QStyleFactory>
+#include <QMessageBox>
 #include "qlog.h"
 //#define __DEBUG__
 int main(int argc, char *argv[])
@@ -26,9 +27,12 @@ int main(int argc, char *argv[])
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     path =dir.currentPath () + QString("/memory.db");
     dir.fromNativeSeparators (path);
-//    db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
-    db.setDatabaseName("db\\platform.db");
-    db.open();
+    db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
+//    db.setDatabaseName("db\\platform.db");
+    if(!db.open()){
+        QMessageBox::warning (NULL,"asd", "asfdas");
+    }
+//    QMessageBox::warning (NULL,"asd", "asfdas");
     MainWindow w;
     w.show();
 

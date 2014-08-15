@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui printsupport
+QT += core gui printsupport webkitwidgets
 QT += serialport
 QT += sql
 QT += axcontainer
@@ -63,7 +63,8 @@ SOURCES += \
     src/qcapture.cpp \
     src/norwegianwoodstyle.cpp \
     src/export/exportobject.cpp \
-    src/print/qprintobject.cpp
+    src/print/qprintobject.cpp \
+    src/qabout.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -78,7 +79,8 @@ HEADERS  += \
     src/qcapture.h \
     src/norwegianwoodstyle.h \
     src/export/exportobject.h \
-    src/print/qprintobject.h
+    src/print/qprintobject.h \
+    src/qabout.h
 
 FORMS    += \
     ui/mainwindow.ui \
@@ -88,7 +90,8 @@ FORMS    += \
     ui/DeviceInfo.ui \
     ui/disassaydata.ui \
     ui/capture.ui \
-    ui/AddNewDev.ui
+    ui/AddNewDev.ui \
+    ui/qabout.ui
 
 RESOURCES += \
     res.qrc

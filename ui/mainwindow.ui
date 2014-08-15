@@ -99,6 +99,9 @@
     <property name="title">
      <string>About</string>
     </property>
+    <addaction name="actionHelp"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuCapture">
     <property name="title">
@@ -237,6 +240,16 @@
    </property>
    <property name="text">
     <string>Capture</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

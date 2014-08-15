@@ -1,41 +1,39 @@
 #ifndef QCAPTURE_H
 #define QCAPTURE_H
-#include <QtCore/QVariant>
-#include <QtWidgets/QAction>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QGridLayout>
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QHeaderView>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpacerItem>
-#include <QtWidgets/QTreeView>
+#include <QApplication>
+#include <QComboBox>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QSpacerItem>
+#include <QTreeView>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QTableView>
 #include <QWidget>
+#include <QTimer>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QTreeWidget>
 #include <QTextEdit>
+#include <QSqlTableModel>
+
 class QCapture : public QWidget
 {
     Q_OBJECT
 public:
     explicit QCapture(QWidget *parent = 0);
-
-    QGridLayout *gridLayout;
-    QHBoxLayout *horizontalLayout;
-    QLabel *label;
-    QComboBox *comboBox;
-    QPushButton *pushButton;
-    QSpacerItem *horizontalSpacer;
-    QTreeWidget *treewidget;
-    QTextEdit   *textedit;
-    QSplitter *splitter;
-
+    ~QCapture();
+public slots:
     void DebugInfo ();
+    void AutoScroll();
+    void ToggledCapture(bool clicked);
+private:
+    bool mAutoScroll;
+    QTimer timer;
+    QSqlTableModel *mModel;
+
+private: // ui
     void setupUi(QWidget *Capture)
     {
         if (Capture->objectName().isEmpty())
@@ -67,8 +65,8 @@ public:
         gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
 
         splitter = new QSplitter(Qt::Vertical, 0);
-        treewidget = new QTreeWidget(splitter);
-        treewidget->setObjectName(QStringLiteral("treeView_top"));
+        treeView = new QTreeView(splitter);
+        treeView->setObjectName(QStringLiteral("treeView_top"));
         textedit = new QTextEdit(splitter);
         textedit->setObjectName(QStringLiteral("textedit"));
         textedit->setReadOnly (true);
@@ -86,9 +84,16 @@ public:
         label->setText(QApplication::translate("Capture", "Port:", 0));
         pushButton->setText(QApplication::translate("Capture", "StartRead", 0));
     } // retranslateUi
-signals:
 
-public slots:
+    QGridLayout *gridLayout;
+    QHBoxLayout *horizontalLayout;
+    QLabel *label;
+    QComboBox *comboBox;
+    QPushButton *pushButton;
+    QSpacerItem *horizontalSpacer;
+    QTreeView   *treeView;
+    QTextEdit   *textedit;
+    QSplitter *splitter;
 };
 
 #endif // QCAPTURE_H
