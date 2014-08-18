@@ -46,6 +46,8 @@ private:
 public slots:
     void printFunc();
     void exportpdf();
+    void DevIdChange(QString index);
+    void DisplayChange(QString index);
     void legendChecked( const QVariant &itemInfo, bool on );
 private:
     Ui::QDispgraphic *ui;

@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QAction>
 #include <QActionGroup>
-#include <QDockWidget>
+#include <QTabWidget>
 #include "qdispgraphic.h"
 #include "deviceinfo.h"
 #include "disassaydata.h"
@@ -21,12 +21,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void InitTabWidget();
 public slots:
     void DevConfig();
     void displayData();
     void displayGraphic();
     void Capture();
     void About();
+    void TabWidgetIndexChange(int index);
 private:
     Ui::MainWindow *ui;
     QAction *exitAct;
@@ -39,6 +41,12 @@ private:
     QAction *ghptaAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+
+    QTabWidget *mtabWidget;
+    QCapture *mCapture;
+    DisAssayData *mDisAssayData;
+    DeviceInfo *mDevInfo;
+    QDispgraphic *mDispGraphic;
 };
 
 #endif // MAINWINDOW_H

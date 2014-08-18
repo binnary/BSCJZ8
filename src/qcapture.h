@@ -24,6 +24,8 @@ class QCapture : public QWidget
 public:
     explicit QCapture(QWidget *parent = 0);
     ~QCapture();
+    void Start();
+    void Stop();
 public slots:
     void DebugInfo ();
     void AutoScroll();

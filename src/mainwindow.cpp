@@ -8,42 +8,58 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->mainToolBar->hide ();
     connect(ui->actionPreview_Table, SIGNAL(triggered()), this, SLOT(displayData()));
     connect(ui->actionPreview_Graphic, SIGNAL(triggered()), this, SLOT(displayGraphic()));
     connect(ui->actionCapture, SIGNAL(triggered()), this, SLOT(Capture()));
     connect(ui->action_DevConfig,SIGNAL(triggered()), this, SLOT(DevConfig()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(About()));
-    Capture ();
+    InitTabWidget();
+    connect(ui->actionExport_Excel, SIGNAL(triggered()), mDisAssayData, SLOT(print()));
+    connect(mtabWidget, SIGNAL(currentChanged(int)), this, SLOT(TabWidgetIndexChange(int)));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+void MainWindow::InitTabWidget()
+{
+    mtabWidget = new QTabWidget(this);
+    mCapture = new QCapture();
+    mtabWidget->addTab (mCapture, "Capture");
+    mDisAssayData = new DisAssayData();
+    mtabWidget->addTab (mDisAssayData, "DisAssayData");
+    mDispGraphic = new QDispgraphic ();
+    mtabWidget->addTab (mDispGraphic, "DisGraphic");
+    mDevInfo = new DeviceInfo();
+    mtabWidget->addTab (mDevInfo, "DeviceInfo");
+    setCentralWidget (mtabWidget);
+}
+void MainWindow::TabWidgetIndexChange(int index)
+{
+   (index == 0) ? mCapture->Start (): mCapture->Stop ();
+}
 void MainWindow::Capture()
 {
 //    mCapture = new QCapture();
-    setCentralWidget (new QCapture());
+    mtabWidget->setCurrentIndex (0);
 }
 void MainWindow::displayData()
 {
-  DisAssayData *mDisAssayData = new DisAssayData();
-//  connect(ui->actionExport_Excel, SIGNAL(triggered()), mDisAssayData, SLOT(print()));
-  setCentralWidget (mDisAssayData);
-}
-
-void MainWindow::DevConfig()
-{
-//  DeviceInfo *mDevInfo = new DeviceInfo();
-  setCentralWidget (new DeviceInfo());
+    mtabWidget->setCurrentIndex (1);
 }
 
 void MainWindow::displayGraphic()
 {
-//  mDispGraphic = new QDispgraphic;
-  setCentralWidget (new QDispgraphic());
+    mtabWidget->setCurrentIndex (2);
 }
+
+void MainWindow::DevConfig()
+{
+    mtabWidget->setCurrentIndex (3);
+}
+
 void MainWindow::About()
 {
 //    QString strAbouti("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

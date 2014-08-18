@@ -18,6 +18,7 @@ public:
     void ExportToDocument(QString &html);
 signals:
     void signalCount(int count);
+
 public slots:
     void FilterQuery();
     void UpdateDate();

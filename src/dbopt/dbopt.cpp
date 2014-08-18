@@ -9,8 +9,8 @@ bool db_open(QString path)
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     path =dir.currentPath () + QString("/memory.db");
     dir.fromNativeSeparators (path);
-//    db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
-    db.setDatabaseName("db\\platform.db");
+    db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
+//    db.setDatabaseName("db\\platform.db");
     if(!db.open()){
         QMessageBox::warning (NULL,QObject::tr("Platform Db Failed"),
                               QObject::tr("Open database failed"));

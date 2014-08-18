@@ -42,8 +42,8 @@ DisAssayData::DisAssayData(QDialog *parent) :
         }
     }
     QObject::connect(ui->pushButton_Query, SIGNAL(clicked()), this, SLOT(FilterQuery()));
-    QObject::connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()));
-    QObject::connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()));
+    QObject::connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()),Qt::QueuedConnection);
+    QObject::connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()),Qt::QueuedConnection);
 }
 
 DisAssayData::~DisAssayData()

@@ -13,7 +13,10 @@
 #include <QPointF>
 #include <QVector>
 #include <QSqlRecord>
-
+#include <QSqlQuery>
+#include  <QPrinter>
+#include <QPrintDialog>
+#include <qwt_plot_renderer.h>
 QDispgraphic::QDispgraphic(QWidget *parent) :
      QWidget(parent),
     ui(new Ui::QDispgraphic)
@@ -26,8 +29,29 @@ QDispgraphic::QDispgraphic(QWidget *parent) :
     InitPlot ();
     InitCurve("Ch4", Qt::red);
     queryData("Ch4");
-//    InitCurve("O2", Qt::blue);
 
+    QSqlQuery query;
+    query.exec("SELECT * from AssayData");
+    while(query.next ()){
+        QString value = query.value("DeviceId").toString ();
+        if (ui->comboBox_DevIndex->findText (value) < 0 ){
+            ui->comboBox_DevIndex->addItem (value);
+        }
+        value = query.value("PipeId").toString ();
+        if (ui->comboBox_PipeIndexEnd->findText (value) < 0 ){
+            ui->comboBox_PipeIndexEnd->addItem (value);
+        }
+        if (ui->comboBox_PipeIndexStart->findText(value) < 0 ){
+            ui->comboBox_PipeIndexStart->addItem (value);
+        }
+    }
+
+    connect(ui->comboBox, SIGNAL(currentIndexChanged(QString)),
+            this, SLOT(DisplayChange(QString)),Qt::QueuedConnection);
+
+    connect(ui->comboBox_DevIndex, SIGNAL(currentIndexChanged(QString)),
+            this, SLOT(DevIdChange(QString)),Qt::QueuedConnection);
+    connect(ui->pushButton_Print, SIGNAL(clicked()), this, SLOT(printFunc()));
 }
 QDispgraphic::~QDispgraphic()
 {
@@ -84,34 +108,33 @@ void QDispgraphic::InitPlot()
 }
 void QDispgraphic::printFunc()
 {
-//    QPrinter printer( QPrinter::HighResolution );
+    QPrinter printer( QPrinter::HighResolution );
 
-//    QString docName = this->windowTitle ();
-//    if ( !docName.isEmpty() )
-//    {
-//        docName.replace ( QRegExp ( QString::fromLatin1 ( "\n" ) ), tr ( " -- " ) );
-//        printer.setDocName ( docName );
-//    }
+    QString docName = ui->qwtPlot->title().text();
+    if ( !docName.isEmpty() )
+    {
+        docName.replace ( QRegExp ( QString::fromLatin1 ( "\n" ) ), tr ( " -- " ) );
+        printer.setDocName ( docName );
+    }
 
-//    printer.setCreator( "Bode example" );
-//    printer.setOrientation( QPrinter::Landscape );
+    printer.setCreator( "Bode example" );
+    printer.setOrientation( QPrinter::Landscape );
 
-//    QPrintDialog dialog( &printer );
-//    if ( dialog.exec() )
-//    {
-//        QwtPlotRenderer renderer;
+    QPrintDialog dialog( &printer );
+    if ( dialog.exec() )
+    {
+        QwtPlotRenderer renderer;
 
-//        if ( printer.colorMode() == QPrinter::GrayScale )
-//        {
-//            renderer.setDiscardFlag( QwtPlotRenderer::DiscardBackground );
-//            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasBackground );
-//            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasFrame );
-//            renderer.setLayoutFlag( QwtPlotRenderer::FrameWithScales );
-//        }
+        if ( printer.colorMode() == QPrinter::GrayScale )
+        {
+            renderer.setDiscardFlag( QwtPlotRenderer::DiscardBackground );
+            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasBackground );
+            renderer.setDiscardFlag( QwtPlotRenderer::DiscardCanvasFrame );
+            renderer.setLayoutFlag( QwtPlotRenderer::FrameWithScales );
+        }
 
-//        renderer.renderTo(this, printer );
-//    }
-
+        renderer.renderTo(ui->qwtPlot, printer );
+    }
 }
 void QDispgraphic::exportpdf()
 {
@@ -138,8 +161,22 @@ void QDispgraphic::queryData(QString name)
         }
 
     }
-
 }
+void QDispgraphic::DisplayChange(QString index)
+{
+    qDebug() << index;
+    queryData (index);
+}
+void QDispgraphic::DevIdChange(QString index)
+{
+    qDebug() << index;
+    QString filter("DeviceId= ");
+    filter += index;
+    mModel->setFilter (filter);
+    mModel->select ();
+    queryData (ui->comboBox->currentText ());
+}
+
 void QDispgraphic::queryData(QString X, QString Y)
 {
    QVector<QPointF> temp;

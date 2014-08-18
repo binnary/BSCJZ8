@@ -99,3 +99,14 @@ void QCapture::DebugInfo ()
    query.exec(sql);
    timer.start (10);
 }
+void QCapture::Stop ()
+{
+   qDebug()<< "Qcapture::stop";
+   timer.stop ();
+   mModel->database ().exec ("DELETE FROM temp;vacuum");
+}
+void QCapture::Start ()
+{
+    qDebug()<< "Qcapture::start";
+    timer.start (10);
+}
