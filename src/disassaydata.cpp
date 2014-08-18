@@ -123,7 +123,7 @@ void DisAssayData::ExportToDocument(QString &html)
     }
     html += "</table>";
 
-      return ;
+    return ;
 }
 void DisAssayData::ExportExcel()
 {

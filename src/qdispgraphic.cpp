@@ -8,6 +8,7 @@
 #include <qwt_plot_canvas.h>
 #include <qwt_plot_panner.h>
 #include <qwt_plot_magnifier.h>
+#include <qwt_plot_zoomer.h>
 #include "ui_qdispgraphic.h"
 #include <QPointF>
 #include <QVector>
@@ -55,10 +56,10 @@ void QDispgraphic::InitPlot()
     canvas->setPalette( palette ());
     ui->qwtPlot->setCanvas( canvas );
     // panning with the left mouse button
-//  ( void ) new QwtPlotPanner( canvas );
+  ( void ) new QwtPlotPanner( canvas );
 
     // zoom in/out with the wheel
-//    ( void ) new QwtPlotMagnifier( canvas );
+    ( void ) new QwtPlotMagnifier( canvas );
 
 
 
@@ -70,6 +71,11 @@ void QDispgraphic::InitPlot()
 
     ui->qwtPlot->setAxisTitle( QwtPlot::yLeft, "Y-->" );
     ui->qwtPlot->setAxisScale( QwtPlot::yLeft, 0, 1000);
+//    QwtPlotZoomer* zoomer = new QwtPlotZoomer( ui->qwtPlot->canvas() );
+//    zoomer->setRubberBandPen( QColor( Qt::black ) );
+//    zoomer->setTrackerPen( QColor( Qt::black ) );
+//    zoomer->setMousePattern(QwtEventPattern::MouseSelect2,Qt::RightButton, Qt::ControlModifier );
+//    zoomer->setMousePattern(QwtEventPattern::MouseSelect3,Qt::RightButton );
 //    QwtLegend *legend = new QwtLegend;
 //    legend->setDefaultItemMode( QwtLegendData::Checkable );
 //    ui->qwtPlot->insertLegend( legend, QwtPlot::RightLegend );
@@ -115,12 +121,16 @@ void QDispgraphic::exportpdf()
 void QDispgraphic::queryData(QString name)
 {
     QVector<QPointF> temp;
+    int maxY = 0;
+    int Y;
     int count = 0;
     while((count++) < mModel->rowCount ()){
-         temp.push_back (QPointF(count,
-                                 mModel->record (count).value (name).toInt ()));
+         Y = mModel->record (count).value (name).toInt ();
+         temp.push_back (QPointF(count, Y));
+         Y >= maxY ? maxY = Y : maxY = maxY;
     }
     ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0, count);
+    ui->qwtPlot->setAxisScale( QwtPlot::yLeft, 0, maxY);
     QList<DispCurve*>::iterator it;
     for (it=mCurveList.begin (); it!=mCurveList.end (); it++){
         if (((DispCurve*)*it)->title().text() == name){

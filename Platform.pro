@@ -21,8 +21,19 @@ PLUGINSPATH +=./
 QWT_ROOT="C:/Qt/qwt-6.1.0"
 #LIBS += -lqwtd
 include ($${QWT_ROOT}/qwtfunctions.pri)
-INCPATH += $${QWT_ROOT}/src src src/print src/export
-DEPENDPATH += $${QWT_ROOT}/src src src/print src/export
+
+SRCPATH = $${QWT_ROOT}/src
+SRCPATH +=src
+SRCPATH +=src/print
+SRCPATH +=src/export
+SRCPATH +=src/dbopt
+SRCPATH +=src/log
+SRCPATH +=src/serial
+SRCPATH +=src/protocol
+SRCPATH +=src/style
+
+INCPATH += $${SRCPATH}
+DEPENDPATH += $${SRCPATH}
 
 contains (QWT_CONFIG, QwtFramework){
          LIBS += -F$${QWT_ROOT}/lib
@@ -53,34 +64,36 @@ SOURCES += \
     src/main.cpp\
     src/mainwindow.cpp \
     src/comcfg.cpp \
-    src/qlog.cpp \
     src/qlogin.cpp \
-    src/qserial.cpp \
-    src/qprotocolbase.cpp \
+    src/serial/qserial.cpp \
+    src/protocol/qprotocolbase.cpp \
     src/qdispgraphic.cpp \
     src/deviceinfo.cpp \
     src/disassaydata.cpp \
     src/qcapture.cpp \
-    src/norwegianwoodstyle.cpp \
+    src/style/norwegianwoodstyle.cpp \
     src/export/exportobject.cpp \
     src/print/qprintobject.cpp \
-    src/qabout.cpp
+    src/qabout.cpp \
+    src/dbopt/dbopt.cpp \
+    src/log/qlog.cpp
 
 HEADERS  += \
     src/mainwindow.h \
     src/comcfg.h \
-    src/qlog.h \
+    src/log/qlog.h \
     src/qlogin.h \
-    src/qserial.h \
-    src/qprotocolbase.h \
+    src/serial/qserial.h \
+    src/protocol/qprotocolbase.h \
     src/qdispgraphic.h \
     src/deviceinfo.h \
     src/disassaydata.h \
     src/qcapture.h \
-    src/norwegianwoodstyle.h \
+    src/style/norwegianwoodstyle.h \
     src/export/exportobject.h \
     src/print/qprintobject.h \
-    src/qabout.h
+    src/qabout.h \
+    src/dbopt/dbopt.h
 
 FORMS    += \
     ui/mainwindow.ui \

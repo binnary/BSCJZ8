@@ -5,6 +5,7 @@
 #include <QStyleFactory>
 #include <QMessageBox>
 #include "qlog.h"
+#include <dbopt/dbopt.h>
 //#define __DEBUG__
 int main(int argc, char *argv[])
 {
@@ -21,17 +22,17 @@ int main(int argc, char *argv[])
 #ifdef __DEBUG__
     qInstallMessageHandler(MessageOutput);
 #endif
-
-    QDir dir;
-    QString path= dir.currentPath ();
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    path =dir.currentPath () + QString("/memory.db");
-    dir.fromNativeSeparators (path);
-    db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
-//    db.setDatabaseName("db\\platform.db");
-    if(!db.open()){
-        QMessageBox::warning (NULL,"asd", "asfdas");
-    }
+     db_open("sss");
+    //QDir dir;
+    //QString path= dir.currentPath ();
+    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    //path =dir.currentPath () + QString("/memory.db");
+    //dir.fromNativeSeparators (path);
+    //db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
+//  //  db.setDatabaseName("db\\platform.db");
+    //if(!db.open()){
+    //    QMessageBox::warning (NULL,"asd", "asfdas");
+    //}
 //    QMessageBox::warning (NULL,"asd", "asfdas");
     MainWindow w;
     w.show();

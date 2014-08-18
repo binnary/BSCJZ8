@@ -30,6 +30,13 @@ void ExportObject::ExportPdf(QString &html)
          doc.print(&printer);
      }
 }
+void ExportObject::ExportExcel (QStringList &html)
+{
+   QStringList::iterator it;
+   for (it = html.begin ();it != html.end (); ++it){
+       ExportExcel(*it);
+   }
+}
 void ExportObject::ExportExcel (QString &html)
 {
     QTextDocument doc;

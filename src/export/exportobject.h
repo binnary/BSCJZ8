@@ -2,6 +2,7 @@
 #define EXPORTOBJECT_H
 
 #include <QString>
+#include <QStringList>
 #include <QWidget>
 
 class ExportObject : public QWidget
@@ -13,6 +14,7 @@ public:
 
 public:
     void ExportExcel (QString &html);
+    void ExportExcel (QStringList &html);
     void ExportPdf(QString &html);
 };
 

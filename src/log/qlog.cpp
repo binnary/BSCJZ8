@@ -7,7 +7,7 @@ class LogFile
 public:
     LogFile(){
         //TODO init log file
-        ReinitFile();
+//        ReinitFile();
     }
     ~LogFile(){
         if (mFile.isOpen ()){
@@ -44,6 +44,9 @@ public:
     void Write(QString &log)
     {
         QTextStream stream(&mFile);
+        if (!mFile.isOpen ()){
+            ReinitFile();
+        }
         log.trimmed ();
         stream << log << "\r\n";
         mFile.flush ();
