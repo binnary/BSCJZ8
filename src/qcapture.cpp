@@ -5,7 +5,9 @@
 #include <QSqlQuery>
 #include <QTreeWidget>
 #include <QDateTime>
+#ifdef Q_OS_WIN
 #include <QSerialPortInfo>
+#endif
 #include <QSqlDriver>
 #include <QDebug>
 #include <QSqlError>
@@ -14,11 +16,13 @@ QCapture::QCapture(QWidget *parent) :
     mAutoScroll(false)
 {
     setupUi (this);
+#ifdef Q_OS_WIN
     QList<QSerialPortInfo> info = QSerialPortInfo::availablePorts ();
     QList<QSerialPortInfo>::iterator it;
     for(it= info.begin (); it!=info.end (); ++it){
          comboBox->addItem (((QSerialPortInfo)*it).portName ());
     }
+#endif
     mModel =  new QSqlTableModel();
     treeView->setAlternatingRowColors(true);
     treeView->setSortingEnabled(true);

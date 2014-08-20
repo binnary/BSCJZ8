@@ -3,6 +3,7 @@
 
 #include "qwt_plot.h"
 #include "qwt_plot_curve.h"
+#include "qwt_plot_magnifier.h"
 #include <qwt_plot_canvas.h>
 #include <QList>
 #include <QSqlTableModel>
@@ -11,6 +12,28 @@ namespace Ui {
 class QDispgraphic;
 }
 
+//) new QwtPlotMagnifier( canvas );
+
+class DisPlotMagnifier: public QwtPlotMagnifier
+{
+public:
+    explicit DisPlotMagnifier( QWidget *parent ):
+        QwtPlotMagnifier(parent)
+    {
+
+    }
+    virtual ~DisPlotMagnifier()
+    {
+
+    }
+
+    virtual void widgetWheelEvent( QWheelEvent *event )
+    {
+        QwtPlotMagnifier::widgetWheelEvent (event);
+         qDebug() <<event;
+//       plot ()->X
+    }
+};
 class DispCurve: public QwtPlotCurve
 {
 public:

@@ -83,7 +83,8 @@ void QDispgraphic::InitPlot()
   ( void ) new QwtPlotPanner( canvas );
 
     // zoom in/out with the wheel
-    ( void ) new QwtPlotMagnifier( canvas );
+//    ( void ) new QwtPlotMagnifier( canvas );
+    ( void ) new DisPlotMagnifier( canvas );
 
 
 
@@ -161,6 +162,7 @@ void QDispgraphic::queryData(QString name)
         }
 
     }
+    ui->qwtPlot->replot();
 }
 void QDispgraphic::DisplayChange(QString index)
 {

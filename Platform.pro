@@ -4,10 +4,13 @@
 #
 #-------------------------------------------------
 
-QT += core gui printsupport webkitwidgets
-QT += serialport
+QT += core gui printsupport
 QT += sql
-QT += axcontainer
+win32 {
+ QT += webkitwidgets
+ QT += serialport
+ QT += axcontainer
+}
 QT += concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -41,31 +44,11 @@ contains (QWT_CONFIG, QwtFramework){
     LIBS += -L$${QWT_ROOT}/lib
 }
 qwtAddLibrary(qwt)
-#contains (QWT_CONFIG, QwtOpenGL){
-#      QT += opengl
-#}else{
-#    DEFINES +=QWT_NO_OPENGL
-#}
-#
-#contains (QWT_CONFIG, QwtSvg){
-#    QT += svg
-#}else{
-#    DEFINES +=QWT_NO_SVG
-#}
-#win32{
-#   contains (QWT_CONFIG, QwtDll){
-#     DEFINES += QT_DLL QWT_DLL
-#  }
-#}
-
-#include (C:\Qt\qwt-6.1.0\qwt.prf)
 
 SOURCES += \
     src/main.cpp\
     src/mainwindow.cpp \
-    src/comcfg.cpp \
     src/qlogin.cpp \
-    src/serial/qserial.cpp \
     src/protocol/qprotocolbase.cpp \
     src/qdispgraphic.cpp \
     src/deviceinfo.cpp \
@@ -80,10 +63,8 @@ SOURCES += \
 
 HEADERS  += \
     src/mainwindow.h \
-    src/comcfg.h \
     src/log/qlog.h \
     src/qlogin.h \
-    src/serial/qserial.h \
     src/protocol/qprotocolbase.h \
     src/qdispgraphic.h \
     src/deviceinfo.h \
@@ -94,6 +75,15 @@ HEADERS  += \
     src/print/qprintobject.h \
     src/qabout.h \
     src/dbopt/dbopt.h
+
+win32 {
+    SOURCES +=\
+    src/comcfg.cpp \
+    src/serial/qserial.cpp
+    HEADERS +=\
+    src/serial/qserial.h \
+    src/comcfg.h
+}
 
 FORMS    += \
     ui/mainwindow.ui \
@@ -108,5 +98,3 @@ FORMS    += \
 
 RESOURCES += \
     res.qrc
-
-OTHER_FILES +=

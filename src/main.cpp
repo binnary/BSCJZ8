@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include "qlog.h"
 #include <dbopt/dbopt.h>
-//#define __DEBUG__
+
 int main(int argc, char *argv[])
 {
 //    Q_INIT_RESOURCE(styles);
@@ -19,21 +19,13 @@ int main(int argc, char *argv[])
     QApplication::setStyle(QStyleFactory::create("WindowsVista"));
     QApplication::setStyle(QStyleFactory::create("Fusion"));
 //    qDebug() <<QStyleFactorykeys ();
-#ifdef __DEBUG__
+#ifndef QT_DEBUG
     qInstallMessageHandler(MessageOutput);
 #endif
-     db_open("sss");
-    //QDir dir;
-    //QString path= dir.currentPath ();
-    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    //path =dir.currentPath () + QString("/memory.db");
-    //dir.fromNativeSeparators (path);
-    //db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
-//  //  db.setDatabaseName("db\\platform.db");
-    //if(!db.open()){
-    //    QMessageBox::warning (NULL,"asd", "asfdas");
-    //}
-//    QMessageBox::warning (NULL,"asd", "asfdas");
+    if (!db_open()){
+        return -1;
+    }
+
     MainWindow w;
     w.show();
 
