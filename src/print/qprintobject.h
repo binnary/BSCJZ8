@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <QPrinter>
-
+#include <QDebug>
+#include <QStringList>
+#include <QString>
 class QTextDocument;
 class QWidget;
 

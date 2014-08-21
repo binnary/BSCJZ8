@@ -8,7 +8,7 @@ public:
     virtual int direct_read();
     virtual int direct_write();
 private:
-//    TypeIO mIODev;
+    //    TypeIO mIODev;
 
 };
 

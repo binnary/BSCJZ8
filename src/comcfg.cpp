@@ -14,8 +14,8 @@ ComCfg::~ComCfg()
 }
 void ComCfg::accept ()
 {
-   //TODO:find user/name
-   QDialog::accept ();
+    //TODO:find user/name
+    QDialog::accept ();
 }
 void ComCfg::reject ()
 {

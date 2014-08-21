@@ -8,7 +8,8 @@
 #include <QList>
 #include <QSqlTableModel>
 
-namespace Ui {
+namespace Ui
+{
 class QDispgraphic;
 }
 
@@ -30,7 +31,7 @@ public:
     virtual void widgetWheelEvent( QWheelEvent *event )
     {
         QwtPlotMagnifier::widgetWheelEvent (event);
-         qDebug() <<event;
+        qDebug() <<event;
 //       plot ()->X
     }
 };

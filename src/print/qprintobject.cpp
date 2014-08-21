@@ -7,11 +7,14 @@
 #include <QPrintDialog>
 #include <QTextDocument>
 #include <QTextFrame>
-
+#include <QTextDocumentWriter>
 #if (QT_VERSION >= QT_VERSION_CHECK(4, 4, 0))
 #include <QPrintPreviewDialog>
 #endif
-static inline double mmToInches(double mm) { return mm * 0.039370147; }
+static inline double mmToInches(double mm)
+{
+    return mm * 0.039370147;
+}
 
 QPrintObject::QPrintObject(QObject *parent)
     : QObject(parent), mParent(0),
@@ -30,13 +33,15 @@ QPrintObject::QPrintObject(QObject *parent)
     // for convenience, default to US_Letter for C/US/Canada
     // NOTE: bug in Qt, this value is not loaded by QPrintDialog
     switch (QLocale::system().country()) {
-      case QLocale::AnyCountry:
-      case QLocale::Canada:
-      case QLocale::UnitedStates:
-      case QLocale::UnitedStatesMinorOutlyingIslands:
-          mPrinter->setPageSize(QPrinter::Letter); break;
-      default:
-          mPrinter->setPageSize(QPrinter::A4); break;
+    case QLocale::AnyCountry:
+    case QLocale::Canada:
+    case QLocale::UnitedStates:
+    case QLocale::UnitedStatesMinorOutlyingIslands:
+        mPrinter->setPageSize(QPrinter::Letter);
+        break;
+    default:
+        mPrinter->setPageSize(QPrinter::A4);
+        break;
     }
 }
 
@@ -207,8 +212,8 @@ void QPrintObject::setBottomMargin(double margin)
 void QPrintObject::setMargins(double margin)
 {
     if ((margin > 0)
-        && (margin < mPrinter->paperRect().height() / 2)
-        && (margin < mPrinter->paperRect().width() / 2)) {
+            && (margin < mPrinter->paperRect().height() / 2)
+            && (margin < mPrinter->paperRect().width() / 2)) {
         mLeftMargin = mRightMargin = mTopMargin = mBottomMargin = margin;
     } else {
         mLeftMargin = mRightMargin = mTopMargin = mBottomMargin = 0;
@@ -433,7 +438,7 @@ void QPrintObject::setDateFormat(const QString &format)
 ///////////////////////////////////////////////////////////////////////////////
 
 void QPrintObject::print(const QTextDocument *document,
-                        const QString &caption)
+                         const QString &caption)
 {
     if (!document) return;
 
@@ -462,7 +467,7 @@ void QPrintObject::print(const QTextDocument *document,
 ///////////////////////////////////////////////////////////////////////////////
 
 void QPrintObject::preview(const QTextDocument *document,
-                          const QString &caption)
+                           const QString &caption)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(4, 4, 0))
     if (!document) return;
@@ -499,7 +504,7 @@ QRectF QPrintObject::paperRect(QPaintDevice *device)
     rect.setWidth(rect.width() *
                   device->logicalDpiX() / mPrinter->logicalDpiX());
     rect.setHeight(rect.height() *
-                  device->logicalDpiY() / mPrinter->logicalDpiY());
+                   device->logicalDpiY() / mPrinter->logicalDpiY());
 
     return rect;
 }
@@ -621,7 +626,7 @@ void QPrintObject::print(QPrinter *printer)
         while (true) {
             for (int pc=0; pc<pagecopies; pc++) {
                 if (printer->printerState() == QPrinter::Aborted ||
-                    printer->printerState() == QPrinter::Error) {
+                        printer->printerState() == QPrinter::Error) {
                     return;
                 }
                 // print page
@@ -642,8 +647,8 @@ void QPrintObject::print(QPrinter *printer)
 // paint an individual page of the document to the painter
 
 void QPrintObject::paintPage(QPainter *painter,
-                            QTextDocument *document,
-                            int pagenum)
+                             QTextDocument *document,
+                             int pagenum)
 {
     QRectF rect;
     double onepoint = painter->device()->logicalDpiY() / 72.0;

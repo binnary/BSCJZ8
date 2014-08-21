@@ -11,7 +11,10 @@ class QSerial
 {
 public:
     QSerial();
-    QList<QSerialPortInfo>QGetPorts(){ return QSerialPortInfo::availablePorts ();}
+    QList<QSerialPortInfo>QGetPorts()
+    {
+        return QSerialPortInfo::availablePorts ();
+    }
 };
 
 #endif // QSERIAL_H

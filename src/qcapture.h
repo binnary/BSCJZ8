@@ -29,12 +29,13 @@ public:
 public slots:
     void DebugInfo ();
     void AutoScroll();
-    void ToggledCapture(bool clicked);
+    void ToggledCapture();
+    void ClearData();
 private:
     bool mAutoScroll;
     QTimer timer;
     QSqlTableModel *mModel;
-
+    bool mIsStarted;
 private: // ui
     void setupUi(QWidget *Capture)
     {
@@ -59,6 +60,11 @@ private: // ui
         pushButton->setObjectName(QStringLiteral("pushButton"));
 
         horizontalLayout->addWidget(pushButton);
+
+        pushButton_Clear = new QPushButton(Capture);
+        pushButton_Clear->setObjectName(QStringLiteral("pushButton_Clear"));
+
+        horizontalLayout->addWidget(pushButton_Clear);
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -85,6 +91,7 @@ private: // ui
         Capture->setWindowTitle(QApplication::translate("Capture", "Form", 0));
         label->setText(QApplication::translate("Capture", "Port:", 0));
         pushButton->setText(QApplication::translate("Capture", "StartRead", 0));
+        pushButton_Clear->setText(QApplication::translate("Capture", "Clear", 0));
     } // retranslateUi
 
     QGridLayout *gridLayout;
@@ -92,6 +99,7 @@ private: // ui
     QLabel *label;
     QComboBox *comboBox;
     QPushButton *pushButton;
+    QPushButton *pushButton_Clear;
     QSpacerItem *horizontalSpacer;
     QTreeView   *treeView;
     QTextEdit   *textedit;

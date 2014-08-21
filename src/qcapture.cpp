@@ -13,20 +13,22 @@
 #include <QSqlError>
 QCapture::QCapture(QWidget *parent) :
     QWidget(parent),
-    mAutoScroll(false)
+    mAutoScroll(false),
+    mIsStarted(false)
 {
     setupUi (this);
 #ifdef Q_OS_WIN
     QList<QSerialPortInfo> info = QSerialPortInfo::availablePorts ();
     QList<QSerialPortInfo>::iterator it;
-    for(it= info.begin (); it!=info.end (); ++it){
-         comboBox->addItem (((QSerialPortInfo)*it).portName ());
+    for(it= info.begin (); it!=info.end (); ++it) {
+        comboBox->addItem (((QSerialPortInfo)*it).portName ());
     }
 #endif
     mModel =  new QSqlTableModel();
     treeView->setAlternatingRowColors(true);
-    treeView->setSortingEnabled(true);
+    treeView->setSortingEnabled(false);
     treeView->setModel (mModel);
+    treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     treeView->setWindowTitle ("test");
 
     mModel->setTable("temp");
@@ -35,8 +37,9 @@ QCapture::QCapture(QWidget *parent) :
     mModel->select();
     connect(&timer, SIGNAL(timeout()), this, SLOT(DebugInfo ()));
     connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(AutoScroll()));
-    connect(pushButton, SIGNAL(toggled(bool)), this, SLOT(ToggledCapture(bool)));
-    timer.start (100);
+    connect(pushButton, SIGNAL(clicked()), this, SLOT(ToggledCapture()));
+    connect(pushButton_Clear, SIGNAL(clicked()), this, SLOT(ClearData()));
+//    timer.start (100);
 //    DebugInfo();
 }
 
@@ -46,9 +49,22 @@ QCapture::~QCapture()
     mModel->database ().exec ("DELETE FROM temp;vacuum");
     delete mModel;
 }
-void QCapture::ToggledCapture(bool clicked)
+void QCapture::ClearData()
 {
-    qDebug() <<clicked;
+    mModel->database ().exec ("DELETE FROM temp;vacuum");
+    qDebug() << mModel->database ().lastError ();
+    mModel->select ();
+    mModel->removeRows (0, mModel->rowCount ());
+}
+void QCapture::ToggledCapture()
+{
+    mIsStarted = !mIsStarted;
+    qDebug() <<mIsStarted;
+    if (mIsStarted == true) {
+        Start();
+    } else {
+        Stop() ;
+    }
 }
 void QCapture::AutoScroll()
 {
@@ -74,40 +90,41 @@ void QCapture::DebugInfo ()
     CO2 = QString::number(qrand()%90);
     CO  = QString::number(qrand()%90);
 
-   int row = mModel->rowCount ();
-   mModel->insertRow (row);
-   mModel->setData (mModel->index (row,0), DeviceId);
-   mModel->setData (mModel->index (row,1), AssayTime);
-   mModel->setData (mModel->index (row,2), PipeId);
-   mModel->setData (mModel->index (row,3), PipeType);
-   mModel->setData (mModel->index (row,4), Flux);
-   mModel->setData (mModel->index (row,5), Ch4);
-   mModel->setData (mModel->index (row,6), Pressure);
-   mModel->setData (mModel->index (row,7), Comment);
-   mModel->setData (mModel->index (row,8), LTime);
-   mModel->setData (mModel->index (row,9), O2);
-   mModel->setData (mModel->index (row,10), CO2);
-   mModel->setData (mModel->index (row,11), CO);
-   mModel->submitAll ();
-   treeView->scrollToBottom ();
+    int row = mModel->rowCount ();
+    mModel->insertRow (row);
+    mModel->setData (mModel->index (row,0), DeviceId);
+    mModel->setData (mModel->index (row,1), AssayTime);
+    mModel->setData (mModel->index (row,2), PipeId);
+    mModel->setData (mModel->index (row,3), PipeType);
+    mModel->setData (mModel->index (row,4), Flux);
+    mModel->setData (mModel->index (row,5), Ch4);
+    mModel->setData (mModel->index (row,6), Pressure);
+    mModel->setData (mModel->index (row,7), Comment);
+    mModel->setData (mModel->index (row,8), LTime);
+    mModel->setData (mModel->index (row,9), O2);
+    mModel->setData (mModel->index (row,10), CO2);
+    mModel->setData (mModel->index (row,11), CO);
+    mModel->submitAll ();
+    treeView->scrollToBottom ();
 
-   QSqlQuery query;
-   QString sql;
-   QTextStream stream(&sql);
-   stream << "Insert into AssayData(DeviceId, AssayTime, PipeId, PipeType, "
-          << "Flux, Ch4,Pressure,Comment,LjTime,O2,CO2,CO) values("
-          << DeviceId << ",'"  << AssayTime<< "',"
-          << PipeId << ","  << PipeType  << "," << Pressure << "," <<Comment << ","
-          << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
-          << CO2 << "," << CO << ")";
-   query.exec(sql);
-   timer.start (10);
+    QSqlQuery query;
+    QString sql;
+    QTextStream stream(&sql);
+    stream << "Insert into AssayData(DeviceId, AssayTime, PipeId, PipeType, "
+           << "Flux, Ch4,Pressure,Comment,LjTime,O2,CO2,CO) values("
+           << DeviceId << ",'"  << AssayTime<< "',"
+           << PipeId << ","  << PipeType  << "," << Pressure << "," <<Comment << ","
+           << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
+           << CO2 << "," << CO << ")";
+    query.exec(sql);
+    timer.start (10);
 }
 void QCapture::Stop ()
 {
-   qDebug()<< "Qcapture::stop";
-   timer.stop ();
-   mModel->database ().exec ("DELETE FROM temp;vacuum");
+    qDebug()<< "Qcapture::stop";
+    timer.stop ();
+    mModel->database ().exec ("DELETE FROM temp;vacuum");
+//   mModel->select ();
 }
 void QCapture::Start ()
 {

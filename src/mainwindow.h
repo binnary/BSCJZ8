@@ -10,7 +10,8 @@
 #include "disassaydata.h"
 #include "qcapture.h"
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 

@@ -4,10 +4,13 @@
 #include <QDialog>
 #include <QSqlTableModel>
 #include <QTextDocument>
-namespace Ui {
+#include <QThread>
+#include "exportobject.h"
+#include "qprintobject.h"
+namespace Ui
+{
 class DisAssayData;
 }
-
 class DisAssayData : public QDialog
 {
     Q_OBJECT
@@ -16,15 +19,20 @@ public:
     ~DisAssayData();
     void DebugInfo();
     void ExportToDocument(QString &html);
+    void ExportToDocument(QStringList &html, int Split, QString fileName);
+//    void ConCurrent(ExportObject *expobj);
 signals:
     void signalCount(int count);
-
+    void setDlgText(const QString &text);
+//    void UpdateRecord(QString &html);
 public slots:
     void FilterQuery();
     void UpdateDate();
     void print();
     void ExportExcel();
 private:
+    QString ExportToDocumentHeader();
+    QString mTableName;
     Ui::DisAssayData *ui;
     QSqlTableModel *mModel;
 };

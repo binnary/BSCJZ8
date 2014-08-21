@@ -3,7 +3,8 @@
 
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class QLogin;
 }
 
@@ -14,7 +15,10 @@ class QLogin : public QDialog
 public:
     explicit QLogin(QWidget *parent = 0);
     ~QLogin();
-    bool is_login(){return mLogin;}
+    bool is_login()
+    {
+        return mLogin;
+    }
 private:
     Ui::QLogin *ui;
     QString mUserName;

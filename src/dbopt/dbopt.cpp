@@ -30,14 +30,14 @@ bool CreateDefaultDb()
                 CO2         REAL             DEFAULT ( 0 ),\
                 CO          REAL             DEFAULT ( 0 ) \
             )");
-     QString UserInfoTable("CREATE TABLE UserInfo (  \
+    QString UserInfoTable("CREATE TABLE UserInfo (  \
                 UserID    NVARCHAR( 6 )   NOT NULL \
                                           UNIQUE, \
                 UserName  NVARCHAR( 20 ), \
                 Password  NVARCHAR( 16 ), \
                 RoleLevel SMALLINT        DEFAULT ( 10 )  \
             )");
-     QString tempTable("CREATE TABLE temp (  \
+    QString tempTable("CREATE TABLE temp (  \
                 DeviceID    NVARCHAR( 6 )    NOT NULL, \
                 AssayTime   DATETIME, \
                 PipeType    NVARCHAR( 6 )    NOT NULL, \
@@ -53,24 +53,24 @@ bool CreateDefaultDb()
                 CO          REAL             DEFAULT ( 0 ) \
             )");
 
-     QSqlQuery query;
-     if(!query.exec (AssayDataTable)){
+    QSqlQuery query;
+    if(!query.exec (AssayDataTable)) {
         qDebug() << query.lastError ();
         return false;
-     }
-     if (!query.exec (tempTable)){
+    }
+    if (!query.exec (tempTable)) {
         qDebug() << query.lastError ();
         return false;
-     }
-     if (!query.exec (UserInfoTable)){
+    }
+    if (!query.exec (UserInfoTable)) {
         qDebug() << query.lastError ();
         return false;
-     }
-     if (!query.exec (DeviceINfoTable)){
+    }
+    if (!query.exec (DeviceINfoTable)) {
         qDebug() << query.lastError ();
         return false;
-     }
-     return true;
+    }
+    return true;
 }
 bool db_open()
 {
@@ -79,26 +79,26 @@ bool db_open()
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     path =dir.currentPath () + QString("/db");
     dir.mkdir (path);
-    path +=QString("/memory.db");
+    path +=QString("/platform.db");
     dir.fromNativeSeparators (path);
 
 #ifdef QT_DEBUG
     db.setDatabaseName("E:\\Qt\\Platform\\db\\platform.db");
 #else
     db.setDatabaseName(path);
-    if (false == QFile::exists (path)){
-        if(!db.open()){
+    if (false == QFile::exists (path)) {
+        if(!db.open()) {
             QMessageBox::warning (NULL,QObject::tr("Platform Db Failed"),
                                   db.lastError ().text ());
             return false;
         }
-        if (false == CreateDefaultDb()){
+        if (false == CreateDefaultDb()) {
             return false;
         }
         return true;
     }
 #endif
-    if(!db.open()){
+    if(!db.open()) {
         QMessageBox::warning (NULL,QObject::tr("Platform Db Failed"),
                               db.lastError ().text ());
         return false;
