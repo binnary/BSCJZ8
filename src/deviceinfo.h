@@ -9,7 +9,8 @@
 //#include <QDockWidget>
 #include <QSqlTableModel>
 
-namespace Ui {
+namespace Ui
+{
 class DeviceInfo;
 }
 

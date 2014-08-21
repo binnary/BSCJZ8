@@ -5,10 +5,12 @@
 #include <QTextStream>
 #include <QSqlQuery>
 #include <QSqlRecord>
-#include "exportobject.h"
-#include "qprintobject.h"
+#include <QtConcurrent>
+#include <QProgressDialog>
+#include <QFileDialog>
 DisAssayData::DisAssayData(QDialog *parent) :
     QDialog(parent),
+    mTableName("AssayData"),
     ui(new Ui::DisAssayData)
 {
 
@@ -18,26 +20,26 @@ DisAssayData::DisAssayData(QDialog *parent) :
     ui->treeView->setSortingEnabled(true);
     ui->treeView->setModel (mModel);
     ui->treeView->setWindowTitle ("test");
-    mModel->setTable("AssayData");
+    mModel->setTable(mTableName);
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->select();
 
-//    stream << "PRAGMA table_info ('" << "DeviceInfo" << "')";
+    //    stream << "PRAGMA table_info ('" << "DeviceInfo" << "')";
     QSqlQuery query;
     //QString sql;
     //QTextStream stream(&sql);
     //stream << "SELECT DeviceId from AssayData";
     query.exec("SELECT * from AssayData");
-    while(query.next ()){
+    while(query.next ()) {
         QString value = query.value("DeviceId").toString ();
-        if (ui->comboBox_DevIndex->findText (value) < 0 ){
+        if (ui->comboBox_DevIndex->findText (value) < 0 ) {
             ui->comboBox_DevIndex->addItem (value);
         }
         value = query.value("PipeId").toString ();
-        if (ui->comboBox_PipeIndexEnd->findText (value) < 0 ){
+        if (ui->comboBox_PipeIndexEnd->findText (value) < 0 ) {
             ui->comboBox_PipeIndexEnd->addItem (value);
         }
-        if (ui->comboBox_PipeIndexStart->findText(value) < 0 ){
+        if (ui->comboBox_PipeIndexStart->findText(value) < 0 ) {
             ui->comboBox_PipeIndexStart->addItem (value);
         }
     }
@@ -55,31 +57,31 @@ DisAssayData::~DisAssayData()
 void DisAssayData::FilterQuery()
 {
     QString filter;
-    if (ui->checkBox_DevIndex->isChecked ()){
+    if (ui->checkBox_DevIndex->isChecked ()) {
         filter = QString("DeviceId ='") + ui->comboBox_DevIndex->currentText ()+ "'";
     }
     //TODO filter by datetime
     //filter = ui->dateTimeEdit_Start->
-    if (ui->checkBox_PipeIndex->isChecked ()){
+    if (ui->checkBox_PipeIndex->isChecked ()) {
         filter += QString(" and PipeType<='") +
-                ui->comboBox_PipeIndexStart->currentText ()+ "' and PipeType>='" +
-                ui->comboBox_PipeIndexEnd->currentText ()+ "'";
+                  ui->comboBox_PipeIndexStart->currentText ()+ "' and PipeType>='" +
+                  ui->comboBox_PipeIndexEnd->currentText ()+ "'";
     }
     mModel->setFilter(filter);
     mModel->select();
 }
 void DisAssayData::DebugInfo ()
 {
-//Insert into AssayData (DeviceId, AssayTime, PipeID,PipeType, Ch4) values(1,2,22,1,2)
+    //Insert into AssayData (DeviceId, AssayTime, PipeID,PipeType, Ch4) values(1,2,22,1,2)
     QSqlQuery query;
     QString sql;
     QTextStream stream(&sql);
     QDateTime time;
     time = QDateTime::currentDateTime ();
     int count = 100;
-    while((count--)>=0){
+    while((count--)>=0) {
         stream << "Insert into AssayData (DeviceId, AssayTime, PipeId, PipeType, Ch4) values(1,'"
-                 << time.toString ("yyyy/M/d/mm:ss") << "',0,00," << qrand()%1000 << ")";
+               << time.toString ("yyyy/M/d/mm:ss") << "',0,00," << qrand()%1000 << ")";
         query.exec(sql);
         sql.clear ();
     }
@@ -93,44 +95,126 @@ void DisAssayData::UpdateDate ()
     QDateTime time;
     time = QDateTime::currentDateTime ();
     stream << "Insert into AssayData (DeviceId, AssayTime, PipeId, PipeType, Ch4) values("
-             <<qrand()%10 << ",'"<< time.toString ("yyyy/M/d/mm:ss") << "',0,00," << qrand()%1000 << ")";
+           <<qrand()%10 << ",'"<< time.toString ("yyyy/M/d/mm:ss") << "',0,00," << qrand()%1000 << ")";
     query.exec(sql);
     mModel->select();
 }
-void DisAssayData::ExportToDocument(QString &html)
+QString DisAssayData::ExportToDocumentHeader()
 {
+    QString header;
     QSqlQuery query;
     QString sql("PRAGMA table_info ('AssayData')");
 
-    html = "<table border=\"1\" cellspacing=\"0\">\n";
-    html += "<tr>";
+    header = "<table border=\"1\" cellspacing=\"0\">\n";
+    header += "<tr>";
 
     query.exec(sql);
-    while(query.next ()){//setheader
-       html += "<th bgcolor=\"lightgray\"><font size=\"+1\"><b><i>";
-       html += query.value ("name").toString ();
-       html += "</i></b></font></th>\n";
+    while(query.next ()) { //setheader
+        header += "<th bgcolor=\"lightgray\"><font size=\"+1\"><b><i>";
+        header += query.value ("name").toString ();
+        header += "</i></b></font></th>\n";
     }
-    html += "</tr>\n";
+    header += "</tr>\n";
+    return header;
+}
+void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileName)
+{
+    /// split <=0 no split split >=0 split export file
+    QString _html= ExportToDocumentHeader ();
+    int col, row = 0;
+    QSqlQuery query;
+    QString sql("SELECT * from ");
+    sql += mTableName;
+    if (mModel->filter ().size ()) {
+        sql += " WHERE " + mModel->filter ();
+    }
+    qDebug() << sql;
+    query.exec (sql);
 
-    int row,col;
-    for(row=1; row <mModel->rowCount (); row++){
-        html += "<tr>";
-        for(col=0; col <mModel->columnCount (); col++){
-             html+= "<td>" + mModel->record (row).value (col).toString ()+ "</td>";
+    while(query.next ()) {
+        if((row++)%100==0) {
+            emit signalCount (row);
         }
-        html += "</tr>\n";
+        _html += QString("<tr>");
+        for(col=0; col < mModel->columnCount (); col++) {
+            _html+= QString("<td>") + query.value(col).toString ()+ QString("</td>");
+        }
+        _html += QString("</tr>\n");
+        if (Split >0) {
+            if (row%Split == 0) {
+                _html += "</table>";
+                html.push_back (_html);
+                _html = ExportToDocumentHeader ();
+            }
+        }
     }
-    html += "</table>";
-
+    _html += QString("</table>");
+    html.push_back (_html);
+    ExportObject expobj(this);
+    emit setDlgText (QString("Export Data to file"));
+    expobj.ExportExcel (html, fileName);
+    emit setDlgText (QString("Export Data to file done"));
+    emit signalCount (row);
     return ;
 }
+void DisAssayData::ExportToDocument(QString &html)
+{
+    int col,row=0;
+    qDebug() <<"rowcount=" << mModel->rowCount () << "col=" <<mModel->columnCount ();
+    while((row++) <mModel->rowCount ()) {
+        if((row)%100==0) {
+            emit signalCount (row);
+        }
+        html += "<tr>";
+        for(col=0; col < mModel->columnCount (); col++) {
+            html+= "<td>" + mModel->record (row).value (col).toString ()+ "</td>";
+        }
+        html += "</tr>\n";
+        if (mModel->canFetchMore ()) {
+            mModel->fetchMore ();
+        }
+        qDebug() << row;
+    }
+    emit signalCount (row);
+    html += "</table>";
+    qDebug() << "done";
+    return ;
+}
+
 void DisAssayData::ExportExcel()
 {
-    ExportObject expobj;
-    QString html;
-    ExportToDocument(html);
-    expobj.ExportExcel (html);
+    int recordCount = 0;
+    //query all data
+    QString sql;
+    sql = QString("Select count(*) from ") + mTableName;
+    if (mModel->filter ().size ()) {
+        sql += " where " +mModel->filter ();
+    }
+    qDebug() << sql;
+    QSqlQuery query;
+    query.exec (sql);
+    while(query.next ()) {
+        qDebug() << query.value ("count(*)").toString ();
+        recordCount = query.value("count(*)").toInt ();
+    }
+    QString fileName = QFileDialog::getSaveFileName(this,
+                       QObject::tr("Save as..."),
+                       QString(""),
+                       QObject::tr("EXCEL files (*.xls);;"
+                                   "ODS files (*.ods);;"
+                                   "ODF files (*.odt);;"
+                                   "HTML-Files (*.htm *.html);;"
+                                   "All Files (*)"));
+    QStringList html;
+    QFuture<void> future = QtConcurrent::run(this,
+                           static_cast<void(DisAssayData::*)(QStringList &, int, QString)>(&DisAssayData::ExportToDocument),
+                           html, 10000, fileName);
+    QProgressDialog dlg(this);
+    dlg.setLabelText (QObject::tr("Prepare Data...."));
+    dlg.setRange (0,recordCount);
+    connect (this, SIGNAL(signalCount(int)),&dlg,SLOT(setValue(int)));
+    connect(this,SIGNAL(setDlgText(QString)), &dlg, SLOT(setLabelText(QString)));
+    dlg.exec ();
 }
 void DisAssayData::print()
 {
@@ -144,17 +228,16 @@ void DisAssayData::print()
 
     QString footertext = "<p align=\"right\"><strong>&page;</strong></p>";
 
-   QPrintObject printobj(this);
-   QString html;
-   QTextDocument doc;
-   ExportToDocument(html);
-   doc.setHtml (html);
-//   expobj.ExportExcel(html);
-   printobj.setHeaderSize(10);
-   printobj.setFooterSize(10);
-   printobj.setDateFormat("MMMM dd yyyy");
-   printobj.setHeaderText(headertext.arg("temp"));
-   printobj.setFooterText(footertext);
-   QString tmp("example print");
-   printobj.print(&doc);
+    QPrintObject printobj(this);
+    QString html;
+    QTextDocument doc;
+    ExportToDocument(html);
+    doc.setHtml (html);
+    printobj.setHeaderSize(10);
+    printobj.setFooterSize(10);
+    printobj.setDateFormat("MMMM dd yyyy");
+    printobj.setHeaderText(headertext.arg("temp"));
+    printobj.setFooterText(footertext);
+    QString tmp("example print");
+    printobj.print(&doc);
 }

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 #ifndef QT_DEBUG
     qInstallMessageHandler(MessageOutput);
 #endif
-    if (!db_open()){
+    if (!db_open()) {
         return -1;
     }
 

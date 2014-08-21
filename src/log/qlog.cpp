@@ -5,12 +5,14 @@
 class LogFile
 {
 public:
-    LogFile(){
+    LogFile()
+    {
         //TODO init log file
-//        ReinitFile();
+        //        ReinitFile();
     }
-    ~LogFile(){
-        if (mFile.isOpen ()){
+    ~LogFile()
+    {
+        if (mFile.isOpen ()) {
             mFile.flush();
             mFile.close ();
         }
@@ -31,20 +33,20 @@ public:
     }
     void ReinitFile()
     {
-         mMutex.lock ();
-         if (mFile.isOpen ()){
-             mFile.flush();
-             mFile.close ();
-         }
-         mFileName =SetupFileName();
-         mFile.setFileName (mFileName);
-         mFile.open (QIODevice::WriteOnly|QIODevice::Unbuffered|QIODevice::Append);
-         mMutex.unlock ();
+        mMutex.lock ();
+        if (mFile.isOpen ()) {
+            mFile.flush();
+            mFile.close ();
+        }
+        mFileName =SetupFileName();
+        mFile.setFileName (mFileName);
+        mFile.open (QIODevice::WriteOnly|QIODevice::Unbuffered|QIODevice::Append);
+        mMutex.unlock ();
     }
     void Write(QString &log)
     {
         QTextStream stream(&mFile);
-        if (!mFile.isOpen ()){
+        if (!mFile.isOpen ()) {
             ReinitFile();
         }
         log.trimmed ();
@@ -64,7 +66,7 @@ void MessageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
     mutex.lock();
     QString log;
     log = QTime::currentTime ().toString ("[hh:mm:ss.zzz]");
-    switch(type){
+    switch(type) {
     case QtDebugMsg:
         log += QString("Debug: ");
         break;

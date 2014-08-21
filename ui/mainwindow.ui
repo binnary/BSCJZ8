@@ -19,79 +19,15 @@
   <property name="windowTitle">
    <string>Platform</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../res.qrc">
+    <normaloff>:/images/preferences-system.png</normaloff>:/images/preferences-system.png</iconset>
+  </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="tabPosition">
-       <enum>QTabWidget::West</enum>
-      </property>
-      <property name="tabShape">
-       <enum>QTabWidget::Triangular</enum>
-      </property>
-      <property name="currentIndex">
-       <number>3</number>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="elideMode">
-       <enum>Qt::ElideLeft</enum>
-      </property>
-      <property name="tabsClosable">
-       <bool>true</bool>
-      </property>
-      <property name="movable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="Capture">
-       <attribute name="icon">
-        <iconset resource="../res.qrc">
-         <normaloff>:/images/capture.png</normaloff>:/images/capture.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>TabCapture</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="DissayData">
-       <attribute name="icon">
-        <iconset resource="../res.qrc">
-         <normaloff>:/images/previe_table.png</normaloff>:/images/previe_table.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>TabDissay</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="Graphic">
-       <attribute name="icon">
-        <iconset resource="../res.qrc">
-         <normaloff>:/images/previe_graphic.png</normaloff>:/images/previe_graphic.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>TabGraphic</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="DevInfo">
-       <attribute name="icon">
-        <iconset resource="../res.qrc">
-         <normaloff>:/images/config.png</normaloff>:/images/config.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>TabDeviceInfo</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
-   </layout>
+   <layout class="QGridLayout" name="gridLayout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="allowedAreas">

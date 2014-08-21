@@ -4,18 +4,21 @@
 #include <QString>
 #include <QStringList>
 #include <QWidget>
+#include <QTextDocument>
 
-class ExportObject : public QWidget
+class ExportObject : public QObject
 {
-    Q_OBJECT
+    //    Q_OBJECT
 public:
-    explicit ExportObject();
-   ~ExportObject();
+    explicit ExportObject(QObject *parent=0);
+    ~ExportObject();
 
 public:
-    void ExportExcel (QString &html);
-    void ExportExcel (QStringList &html);
-    void ExportPdf(QString &html);
+    void ExportExcel (QString &html, QString fileName);
+    void ExportExcel (QStringList &html, QString fileName);
+    void ExportPdf(QString &html, QString fileName);
+private:
+    void _ExportExcel(QString &fileName, QTextDocument &doc);
 };
 
 #endif // EXPORTOBJECT_H

@@ -7,7 +7,8 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QPrinter>
-ExportObject::ExportObject()
+ExportObject::ExportObject(QObject *parent):
+    QObject(parent)
 {
 
 }
@@ -15,60 +16,73 @@ ExportObject::~ExportObject()
 {
 
 }
-void ExportObject::ExportPdf(QString &html)
+void ExportObject::ExportPdf(QString &html, QString fileName)
 {
     QTextDocument doc;
     doc.setHtml (html);
-    QString fileName = QFileDialog::getSaveFileName(this,"Export PDF",QString(),"*.pdf");
-    if(!fileName.isEmpty()){
-         if(QFileInfo(fileName).suffix().isEmpty()){
-             fileName.append(".pdf");
-         }
-         QPrinter  printer(QPrinter::HighResolution);
-         printer.setOutputFormat(QPrinter::PdfFormat);
-         printer.setOutputFileName(fileName);
-         doc.print(&printer);
-     }
+    if(!fileName.isEmpty()) {
+        if(QFileInfo(fileName).suffix().isEmpty()) {
+            fileName.append(".pdf");
+        }
+        QPrinter  printer(QPrinter::HighResolution);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setOutputFileName(fileName);
+        doc.print(&printer);
+    }
 }
-void ExportObject::ExportExcel (QStringList &html)
+void ExportObject::ExportExcel (QStringList &html, QString fileName)
 {
-   QStringList::iterator it;
-   for (it = html.begin ();it != html.end (); ++it){
-       ExportExcel(*it);
-   }
-}
-void ExportObject::ExportExcel (QString &html)
-{
-    QTextDocument doc;
-    doc.setHtml (html);
-    QString fileName = QFileDialog::getSaveFileName(this,
-                        QObject::tr("Save as..."),
-                        QString("a"),
-                        QObject::tr("EXCEL files (*.xls);;"
-                                    "ODS files (*.ods);;"
-                                    "ODF files (*.odt);;"
-                                    "HTML-Files (*.htm *.html);;"
-                                    "All Files (*)"));
-    if (fileName.isEmpty()){
+    QStringList::iterator it = html.begin ();
+    int FileCount = 0;
+    if (fileName.isEmpty()) {
         return;
     }
+    if (html.size ()==1) {
+        QTextDocument doc;
+        doc.setHtml (*it);
+        _ExportExcel (fileName, doc);
+        return;
+    }
+    QFileInfo FileInfo(fileName);
+    for (; it != html.end (); ++it) {
+        QTextDocument doc;
+        doc.setHtml (*it);
+        fileName = FileInfo.baseName () +
+                   QString("_") +
+                   QString::number (FileCount++) +
+                   QString(".") +
+                   FileInfo.suffix ();
+        qDebug() <<fileName;
+        _ExportExcel(fileName, doc);
+    }
+}
+void ExportObject::ExportExcel (QString &html, QString fileName)
+{
+    QTextDocument doc;
+    if (fileName.isEmpty()) {
+        return;
+    }
+    doc.setHtml (html);
+    _ExportExcel(fileName, doc);
 
+}
+void ExportObject::_ExportExcel(QString &fileName, QTextDocument &doc)
+{
     if (!(fileName.endsWith(".xls", Qt::CaseInsensitive)||
-          fileName.endsWith(".odt", Qt::CaseInsensitive) ||
-          fileName.endsWith(".htm", Qt::CaseInsensitive) ||
-          fileName.endsWith(".html", Qt::CaseInsensitive)||
-          fileName.endsWith(".ods", Qt::CaseInsensitive)) ){
-        if(QFileInfo(fileName).suffix().isEmpty()){
+            fileName.endsWith(".odt", Qt::CaseInsensitive) ||
+            fileName.endsWith(".htm", Qt::CaseInsensitive) ||
+            fileName.endsWith(".html", Qt::CaseInsensitive)||
+            fileName.endsWith(".ods", Qt::CaseInsensitive)) ) {
+        if(QFileInfo(fileName).suffix().isEmpty()) {
             fileName.append (".xls");
         }
     }
-    if (fileName.endsWith(".odt", Qt::CaseInsensitive)){
+    if (fileName.endsWith(".odt", Qt::CaseInsensitive)) {
         QTextDocumentWriter writer(fileName);
         writer.write(&doc);
-    }else{
+    } else {
         QFile file(fileName);
-        if (file.open(QFile::WriteOnly | QIODevice::Text))
-        {
+        if (file.open(QFile::WriteOnly | QIODevice::Text)) {
             QTextStream stream(&file);
             stream.setCodec("UTF-8");
             stream<<doc.toHtml("UTF-8");

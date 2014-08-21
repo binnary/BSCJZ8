@@ -1,6 +1,6 @@
 #include "qprotocolbase.h"
 
-QProtocolBase::QProtocolBase()//TypeIO &IODev)
+QProtocolBase::QProtocolBase()   //TypeIO &IODev)
 {
 
 }
