@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->mainToolBar->hide ();
     connect(ui->actionPreview_Table, SIGNAL(triggered()), this, SLOT(displayData()));
     connect(ui->actionPreview_Graphic, SIGNAL(triggered()), this, SLOT(displayGraphic()));
     connect(ui->actionCapture, SIGNAL(triggered()), this, SLOT(Capture()));
@@ -91,7 +90,7 @@ void MainWindow::About()
                                         "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-style:italic; text-decoration: underline;\">If you have any questions, contact me at Email</span></p>\n"
                                         "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-style:italic; text-decoration: underline;\">Auth : binnary</span></p>\n"
                                         "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-style:italic; text-decoration: underline;\">Email: binnary@foxmail.com<br /></span></p></td></tr></table></body></html>", 0));
-    QMessageBox::about (this, "About", str);
+    QMessageBox::about (this, QObject::tr("About"), str);
     return;
     QDialog about(this);
     about.setObjectName(QStringLiteral("About"));

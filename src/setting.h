@@ -21,6 +21,7 @@ public:
     }
     void ReInitDefault();
     void SetKeyInfo(QString key, IniData_t data);
+    void SetKeyInfo(QString key, QVariant val);
     void SetComInfo(IniData_t &data);
     void SetDevInfo(IniData_t &data);
     QVariant GetValue(QString key)

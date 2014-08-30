@@ -33,6 +33,10 @@ void Setting::ReInitDefault()
     SetComInfo (temp);
 }
 
+void Setting::SetKeyInfo(QString key, QVariant val)
+{
+   mSetting->setValue (key, val);
+}
 void Setting::SetDevInfo(IniData_t &data)
 {
     SetKeyInfo ("DEVICE", data);
@@ -46,6 +50,5 @@ void Setting::SetKeyInfo(QString key, IniData_t data)
     IniData_t::iterator it=data.begin ();
     for (; it != data.end (); ++it) {
         mSetting->setValue (QString("/") + key + QString("/") + it->first, it->second);
-//        mSetting->setValue (key + QString("/") + it->first, it->second);
     }
 }

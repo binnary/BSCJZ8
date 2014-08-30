@@ -36,21 +36,11 @@ DeviceInfo::DeviceInfo(QDialog *parent) :
     mModel->setTable("DeviceInfo");
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->select();
-    //QSqlQuery query;
-    //QString sql;
-    //QTextStream stream(&sql);
-    //stream << "PRAGMA table_info ('" << "DeviceInfo" << "')";
-    //query.exec(sql);
-    //int count=0;
-    //while(query.next ()){
-    //    mModel->setHeaderData((count++), Qt::Horizontal, query.value ("name"));
-    //}
+
     QObject::connect(ui->pushButton_Add, SIGNAL(clicked()), this, SLOT(DbAdd()));
     QObject::connect(ui->pushButton_Del, SIGNAL(clicked()), this, SLOT(DbDel()));
-    //    QObject::connect(ui->pushButton_Query, SIGNAL(clicked()), DeviceInfo, SLOT(DbQuery()));
     QObject::connect(ui->pushButton_Modify, SIGNAL(clicked()), this, SLOT(DbModify()));
 
-    //    QObject::connect (ui->tableView, SIGNAL(clicked ()), this, SLOT(dbclicked()));
 }
 
 DeviceInfo::~DeviceInfo()
@@ -67,15 +57,17 @@ void DeviceInfo::DbAdd()
     if (dev.exec () == QDialog::Rejected) {
         return;
     }
-    mModel->setData(mModel->index(rowNum,0), dev.ui->comboBox_devType->currentText ());
-    mModel->setData(mModel->index(rowNum,1), dev.ui->lineEdit_devId->text ());
+    mModel->setData(mModel->index(rowNum,0), dev.ui->lineEdit_devId->text ());
+//    mModel->setData(mModel->index(rowNum,0), dev.ui->comboBox_devType->currentText ());
+    mModel->setData(mModel->index(rowNum,1), dev.ui->comboBox_devType->currentText());
     mModel->setData(mModel->index(rowNum,2), dev.ui->comboBox_PipeIdType->currentText ());
     QString checkable("0");
     if (dev.ui->checkBox_Resizeable->isChecked ()) {
         checkable = "1";
     }
     mModel->setData(mModel->index(rowNum,3), checkable);
-    mModel->submitAll(); //commit
+    DbModify();
+    mModel->select ();
 }
 void DeviceInfo::DbDel()
 {

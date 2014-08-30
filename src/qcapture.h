@@ -107,8 +107,6 @@ private: // ui
         splitter = new QSplitter(Qt::Vertical, 0);
         MainTreeView = new QTreeView(splitter);
         MainTreeView->setObjectName(QStringLiteral("treeView_main"));
-        //LogTre2eView = new QTreeView(splitter);
-        //LogTreeView->setObjectName(QStringLiteral("treeView_log"));
         LogTextEdit = new QTextEdit(splitter);
         LogTextEdit->setObjectName(QStringLiteral("textedit"));
         LogTextEdit->setReadOnly (true);
@@ -122,8 +120,8 @@ private: // ui
 
     void retranslateUi(QWidget *Capture)
     {
-        Capture->setWindowTitle(QApplication::translate("Capture", "Form", 0));
-        label->setText(QApplication::translate("Capture", "Port:", 0));
+        Capture->setWindowTitle(QApplication::translate("Capture", "Capture", 0));
+        label->setText(QApplication::translate("Capture", "Port", 0));
         pushButton->setText(QApplication::translate("Capture", "StartRead", 0));
         pushButton_Clear->setText(QApplication::translate("Capture", "Clear", 0));
     } // retranslateUi

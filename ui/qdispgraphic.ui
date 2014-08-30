@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Display Graphic</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label_DevIndex">
        <property name="text">
-        <string>仪器编号</string>
+        <string>Device ID</string>
        </property>
       </widget>
      </item>
@@ -29,7 +29,7 @@
      <item>
       <widget class="QLabel" name="label_StartEndTime">
        <property name="text">
-        <string>起止时间</string>
+        <string>Date</string>
        </property>
       </widget>
      </item>
@@ -50,7 +50,7 @@
      <item>
       <widget class="QCheckBox" name="checkBox_PipeIndex">
        <property name="text">
-        <string>管道编号</string>
+        <string>Pipe ID</string>
        </property>
       </widget>
      </item>

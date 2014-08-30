@@ -43,9 +43,57 @@ DisAssayData::DisAssayData(QDialog *parent) :
             ui->comboBox_PipeIndexStart->addItem (value);
         }
     }
-    QObject::connect(ui->pushButton_Query, SIGNAL(clicked()), this, SLOT(FilterQuery()));
-    QObject::connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()),Qt::QueuedConnection);
-    QObject::connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()),Qt::QueuedConnection);
+    query.exec("SELECT MAX(AssayTime), MIN(AssayTime) FROM AssayData");
+    if(query.next ()){
+        qDebug() <<"Time=" << query.value ("MIN(AssayTime)").toString ();
+        qDebug() <<"Time=" << query.value ("MAX(AssayTime)").toString ();
+
+        ui->dateTimeEdit_Start->setDateTime(
+                     QDateTime::fromString (
+                        query.value ("MIN(AssayTime)").toString (),
+                                     QString("yyyy/M/d/mm:ss:zzz"))
+                    );
+        ui->dateTimeEdit_End->setDateTime(
+                     QDateTime::fromString (
+                        query.value ("MAX(AssayTime)").toString (),
+                                     QString("yyyy/M/d/mm:ss:zzz"))
+                    );
+    }
+
+    connect(ui->checkBox_DevIndex,
+            SIGNAL(clicked()),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->comboBox_DevIndex,
+           SIGNAL(currentIndexChanged(QString)),
+           this,
+           SLOT(FilterQuery(QString)));
+    connect(ui->checkBox_StartEndDate,
+            SIGNAL(clicked()),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->dateTimeEdit_Start,
+            SIGNAL(dateTimeChanged(QDateTime)),
+            this,
+            SLOT(dateTimeChanged(QDateTime)));
+    connect(ui->dateTimeEdit_End,
+            SIGNAL(dateTimeChanged(QDateTime)),
+            this,
+            SLOT(dateTimeChanged(QDateTime)));
+    connect(ui->checkBox_PipeIndex,
+            SIGNAL(clicked()),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->comboBox_PipeIndexStart,
+           SIGNAL(currentIndexChanged(QString)),
+           this,
+           SLOT(FilterQuery(QString)));
+   connect(ui->comboBox_PipeIndexEnd,
+           SIGNAL(currentIndexChanged(QString)),
+           this,
+           SLOT(FilterQuery(QString)));
+    connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()),Qt::QueuedConnection);
+    connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()),Qt::QueuedConnection);
 }
 
 DisAssayData::~DisAssayData()
@@ -54,6 +102,16 @@ DisAssayData::~DisAssayData()
     delete mModel;
 }
 
+void DisAssayData::dateTimeChanged(const QDateTime &dateTime)
+{
+//   dateTime = dateTime;
+   FilterQuery ();
+}
+void DisAssayData::FilterQuery(const QString &index)
+{
+//   index = index;
+   FilterQuery ();
+}
 void DisAssayData::FilterQuery()
 {
     QString filter;
@@ -62,11 +120,27 @@ void DisAssayData::FilterQuery()
     }
     //TODO filter by datetime
     //filter = ui->dateTimeEdit_Start->
-    if (ui->checkBox_PipeIndex->isChecked ()) {
-        filter += QString(" and PipeType<='") +
-                  ui->comboBox_PipeIndexStart->currentText ()+ "' and PipeType>='" +
-                  ui->comboBox_PipeIndexEnd->currentText ()+ "'";
+    if (ui->checkBox_StartEndDate->isChecked ()){
+        if(filter.size ()){
+            filter+= QString(" and ");
+        }
+        filter += QString ("AssayTime>='") +
+                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/M/d/mm:ss:zzz")+
+                  QString("' and AssayTime<='") +
+                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/M/d/mm:ss:zzz") +
+                  QString("'");
     }
+    if (ui->checkBox_PipeIndex->isChecked ()) {
+        if(filter.size ()){
+            filter+= QString(" and ");
+        }
+        filter += QString("PipeID>='") +
+                  ui->comboBox_PipeIndexStart->currentText ()+
+                  "' and PipeID<='" +
+                  ui->comboBox_PipeIndexEnd->currentText ()+
+                  QString("'");
+    }
+    qDebug() <<  filter;
     mModel->setFilter(filter);
     mModel->select();
 }
@@ -151,9 +225,9 @@ void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileNa
     _html += QString("</table>");
     html.push_back (_html);
     ExportObject expobj(this);
-    emit setDlgText (QString("Export Data to file"));
+    emit setDlgText (QObject::tr("Export Data to file"));
     expobj.ExportExcel (html, fileName);
-    emit setDlgText (QString("Export Data to file done"));
+    emit setDlgText (QObject::tr("Export Data to file done"));
     emit signalCount (row);
     return ;
 }

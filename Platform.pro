@@ -102,3 +102,5 @@ FORMS    += \
 
 RESOURCES += \
     res.qrc
+TRANSLATIONS += \
+    language/lang_CN.ts
