@@ -31,6 +31,7 @@ void Setting::ReInitDefault()
     temp["Stop"] = QSerialPort::OneStop;
     temp["Flow"] = QSerialPort::NoFlowControl;
     SetComInfo (temp);
+    SetKeyInfo("LANGUAGE", "language/lang_CH.qm");
 }
 
 void Setting::SetKeyInfo(QString key, QVariant val)
