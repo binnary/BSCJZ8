@@ -10,12 +10,18 @@
 #include <QTranslator>
 #include <QTextCodec>
 #include <QFont>
+#include <setting.h>
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
     QTranslator *translator = new QTranslator(NULL);
-    translator->load ("language/lang_CN.qm");
-    a.installTranslator (translator);
+    QString language = Setting::GetInstance ().GetValue ("LANGUAGE").toString ();
+    if (translator->load (language)){
+        a.installTranslator (translator);
+    }
+
     //NorwegianWood Windows WindowsXP Fusion WindowsVista
     QApplication::setStyle(QStyleFactory::create("Windows"));
     QApplication::setStyle(("Fusion"));
