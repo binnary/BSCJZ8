@@ -38,11 +38,10 @@ void MainWindow::InitTabWidget()
 }
 void MainWindow::TabWidgetIndexChange(int index)
 {
-    (index == 0) ? mCapture->Start (): mCapture->Stop ();
+//    (index == 0) ? mCapture->Start (): mCapture->Stop ();
 }
 void MainWindow::Capture()
 {
-//    mCapture = new QCapture();
     mtabWidget->setCurrentIndex (0);
 }
 void MainWindow::displayData()

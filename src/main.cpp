@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include "qlog.h"
 #include <dbopt/dbopt.h>
-
+#include <setting.h>
 int main(int argc, char *argv[])
 {
 //    Q_INIT_RESOURCE(styles);
@@ -15,17 +15,18 @@ int main(int argc, char *argv[])
     QApplication::setStyle(QStyleFactory::create("Windows"));
     QApplication::setStyle(("Fusion"));
     QApplication::setStyle(QStyleFactory::create("WindowsXP"));
-    QApplication::setStyle(new NorwegianWoodStyle);
     QApplication::setStyle(QStyleFactory::create("WindowsVista"));
     QApplication::setStyle(QStyleFactory::create("Fusion"));
-//    qDebug() <<QStyleFactorykeys ();
+//    QApplication::setStyle(new NorwegianWoodStyle);
 #ifndef QT_DEBUG
     qInstallMessageHandler(MessageOutput);
 #endif
+    qInstallMessageHandler(MessageOutput);
+    qDebug() << "Start---------------------------------------------------";
+    Setting::GetInstance ();
     if (!db_open()) {
         return -1;
     }
-
     MainWindow w;
     w.show();
 
