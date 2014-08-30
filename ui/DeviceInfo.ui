@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>设备管理</string>
+   <string>Device Manager</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -22,35 +22,41 @@
      <item>
       <widget class="QPushButton" name="pushButton_Add">
        <property name="text">
-        <string>增加</string>
+        <string>Add</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_Del">
        <property name="text">
-        <string>删除</string>
+        <string>Delete</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_Modify">
        <property name="text">
-        <string>修改</string>
+        <string>Modify</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_OK">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
-        <string>确认</string>
+        <string>OK</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_Cacel">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
-        <string>取消</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
@@ -72,38 +78,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>pushButton_OK</sender>
-   <signal>clicked()</signal>
-   <receiver>DeviceInfo</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>485</x>
-     <y>115</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>266</x>
-     <y>210</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_Cacel</sender>
-   <signal>clicked()</signal>
-   <receiver>DeviceInfo</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>485</x>
-     <y>146</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>266</x>
-     <y>210</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

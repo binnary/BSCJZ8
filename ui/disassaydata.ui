@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Data Query </string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -19,7 +19,7 @@
      <item>
       <widget class="QCheckBox" name="checkBox_DevIndex">
        <property name="text">
-        <string>仪器编号</string>
+        <string>Device ID</string>
        </property>
       </widget>
      </item>
@@ -27,9 +27,9 @@
       <widget class="QComboBox" name="comboBox_DevIndex"/>
      </item>
      <item>
-      <widget class="QLabel" name="label_StartEndTime">
+      <widget class="QCheckBox" name="checkBox_StartEndDate">
        <property name="text">
-        <string>起止时间</string>
+        <string>DateTime</string>
        </property>
       </widget>
      </item>
@@ -37,6 +37,13 @@
       <widget class="QDateTimeEdit" name="dateTimeEdit_Start">
        <property name="displayFormat">
         <string>yyyy年M月d日</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>&lt;-&gt;</string>
        </property>
       </widget>
      </item>
@@ -50,7 +57,7 @@
      <item>
       <widget class="QCheckBox" name="checkBox_PipeIndex">
        <property name="text">
-        <string>管道编号</string>
+        <string>Pipe ID</string>
        </property>
       </widget>
      </item>
@@ -58,14 +65,14 @@
       <widget class="QComboBox" name="comboBox_PipeIndexStart"/>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox_PipeIndexEnd"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_Query">
+      <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Query</string>
+        <string>&lt;-&gt;</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_PipeIndexEnd"/>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_print">
@@ -77,7 +84,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_Export">
        <property name="text">
-        <string>Export Excel</string>
+        <string>Export</string>
        </property>
       </widget>
      </item>

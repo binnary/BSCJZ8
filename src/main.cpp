@@ -7,10 +7,15 @@
 #include "qlog.h"
 #include <dbopt/dbopt.h>
 #include <setting.h>
+#include <QTranslator>
+#include <QTextCodec>
+#include <QFont>
 int main(int argc, char *argv[])
 {
-//    Q_INIT_RESOURCE(styles);
     QApplication a(argc, argv);
+    QTranslator *translator = new QTranslator(NULL);
+    translator->load ("language/lang_CN.qm");
+    a.installTranslator (translator);
     //NorwegianWood Windows WindowsXP Fusion WindowsVista
     QApplication::setStyle(QStyleFactory::create("Windows"));
     QApplication::setStyle(("Fusion"));
@@ -21,7 +26,7 @@ int main(int argc, char *argv[])
 #ifndef QT_DEBUG
     qInstallMessageHandler(MessageOutput);
 #endif
-    qInstallMessageHandler(MessageOutput);
+//    qInstallMessageHandler(MessageOutput);
     qDebug() << "Start---------------------------------------------------";
     Setting::GetInstance ();
     if (!db_open()) {

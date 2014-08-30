@@ -27,6 +27,8 @@ signals:
 //    void UpdateRecord(QString &html);
 public slots:
     void FilterQuery();
+    void FilterQuery(const QString &index);
+    void dateTimeChanged(const QDateTime &dateTime);
     void UpdateDate();
     void print();
     void ExportExcel();

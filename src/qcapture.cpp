@@ -45,6 +45,9 @@ QCapture::QCapture(QWidget *parent) :
     LogTextEdit->setText ("ssssssssssssssssss");
     connect(&LogFile::GetInstance (), SIGNAL(LogChanged(QString)), LogTextEdit, SLOT(setText(QString)));
     connect(LogTextEdit, SIGNAL(textChanged()), this, SLOT(LogTextEditAutoScroll()));
+
+    connect(&timer, SIGNAL(timeout()), this, SLOT(DebugInfo()));
+    timer.start (100);
 }
 
 QCapture::~QCapture()
@@ -61,10 +64,8 @@ void QCapture::LogTextEditAutoScroll()
 }
 void QCapture::ClearData()
 {
-    mModel->database ().exec ("DELETE FROM temp;vacuum");
-    qDebug() << mModel->database ().lastError ();
+    mModel->database ().exec ("DELETE FROM temp");
     mModel->select ();
-    mModel->removeRows (0, mModel->rowCount ());
 }
 void QCapture::ToggledCapture(bool toggled)
 {
@@ -130,7 +131,7 @@ void QCapture::DebugInfo ()
            << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
            << CO2 << "," << CO << ")";
     query.exec(sql);
-    timer.start (10);
+    timer.start (100);
 }
 void QCapture::Stop ()
 {
