@@ -17,7 +17,8 @@
 #include <QTreeWidget>
 #include <QTextEdit>
 #include <QSqlTableModel>
-
+#include <QMap>
+#include "qhostpaser.h"
 class QCapture : public QWidget
 {
     Q_OBJECT
@@ -26,16 +27,24 @@ public:
     ~QCapture();
     void Start();
     void Stop();
+    void InsterOneItem(MeasureVal_t &val);
 public slots:
     void DebugInfo ();
+    void LogTextEditAutoScroll();
     void AutoScroll();
-    void ToggledCapture();
+    void ToggledCapture(bool toggled);
     void ClearData();
+    void UpdateData(QList<MeasureVal_t> data);
+    void SendCmdEraseAll();
+    void SendCmdSetPara();
+    void SendCmdSetTime();
 private:
     bool mAutoScroll;
     QTimer timer;
     QSqlTableModel *mModel;
     bool mIsStarted;
+    QMap<QString, QHostPaser *> mListPort;
+    QHostPaser *mPort;
 private: // ui
     void setupUi(QWidget *Capture)
     {
@@ -58,11 +67,34 @@ private: // ui
 
         pushButton = new QPushButton(Capture);
         pushButton->setObjectName(QStringLiteral("pushButton"));
-
+        pushButton->setCheckable (true);
         horizontalLayout->addWidget(pushButton);
+
+        pushButton_setpara = new QPushButton(Capture);
+        pushButton_setpara->setObjectName(QStringLiteral("pushButton_setPara"));
+        pushButton_setpara->setText(QApplication::translate("Capture", "Set Param", 0));
+        pushButton_setpara->setEnabled (false);
+        connect(pushButton, SIGNAL(toggled(bool)), pushButton_setpara, SLOT(setEnabled(bool)));
+        horizontalLayout->addWidget(pushButton_setpara);
+
+        pushButton_settime = new QPushButton(Capture);
+        pushButton_settime->setObjectName(QStringLiteral("pushButton_setPara"));
+        pushButton_settime->setText(QApplication::translate("Capture", "Set Time", 0));
+        pushButton_settime->setEnabled (false);
+        connect(pushButton, SIGNAL(toggled(bool)), pushButton_settime, SLOT(setEnabled(bool)));
+        horizontalLayout->addWidget(pushButton_settime);
+
+        pushButton_eraseall = new QPushButton(Capture);
+        pushButton_eraseall->setObjectName(QStringLiteral("pushButton_setPara"));
+        pushButton_eraseall->setText(QApplication::translate("Capture", "Erase All", 0));
+        pushButton_eraseall->setEnabled (false);
+        connect(pushButton, SIGNAL(toggled(bool)), pushButton_eraseall, SLOT(setEnabled(bool)));
+        horizontalLayout->addWidget(pushButton_eraseall);
 
         pushButton_Clear = new QPushButton(Capture);
         pushButton_Clear->setObjectName(QStringLiteral("pushButton_Clear"));
+        connect(pushButton, SIGNAL(toggled(bool)), pushButton_Clear, SLOT(setEnabled(bool)));
+        pushButton_Clear->setEnabled (false);
 
         horizontalLayout->addWidget(pushButton_Clear);
 
@@ -73,11 +105,13 @@ private: // ui
         gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
 
         splitter = new QSplitter(Qt::Vertical, 0);
-        treeView = new QTreeView(splitter);
-        treeView->setObjectName(QStringLiteral("treeView_top"));
-        textedit = new QTextEdit(splitter);
-        textedit->setObjectName(QStringLiteral("textedit"));
-        textedit->setReadOnly (true);
+        MainTreeView = new QTreeView(splitter);
+        MainTreeView->setObjectName(QStringLiteral("treeView_main"));
+        //LogTre2eView = new QTreeView(splitter);
+        //LogTreeView->setObjectName(QStringLiteral("treeView_log"));
+        LogTextEdit = new QTextEdit(splitter);
+        LogTextEdit->setObjectName(QStringLiteral("textedit"));
+        LogTextEdit->setReadOnly (true);
         gridLayout->addWidget(splitter, 1, 0, 1, 1);
 
 
@@ -99,10 +133,14 @@ private: // ui
     QLabel *label;
     QComboBox *comboBox;
     QPushButton *pushButton;
+    QPushButton *pushButton_setpara;
+    QPushButton *pushButton_settime;
+    QPushButton *pushButton_eraseall;
     QPushButton *pushButton_Clear;
     QSpacerItem *horizontalSpacer;
-    QTreeView   *treeView;
-    QTextEdit   *textedit;
+    QTreeView   *MainTreeView;
+    QTreeView   *LogTreeView;
+    QTextEdit   *LogTextEdit;
     QSplitter *splitter;
 };
 

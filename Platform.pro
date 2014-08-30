@@ -49,7 +49,6 @@ SOURCES += \
     src/main.cpp\
     src/mainwindow.cpp \
     src/qlogin.cpp \
-    src/protocol/qprotocolbase.cpp \
     src/qdispgraphic.cpp \
     src/deviceinfo.cpp \
     src/disassaydata.cpp \
@@ -59,13 +58,15 @@ SOURCES += \
     src/print/qprintobject.cpp \
     src/qabout.cpp \
     src/dbopt/dbopt.cpp \
-    src/log/qlog.cpp
+    src/log/qlog.cpp \
+    src/protocol/qprotocol.cpp \
+    src/serial/qhostpaser.cpp \
+    src/setting.cpp
 
 HEADERS  += \
     src/mainwindow.h \
     src/log/qlog.h \
     src/qlogin.h \
-    src/protocol/qprotocolbase.h \
     src/qdispgraphic.h \
     src/deviceinfo.h \
     src/disassaydata.h \
@@ -74,7 +75,10 @@ HEADERS  += \
     src/export/exportobject.h \
     src/print/qprintobject.h \
     src/qabout.h \
-    src/dbopt/dbopt.h
+    src/dbopt/dbopt.h \
+    src/protocol/qprotocol.h \
+    src/serial/qhostpaser.h \
+    src/setting.h
 
 win32 {
     SOURCES +=\
