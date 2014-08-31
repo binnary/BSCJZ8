@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "devparamconfig.h"
 #include "ui_mainwindow.h"
 #include <QLabel>
 #include <QDialog>
@@ -8,19 +9,26 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->actionPreview_Table, SIGNAL(triggered()), this, SLOT(displayData()));
-    connect(ui->actionPreview_Graphic, SIGNAL(triggered()), this, SLOT(displayGraphic()));
-    connect(ui->actionCapture, SIGNAL(triggered()), this, SLOT(Capture()));
-    connect(ui->action_DevConfig,SIGNAL(triggered()), this, SLOT(DevConfig()));
+    //connect(ui->actionPreview_Table, SIGNAL(triggered()), this, SLOT(displayData()));
+    //connect(ui->actionPreview_Graphic, SIGNAL(triggered()), this, SLOT(displayGraphic()));
+    //connect(ui->actionCapture, SIGNAL(triggered()), this, SLOT(Capture()));
+    //connect(ui->action_DevConfig,SIGNAL(triggered()), this, SLOT(DevConfig()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(About()));
     InitTabWidget();
-    connect(ui->actionExport_Excel, SIGNAL(triggered()), mDisAssayData, SLOT(print()));
+    //connect(ui->actionExport_Excel, SIGNAL(triggered()), mDisAssayData, SLOT(print()));
     connect(mtabWidget, SIGNAL(currentChanged(int)), this, SLOT(TabWidgetIndexChange(int)));
+    connect(ui->actionSetting, SIGNAL(triggered()), this, SLOT(Setting()));
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+void MainWindow::Setting()
+{
+    DevParamConfig config;
+    config.exec ();
 }
 void MainWindow::InitTabWidget()
 {

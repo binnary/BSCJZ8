@@ -51,12 +51,12 @@ DisAssayData::DisAssayData(QDialog *parent) :
         ui->dateTimeEdit_Start->setDateTime(
                      QDateTime::fromString (
                         query.value ("MIN(AssayTime)").toString (),
-                                     QString("yyyy/M/d/mm:ss:zzz"))
+                                     QString("yyyy/M/d/mm:ss"))
                     );
         ui->dateTimeEdit_End->setDateTime(
                      QDateTime::fromString (
                         query.value ("MAX(AssayTime)").toString (),
-                                     QString("yyyy/M/d/mm:ss:zzz"))
+                                     QString("yyyy/M/d/mm:ss"))
                     );
     }
 
@@ -125,9 +125,9 @@ void DisAssayData::FilterQuery()
             filter+= QString(" and ");
         }
         filter += QString ("AssayTime>='") +
-                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/M/d/mm:ss:zzz")+
+                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/M/d/mm:ss")+
                   QString("' and AssayTime<='") +
-                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/M/d/mm:ss:zzz") +
+                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/M/d/mm:ss") +
                   QString("'");
     }
     if (ui->checkBox_PipeIndex->isChecked ()) {

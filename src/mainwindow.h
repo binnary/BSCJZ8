@@ -26,6 +26,7 @@ public:
 public slots:
     void DevConfig();
     void displayData();
+    void Setting();
     void displayGraphic();
     void Capture();
     void About();

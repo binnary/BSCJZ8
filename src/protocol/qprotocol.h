@@ -12,18 +12,20 @@
 #include <QDebug>
 
 typedef struct{
-    unsigned char sec;
-    unsigned char min;
-    unsigned char hour;
-    unsigned char mday;
-    unsigned char mon;
-//    unsigned char wday;
-    unsigned char year;
+    quint8 sec;
+    quint8 min;
+    quint8 hour;
+    quint8 mday;
+    quint8 mon;
+//    quint8 wday;
+    quint8 year;
 }Time_t;
 
 typedef struct{
-    unsigned char   magic_code;
+    quint8  magic_code;
     Time_t cp_time;    //capture time
+    quint16  pipe_type; //管道类型
+    quint16  pipe_num; //管道编号
     float  CO;
     float  O2;
     float  abs_press;//绝压
@@ -37,7 +39,8 @@ typedef struct{
 typedef enum{
     M_CO=0,
     M_O2,
-    M_PRESS,
+    M_PRESS_ABS,
+    M_PRESS_SFC,
     M_FLOW,
     M_CO2,
     M_CH4,
@@ -48,12 +51,14 @@ typedef enum{
 typedef struct{
     float param_A;
     float param_B;
+    float param_C;
+    float param_D;
 }FormulaParam_t;
 
 typedef struct{
-    unsigned char m_interval;     //measure interval time,  minute
-    unsigned char s_interval;      //save data interval time, minute
-    unsigned char padding_1;
+    quint8 m_interval;     //measure interval time,  minute
+    quint8 s_interval;      //save data interval time, minute
+    quint8 padding_1;
     FormulaParam_t fparam[MAX_MTYPE];
 }Settings_t,*pSettings_t;
 
@@ -74,16 +79,16 @@ public:
         CMD_SET_PARAM=0x15,
     };
     void TestSelf();
-    QByteArray makeCmdEraseAll(unsigned char Addr=0);
-    QByteArray makeCmdSetParam(unsigned char Addr=0, QByteArray settings= QByteArray(""));
-    QByteArray makeCmdSetTime(unsigned char Addr=0, QDateTime datetime=QDateTime::currentDateTime());
-    QByteArray makeCmdACK(unsigned char Addr=0);
+    QByteArray makeCmdEraseAll(quint8 Addr=0);
+    QByteArray makeCmdSetParam(quint8 Addr=0, QByteArray settings= QByteArray(""));
+    QByteArray makeCmdSetTime(quint8 Addr=0, QDateTime datetime=QDateTime::currentDateTime());
+    QByteArray makeCmdACK(quint8 Addr=0);
     QByteArray PaseraCmdACK(QByteArray data);
-    QByteArray makeCmdNACK(unsigned char Addr=0);
-    QByteArray makeCmdUpload(unsigned char Addr=0, QDate start=QDate::currentDate(), QDate end=QDate::currentDate());
+    QByteArray makeCmdNACK(quint8 Addr=0);
+    QByteArray makeCmdUpload(quint8 Addr=0, QDate start=QDate::currentDate(), QDate end=QDate::currentDate());
     QList<MeasureVal_t> PaserRespCmdUpload(QByteArray data);
-    unsigned char makeFCS(QByteArray data);
-    unsigned char makeFCS(char data[]);
+    quint8 makeFCS(QByteArray data);
+    quint8 makeFCS(char data[]);
     QByteArray makeDate(QDate date);
     QString DumpArray(QByteArray data);
 };

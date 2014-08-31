@@ -76,7 +76,7 @@ void LogFile::Write(QtMsgType type, const QMessageLogContext &context, const QSt
 
     log.trimmed ();
     stream << log << "\r\n";
-    mLog += log + QString("\r\n");
+    mLog = log + QString("\r\n");
     emit LogChanged (mLog);
     mFile.flush ();
 }

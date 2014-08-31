@@ -58,7 +58,7 @@ void QSerial::run()
                 break;
             }
             Package = RecvData.mid(i, RecvData.at(i+1)+1);
-            unsigned char fcs = mProtocol.makeFCS(Package);
+            quint8 fcs = mProtocol.makeFCS(Package);
             if (fcs == RecvData.at(RecvData.at(i+1)+1+i)){
                 PaserPackage(Package);
             }else{

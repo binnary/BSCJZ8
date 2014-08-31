@@ -43,38 +43,10 @@
     <property name="title">
      <string>System</string>
     </property>
-    <addaction name="action_DevConfig"/>
+    <addaction name="actionDataBase"/>
+    <addaction name="actionSetting"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuNULL_2">
-    <property name="title">
-     <string>DataBase</string>
-    </property>
-    <widget class="QMenu" name="menuPreview_Data">
-     <property name="title">
-      <string>Preview</string>
-     </property>
-     <addaction name="actionPreview_Table"/>
-     <addaction name="actionPreview_Graphic"/>
-    </widget>
-    <widget class="QMenu" name="menuExport">
-     <property name="title">
-      <string>Export</string>
-     </property>
-     <addaction name="actionExcel"/>
-     <addaction name="actionPdf"/>
-    </widget>
-    <addaction name="menuPreview_Data"/>
-    <addaction name="menuExport"/>
-    <addaction name="separator"/>
-    <addaction name="actionDataBase"/>
-   </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Settings</string>
-    </property>
-    <addaction name="actionSystem"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -84,91 +56,9 @@
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuCapture">
-    <property name="title">
-     <string>Capture</string>
-    </property>
-    <addaction name="actionCapture"/>
-    <addaction name="actionStart_Capture"/>
-    <addaction name="actionStop_Capture"/>
-    <addaction name="separator"/>
-    <addaction name="actionEnable_Log_Window"/>
-   </widget>
    <addaction name="menuNULL"/>
-   <addaction name="menuCapture"/>
-   <addaction name="menuNULL_2"/>
-   <addaction name="menuSettings"/>
    <addaction name="menuAbout"/>
   </widget>
-  <action name="action_DevConfig">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/config.png</normaloff>:/images/config.png</iconset>
-   </property>
-   <property name="text">
-    <string>Device Config</string>
-   </property>
-  </action>
-  <action name="actionDataBase">
-   <property name="text">
-    <string>BackUp DB</string>
-   </property>
-  </action>
-  <action name="actionSystem">
-   <property name="text">
-    <string>System</string>
-   </property>
-  </action>
-  <action name="actionStart_Capture">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/startcapture.png</normaloff>:/images/startcapture.png</iconset>
-   </property>
-   <property name="text">
-    <string>Start Capture</string>
-   </property>
-  </action>
-  <action name="actionStop_Capture">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/stopcapture.png</normaloff>:/images/stopcapture.png</iconset>
-   </property>
-   <property name="text">
-    <string>Stop Capture</string>
-   </property>
-  </action>
-  <action name="actionEnable_Log_Window">
-   <property name="text">
-    <string>Enable Log Window</string>
-   </property>
-  </action>
-  <action name="actionExport_Pdf">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/exportpdf.png</normaloff>:/images/exportpdf.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export Pdf</string>
-   </property>
-  </action>
-  <action name="actionExport_Excel">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/exportexcel.png</normaloff>:/images/exportexcel.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export Excel</string>
-   </property>
-  </action>
-  <action name="actionPrint">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/fileprint.png</normaloff>:/images/fileprint.png</iconset>
-   </property>
-   <property name="text">
-    <string>Print</string>
-   </property>
-  </action>
   <action name="actionExit">
    <property name="icon">
     <iconset resource="../res.qrc">
@@ -176,51 +66,6 @@
    </property>
    <property name="text">
     <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionPreview_Table">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/previe_table.png</normaloff>:/images/previe_table.png</iconset>
-   </property>
-   <property name="text">
-    <string>Preview By Table</string>
-   </property>
-  </action>
-  <action name="actionPreview_Graphic">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/previe_graphic.png</normaloff>:/images/previe_graphic.png</iconset>
-   </property>
-   <property name="text">
-    <string>Preview By Graphic</string>
-   </property>
-  </action>
-  <action name="actionExcel">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/exportexcel.png</normaloff>:/images/exportexcel.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export Excel</string>
-   </property>
-  </action>
-  <action name="actionPdf">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/exportpdf.png</normaloff>:/images/exportpdf.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export Pdf</string>
-   </property>
-  </action>
-  <action name="actionCapture">
-   <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/images/capture.png</normaloff>:/images/capture.png</iconset>
-   </property>
-   <property name="text">
-    <string>Capture</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -231,6 +76,16 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionSetting">
+   <property name="text">
+    <string>Setting</string>
+   </property>
+  </action>
+  <action name="actionDataBase">
+   <property name="text">
+    <string>DataBase </string>
    </property>
   </action>
  </widget>

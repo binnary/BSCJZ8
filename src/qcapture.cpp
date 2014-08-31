@@ -42,12 +42,12 @@ QCapture::QCapture(QWidget *parent) :
     connect(MainTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(AutoScroll()));
     connect(pushButton, SIGNAL(toggled(bool)), this, SLOT(ToggledCapture(bool)), Qt::AutoConnection);
     connect(pushButton_Clear, SIGNAL(clicked()), this, SLOT(ClearData()));
-    LogTextEdit->setText ("ssssssssssssssssss");
-    connect(&LogFile::GetInstance (), SIGNAL(LogChanged(QString)), LogTextEdit, SLOT(setText(QString)));
     connect(LogTextEdit, SIGNAL(textChanged()), this, SLOT(LogTextEditAutoScroll()));
 
+    connect(&LogFile::GetInstance (), SIGNAL(LogChanged(QString)), this, SLOT(LogChanged(QString)));
+
     connect(&timer, SIGNAL(timeout()), this, SLOT(DebugInfo()));
-    timer.start (100);
+//    timer.start (100);
 }
 
 QCapture::~QCapture()
@@ -56,6 +56,12 @@ QCapture::~QCapture()
     mModel->database ().exec ("DELETE FROM temp;vacuum");
     delete mModel;
 }
+void QCapture::LogChanged(const QString &text)
+{
+   LogText += text;
+   LogTextEdit->setText (LogText);
+}
+
 void QCapture::LogTextEditAutoScroll()
 {
     QTextCursor cursor = LogTextEdit->textCursor();
@@ -64,6 +70,8 @@ void QCapture::LogTextEditAutoScroll()
 }
 void QCapture::ClearData()
 {
+    LogText.clear ();
+    LogTextEdit->setText (LogText);
     mModel->database ().exec ("DELETE FROM temp");
     mModel->select ();
 }
@@ -92,7 +100,7 @@ void QCapture::DebugInfo ()
 
     time = QDateTime::currentDateTime ();
     DeviceId = QString::number(qrand()%10);
-    AssayTime = time.toString ("yyyy/M/d/mm:ss:zzz");
+    AssayTime = time.toString ("yyyy/M/d/mm:ss");
     PipeType = QString::number(qrand()%10);
     Pressure = QString::number(qrand()%90);
     Comment  = QString::number(qrand()%90);
@@ -131,7 +139,7 @@ void QCapture::DebugInfo ()
            << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
            << CO2 << "," << CO << ")";
     query.exec(sql);
-    timer.start (100);
+    timer.start (500);
 }
 void QCapture::Stop ()
 {
@@ -194,7 +202,7 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
 
     time = QDateTime::currentDateTime ();
     DeviceId = QString::number(qrand()%10);
-    AssayTime = time.toString ("yyyy/M/d/mm:ss:zzz");
+    AssayTime = time.toString ("yyyy/M/d/mm:ss");
     PipeType = QString::number(qrand()%10);
     Pressure = QString("%1").arg(val.abs_press);
     Comment  = QString::number(qrand()%90);

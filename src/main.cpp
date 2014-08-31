@@ -21,8 +21,7 @@ int main(int argc, char *argv[])
     if (translator->load (language)){
         a.installTranslator (translator);
     }
-
-    //NorwegianWood Windows WindowsXP Fusion WindowsVista
+     //NorwegianWood Windows WindowsXP Fusion WindowsVista
     QApplication::setStyle(QStyleFactory::create("Windows"));
     QApplication::setStyle(("Fusion"));
     QApplication::setStyle(QStyleFactory::create("WindowsXP"));
@@ -38,6 +37,11 @@ int main(int argc, char *argv[])
     if (!db_open()) {
         return -1;
     }
+    QFont font;
+    font.setFamily(QString::fromUtf8("\345\256\213\344\275\223"));
+    font.setPointSize(14);
+    a.setFont(font);
+
     MainWindow w;
     w.show();
 

@@ -30,6 +30,7 @@ public:
     void InsterOneItem(MeasureVal_t &val);
 public slots:
     void DebugInfo ();
+    void LogChanged(const QString &text);
     void LogTextEditAutoScroll();
     void AutoScroll();
     void ToggledCapture(bool toggled);
@@ -140,6 +141,8 @@ private: // ui
     QTreeView   *LogTreeView;
     QTextEdit   *LogTextEdit;
     QSplitter *splitter;
+
+    QString LogText;
 };
 
 #endif // QCAPTURE_H
