@@ -20,7 +20,8 @@ public:
         mPort(new QSerialPort(info)),
         mPortInfo(info)
     {
-           connect(this, SIGNAL(started ()), this, SLOT(start()));
+        moveToThread (this);
+        connect(this, SIGNAL(started ()), this, SLOT(start()));
     }
 //    explicit QSerial(QThread *parent = 0);
     ~QSerial(){
@@ -36,7 +37,7 @@ public:
             mPort = NULL;
         }
     }
-    QByteArray Write(QByteArray data);
+    bool Write(QByteArray data);
     virtual bool PaserPackage(QByteArray &Package, bool fcs_state=true);
     const QSerialPort *GetPortDev(){return mPort;}
     const QSerialPortInfo &GetPortInfo(){return mPortInfo;}

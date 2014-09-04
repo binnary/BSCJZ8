@@ -71,6 +71,11 @@ public:
     enum PROTOCOL{
         STX=0x02,
     };
+    enum {
+        START=0x01,
+        LEN,
+        FCS,
+    }FSM;
     enum CMD{
         CMD_ACK=0x06,
         CMD_ACK_ERR=0x07,

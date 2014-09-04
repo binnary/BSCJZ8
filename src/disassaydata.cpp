@@ -231,7 +231,7 @@ void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileNa
 void DisAssayData::ExportToDocument(QString &html)
 {
     int col,row=0;
-    qDebug() <<"rowcount=" << mModel->rowCount () << "col=" <<mModel->columnCount ();
+//  qDebug() <<"rowcount=" << mModel->rowCount () << "col=" <<mModel->columnCount ();
     while((row++) <mModel->rowCount ()) {
         if((row)%100==0) {
             emit signalCount (row);

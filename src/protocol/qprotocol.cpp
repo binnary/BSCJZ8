@@ -125,6 +125,9 @@ QList<MeasureVal_t> QProtocol::PaserRespCmdUpload(QByteArray data)
 QString QProtocol::DumpArray(QByteArray data){
    QByteArray::iterator it= data.begin();
    QString temp;
+   if(!data.size ()){
+       return temp;
+   }
    for(; it!=data.end();++it){
       temp += QString("0x") + QString::number((quint8)*it,16) +QString(" ");
    }

@@ -47,7 +47,7 @@ private:
     void PrepareWaitACK();
 private:
     bool mAutoScroll;
-    QTimer mTimer;
+//    QTimer mTimer;
     int mWaitAckTime;
     QSqlTableModel *mModel;
     bool mIsStarted;

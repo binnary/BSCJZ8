@@ -51,7 +51,6 @@ DeviceInfo::DeviceInfo(QDialog *parent) :
     ui->lineEdit_MeasureInterTime->setValidator (new QIntValidator(0, 255, ui->lineEdit_MeasureInterTime));
     ui->lineEdit_SaveInterTime->setValidator (new QIntValidator(0, 255, ui->lineEdit_SaveInterTime));
 
-
     for(int i=0; i< MAX_MTYPE; i++) {
         ui->comboBox_ParamType->addItem (gList[i]);
     }
@@ -91,7 +90,7 @@ void DeviceInfo::DbAdd()
         return;
     }
     mModel->setData(mModel->index(rowNum,0), dev.ui->lineEdit_devId->text ());
-//    mModel->setData(mModel->index(rowNum,0), dev.ui->comboBox_devType->currentText ());
+//  mModel->setData(mModel->index(rowNum,0), dev.ui->comboBox_devType->currentText ());
     mModel->setData(mModel->index(rowNum,1), dev.ui->comboBox_devType->currentText());
     mModel->setData(mModel->index(rowNum,2), dev.ui->comboBox_PipeIdType->currentText ());
     QString checkable("0");

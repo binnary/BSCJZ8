@@ -7,33 +7,37 @@
 QByteArray QSerial::ReadAll()
 {
     QByteArray data("");
+    mutex.lock ();
     if (!mPort->isOpen ()){
-        return data;
+        goto ReadAllOut;
     }
     if (!mPort->bytesAvailable ()){
         msleep(100);
-        return data;
+        goto ReadAllOut;
     }
     data = mPort->readAll ();
     if (data.size ()){
         QProtocol pro;
         qDebug() << "H<--D:"<< pro.DumpArray (data);
     }
+ReadAllOut:
+    mutex.unlock ();
     return data;
 }
-QByteArray QSerial::Write(QByteArray data)
+bool QSerial::Write(QByteArray data)
 {
     QProtocol pro;
 #ifdef DEBUG_SERIAL
     qDebug() << "Write:" << pro.DumpArray (data);
-    return data;
+    return true;
 #endif
-   if (!mPort->isOpen ()) return data;
+   if (!mPort->isOpen ()) return false;
    mutex.lock ();
    qDebug() << "H-->D:"<< pro.DumpArray (data);
    mPort->write (data);
+//   mPort->waitForBytesWritten (1000);
    mutex.unlock ();
-   return data;
+   return true;
 }
 void QSerial::run()
 {
@@ -41,32 +45,81 @@ void QSerial::run()
    QByteArray Package("");
    while(!isInterruptionRequested()){
 #ifndef DEBUG_SERIAL
-       RecvData.append(ReadAll ());
+       QByteArray temp("");
+       temp = ReadAll ();
+       if (!temp.size ()){
+           continue;
+       }
+       RecvData.append(temp);
+       qDebug() <<"RecvData:" << mProtocol.DumpArray (RecvData);
 #else
        msleep (100);
        QByteArray temp = Generate();
        RecvData.append(temp);
 #endif
-       int i = 0;
-       for(; i < RecvData.size(); ++i){
-           if (RecvData.at(i) != QProtocol::STX){
+
+//       int mStatus = QProtocol::START;
+//       qint32 PackageLen = 0;
+//       while( i < RecvData.size ()){
+//          switch(mStatus) {
+//           case QProtocol::START:
+//              if(QProtocol::STX == RecvData.at (i++)){
+//                  mStatus = QProtocol::LEN;
+//              }
+//              break;
+//           case QProtocol::LEN:
+//              PackageLen = RecvData.at (i++);
+//              if (RecvData.size ()-i >= PackageLen){
+//                 goto PaserDone;
+//              }
+//              break;
+//           case QProtocol::FCS:
+//              Package = RecvData.mid(i, PackageLen+1);
+//              i += PackageLen+1;
+//              quint8 fcs = mProtocol.makeFCS(Package);
+//              if (fcs ==  RecvData.at (i)){
+//                  PaserPackage(Package);
+//              }else{
+//                  PaserPackage (Package, false);
+//              }
+//              break;
+//         // default:
+//         //     i++;
+//      };
+//     PaserDone:
+//            RecvData = RecvData.mid(i);
+//     }
+// PACKAGE=STX+LEN+ADDR+CMD+DATA+FCS
+// LEN = ADDR + CMD+DATA+FCS
+//  FCS = STX+LEN+ADDR+CMD+DATA ^
+       //i=Current STX
+       int STX, PackageLen=0;
+       for(STX=0; STX < RecvData.size()-1; ++STX){
+           if (RecvData.at(STX) != QProtocol::STX){
                continue;
            }
-           if (RecvData.at(i+1)+1 >= RecvData.size()-i){
+           PackageLen = RecvData.at (STX+1);
+           if (STX + PackageLen+1 >= RecvData.size()){
                 //have not more data;
-                RecvData = RecvData.mid(i);
+                RecvData = RecvData.mid(STX);
                 break;
             }
-            Package = RecvData.mid(i, RecvData.at(i+1)+1);
+//           qDebug() <<Q_FUNC_INFO << ":" <<__LINE__ << ":" << STX;
+           //Package=LEN+ADDR+CMD+DATA
+            Package = RecvData.mid(STX, PackageLen+1);
             quint8 fcs = mProtocol.makeFCS(Package);
-            if (fcs == RecvData.at(RecvData.at(i+1)+1+i)){
+//           qDebug() <<Q_FUNC_INFO << ":" <<__LINE__ << ":" << STX;
+            if (fcs == RecvData.at(PackageLen+STX+1)){
                 PaserPackage(Package);
+                STX += PackageLen+1;
             }else{
                 PaserPackage (Package, false);
             }
-            i += RecvData.at(i+1)+1;
+//           qDebug() <<Q_FUNC_INFO << ":" <<__LINE__ << ":" << STX;
+//           i += RecvData.at(i+1)+1;
        }
-       if (i==RecvData.size ()){
+//       qDebug() <<Q_FUNC_INFO << ":" <<__LINE__ << ":" << STX;
+       if (STX==RecvData.size ()){
            RecvData.clear ();
        }
    }

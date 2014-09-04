@@ -105,9 +105,9 @@ void QCapture::ToggledCapture(bool toggled)
         pushButton->setText (QObject::tr("Stop Read"));
     } else {
         Stop();
-        if(mTimer.isActive ()) {
-            mTimer.stop ();
-        }
+        //if(mTimer.isActive ()) {
+        //    mTimer.stop ();
+        //}
         comboBox->setEnabled (true);
         comboBox_DeviceID->setEnabled (true);
         pushButton->setText (QObject::tr("Start Read"));
@@ -164,11 +164,11 @@ void QCapture::DebugInfo ()
            << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
            << CO2 << "," << CO << ")";
     query.exec(sql);
-    mTimer.start (500);
+//    mTimer.start (500);
 }
 void QCapture::Stop ()
 {
-    qDebug()<< "Qcapture::stop";
+//    qDebug()<< "Qcapture::stop";
     QString port = comboBox->currentText ();
     if (!mPort) {
         return;
@@ -206,7 +206,7 @@ void QCapture::Start ()
                              );
     }
     connect (mPort, SIGNAL(PackagePaserDone(QList<MeasureVal_t>)), this, SLOT(UpdateData(QList<MeasureVal_t>)));
-    connect (mPort, SIGNAL(ACK()), this, SLOT(ReceiveACK()));
+    connect (mPort, SIGNAL(ACK()), this, SLOT(ReceiveACK()), Qt::QueuedConnection);
     connect(pushButton_eraseall, SIGNAL(clicked()), this, SLOT(SendCmdEraseAll()));
     connect(pushButton_setpara, SIGNAL(clicked()), this, SLOT(SendCmdSetPara()));
     connect(pushButton_settime, SIGNAL(clicked()), this, SLOT(SendCmdSetTime()));
@@ -263,40 +263,40 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
 }
 void QCapture::ReceiveACK()
 {
-    if (mTimer.isActive ()) {
-        mTimer.stop ();
-    }
+    //if (mTimer.isActive ()) {
+    //    mTimer.stop ();
+    //}
     pushButton_setpara->setEnabled (true);
     pushButton_settime->setEnabled (true);
     pushButton_eraseall->setEnabled (true);
     pushButton_Clear->setEnabled (true);
-    qWarning() << "Receive ACK";
+    qDebug() << "Receive ACK";
 }
 void QCapture::PrepareWaitACK()
 {
-    pushButton_setpara->setEnabled (false);
-    pushButton_settime->setEnabled (false);
-    pushButton_eraseall->setEnabled (false);
-    pushButton_Clear->setEnabled (false);
+   // pushButton_setpara->setEnabled (false);
+   // pushButton_settime->setEnabled (false);
+   // pushButton_eraseall->setEnabled (false);
+   // pushButton_Clear->setEnabled (false);
 
-    mWaitAckTime= 10;
-    qDebug() << "Wait for ACK, TimeOut is " << mWaitAckTime << "S";
-    connect(&mTimer, SIGNAL(timeout()), this, SLOT(WaitACK()));
-    mTimer.start (1000);
+//    mWaitAckTime= 10;
+//    qDebug() << "Wait for ACK, TimeOut is " << mWaitAckTime << "S";
+//    connect(&mTimer, SIGNAL(timeout()), this, SLOT(WaitACK()), Qt::QueuedConnection);
+//    mTimer.start (1000);
 }
 void QCapture::WaitACK()
 {
     if ((--mWaitAckTime) >= 0) {
         qDebug() << "Wait for ACK, TimeOut is " <<mWaitAckTime << "S";
-        mTimer.start(1000);
+//        mTimer.start(1000);
     } else {
         pushButton_setpara->setEnabled (true);
         pushButton_settime->setEnabled (true);
         pushButton_eraseall->setEnabled (true);
         pushButton_Clear->setEnabled (true);
-        if (mTimer.isActive ()) {
-            mTimer.stop ();
-        }
+        //if (mTimer.isActive ()) {
+        //    mTimer.stop ();
+        //}
     }
 }
 void QCapture::SendCmdSetTime ()
