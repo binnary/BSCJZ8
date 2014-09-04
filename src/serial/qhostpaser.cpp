@@ -19,5 +19,8 @@ bool QHostPaser::PaserPackage(QByteArray &Package, bool fcs_state){
              mProtocol.PaserRespCmdUpload (Package.mid(4));
         emit PackagePaserDone(resp);
     }
+    if (QProtocol::CMD_ACK == Package.at(3)){//CMD
+        emit ACK();
+    }
     return true;
 }

@@ -45,7 +45,7 @@ QDispgraphic::QDispgraphic(QWidget *parent) :
             ui->comboBox_PipeIndexStart->addItem (value);
         }
     }
-
+    DevIdChange (ui->comboBox_DevIndex->currentText ());
     connect(ui->comboBox, SIGNAL(currentIndexChanged(QString)),
             this, SLOT(DisplayChange(QString)),Qt::QueuedConnection);
 
@@ -168,7 +168,7 @@ void QDispgraphic::DisplayChange(QString index)
 }
 void QDispgraphic::DevIdChange(QString index)
 {
-    qDebug() << index;
+//    qDebug() << index;
     QString filter("DeviceId= ");
     filter += index;
     mModel->setFilter (filter);

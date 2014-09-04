@@ -59,6 +59,7 @@ typedef struct{
     quint8 m_interval;     //measure interval time,  minute
     quint8 s_interval;      //save data interval time, minute
     quint8 padding_1;
+    quint8  device_id;
     FormulaParam_t fparam[MAX_MTYPE];
 }Settings_t,*pSettings_t;
 

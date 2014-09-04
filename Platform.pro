@@ -61,7 +61,9 @@ SOURCES += \
     src/log/qlog.cpp \
     src/protocol/qprotocol.cpp \
     src/serial/qhostpaser.cpp \
-    src/setting.cpp
+    src/setting.cpp \
+    src/devparamconfig.cpp \
+    src/qloading.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -78,7 +80,9 @@ HEADERS  += \
     src/dbopt/dbopt.h \
     src/protocol/qprotocol.h \
     src/serial/qhostpaser.h \
-    src/setting.h
+    src/setting.h \
+    src/devparamconfig.h \
+    src/qloading.h
 
 win32 {
     SOURCES +=\
@@ -98,7 +102,9 @@ FORMS    += \
     ui/disassaydata.ui \
     ui/capture.ui \
     ui/AddNewDev.ui \
-    ui/qabout.ui
+    ui/qabout.ui \
+    ui/devparamconfig.ui \
+    ui/qloading.ui
 
 RESOURCES += \
     res.qrc

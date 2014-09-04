@@ -25,8 +25,10 @@ public:
     void SetKeyInfo(QString key, QVariant val);
     void SetComInfo(IniData_t &data);
     void SetDevInfo(IniData_t &data);
-    Settings_t GetDevSettings();
     void SetDevSettings(Settings_t  &set);
+    Settings_t GetSettingsT(int DeviceID);
+    Settings_t GetSettingsT();
+    Settings_t GetDevSettings();
     QVariant GetValue(QString key)
     {
         return mSetting->value(key);

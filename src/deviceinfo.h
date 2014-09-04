@@ -27,11 +27,16 @@ public slots:
     void DbDel();
     void DbQuery();
     void DbModify();
-    void accept();
-    void reject();
+    void DeviceInfoSelected(const QModelIndex &index);
+    void DevParamInfoModify();
+    void ParamTypeTextChanged(const QString &text);
 private:
+    void UpdateParamTypeValue(QString ParamType);
+    void _Modify(QString DeviceID, QString MeasureType);
     Ui::DeviceInfo *ui;
     QSqlTableModel *mModel;
+    QString mCurrentDevId;
+    QString mPrevDevType;
 };
 
 #endif // DEVICEINFO_H

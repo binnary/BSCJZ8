@@ -11,6 +11,7 @@ public:
     virtual bool PaserPackage(QByteArray &Package, bool fcs_state=true);
 signals:
     void PackagePaserDone(QList<MeasureVal_t>);
+    void ACK();
 };
 
 #endif // QHOSTPASER_H

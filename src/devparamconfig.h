@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QSqlTableModel>
-
+#include "qprotocol.h"
 namespace Ui
 {
 class DevParamConfig;
@@ -21,8 +21,9 @@ public slots:
     void Modify();
     void DeviceIdChanged(const QString &text);
     void MeasureTypeChange(const QString &text);
+    Settings_t GetSettingsT(int DeviceID);
 private:
-    void _Modify(QString DeviceId, QString MeasureType);
+    void _Modify(QString DeviceID, QString MeasureType);
     Ui::DevParamConfig *ui;
     QSqlTableModel *mModel;
     QString mPrevDevId;

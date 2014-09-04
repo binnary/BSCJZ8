@@ -5,8 +5,9 @@
 #include <QSerialPort>
 #include <QTextCodec>
 #include <QStringList>
+#include <QSqlQuery>
 
- QString gList[MAX_MTYPE] = {"CO", "O2", "PRESS_ABS", "PRESS_SFC", "FLOW", "CO2", "CH4", "TEMP"};
+static QString gList[MAX_MTYPE] = {"CO", "O2", "PRESS_ABS", "PRESS_SFC", "FLOW", "CO2", "CH4", "TEMP"};
 Setting::Setting(QObject *parent) :
     QObject(parent)
 {
@@ -39,18 +40,20 @@ void Setting::ReInitDefault()
     SetKeyInfo("LANGUAGE", "language/lang_CH.qm");
 
     //Device config
-    for(int i=0; i < MAX_MTYPE; ++i){
-        mSetting->setValue (gList[i]+"/PARAM_A", 0.0);
-        mSetting->setValue (gList[i]+"/PARAM_B", 0.0);
-        mSetting->setValue (gList[i]+"/PARAM_C", 1.0);
-        mSetting->setValue (gList[i]+"/PARAM_D", 0.0);
-    }
-
+    //for(int i=0; i < MAX_MTYPE; ++i){
+    //    mSetting->setValue (gList[i]+"/PARAM_A", 0.0);
+    //    mSetting->setValue (gList[i]+"/PARAM_B", 0.0);
+    //    mSetting->setValue (gList[i]+"/PARAM_C", 1.0);
+    //    mSetting->setValue (gList[i]+"/PARAM_D", 0.0);
+    //}
+    mSetting->setValue ("DeviceID", "0");
+    mSetting->sync ();
 }
 
 void Setting::SetKeyInfo(QString key, QVariant val)
 {
-   mSetting->setValue (key, val);
+    mSetting->setValue (key, val);
+    mSetting->sync ();
 }
 void Setting::SetDevInfo(IniData_t &data)
 {
@@ -66,11 +69,13 @@ void Setting::SetKeyInfo(QString key, IniData_t data)
     for (; it != data.end (); ++it) {
         mSetting->setValue (QString("/") + key + QString("/") + it->first, it->second);
     }
+    mSetting->sync ();
 }
 
-Settings_t Setting::GetDevSettings(){
+Settings_t Setting::GetDevSettings()
+{
     Settings_t set;
-     for(int i=0; i < MAX_MTYPE; ++i){
+    for(int i=0; i < MAX_MTYPE; ++i) {
         set.fparam[i].param_A = mSetting->value (gList[i]+"/PARAM_A").toFloat ();
         set.fparam[i].param_B = mSetting->value (gList[i]+"/PARAM_B").toFloat ();
         set.fparam[i].param_C = mSetting->value (gList[i]+"/PARAM_C").toFloat ();
@@ -79,15 +84,50 @@ Settings_t Setting::GetDevSettings(){
     return set;
 }
 
-void Setting::SetDevSettings(Settings_t &set){
+void Setting::SetDevSettings(Settings_t &set)
+{
 //DEVSETTING
 // key:MEASURE,
     //setdefault value
-    for(int i=0; i < MAX_MTYPE; ++i){
+    for(int i=0; i < MAX_MTYPE; ++i) {
         mSetting->setValue (gList[i]+"/PARAM_A", set.fparam[i].param_A);
         mSetting->setValue (gList[i]+"/PARAM_B", set.fparam[i].param_B);
         mSetting->setValue (gList[i]+"/PARAM_C", set.fparam[i].param_C);
         mSetting->setValue (gList[i]+"/PARAM_D", set.fparam[i].param_D);
     }
+    mSetting->sync ();
 
+}
+Settings_t Setting::GetSettingsT()
+{
+    return GetSettingsT(mSetting->value ("DeviceId").toInt ());
+}
+Settings_t Setting::GetSettingsT(int DeviceID)
+{
+    Settings_t set;
+    QSqlQuery query;
+    QString sql = QString("SELECT * from Settings WHERE DeviceID='") + QString::number (DeviceID) +QString("'");
+    memset(&set, 0, sizeof(Settings_t));
+    for(int i=0; i< MAX_MTYPE; ++i) {
+        set.fparam[i].param_C = 1.0;
+    }
+    set.m_interval = 255;
+    set.s_interval = 255;
+    set.device_id = DeviceID;
+
+    query.exec(sql);
+    while(query.next ()) {
+        QString MeastureType = query.value ("MeasureType").toString ();
+        set.m_interval = query.value ("MInterval").toInt ();
+        set.s_interval = query.value ("SInterval").toInt ();
+        for(int i=0; i <MAX_MTYPE; ++i) {
+            if(MeastureType == gList[i]) {
+                set.fparam[i].param_A = query.value ("Param_A").toFloat ();
+                set.fparam[i].param_B = query.value ("Param_B").toFloat ();
+                set.fparam[i].param_C = query.value ("Param_C").toFloat ();
+                set.fparam[i].param_D = query.value ("Param_D").toFloat ();
+            }
+        }
+    }
+    return set;
 }

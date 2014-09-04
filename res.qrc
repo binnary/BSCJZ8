@@ -16,5 +16,7 @@
         <file>images/previe_graphic.png</file>
         <file>images/previe_table.png</file>
         <file>images/about.png</file>
+        <file>images/loading.png</file>
+        <file>images/settings.png</file>
     </qresource>
 </RCC>

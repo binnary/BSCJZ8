@@ -19,6 +19,7 @@
 #include <QSqlTableModel>
 #include <QMap>
 #include "qhostpaser.h"
+
 class QCapture : public QWidget
 {
     Q_OBJECT
@@ -39,13 +40,20 @@ public slots:
     void SendCmdEraseAll();
     void SendCmdSetPara();
     void SendCmdSetTime();
+    void WaitACK();
+    void ReceiveACK();
+    void DeviceIDChanged(const QString &text);
+private:
+    void PrepareWaitACK();
 private:
     bool mAutoScroll;
-    QTimer timer;
+    QTimer mTimer;
+    int mWaitAckTime;
     QSqlTableModel *mModel;
     bool mIsStarted;
     QMap<QString, QHostPaser *> mListPort;
     QHostPaser *mPort;
+    QProtocol mProtocol;
 private: // ui
     void setupUi(QWidget *Capture)
     {
@@ -56,6 +64,15 @@ private: // ui
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+
+        label_DeviceID = new QLabel(Capture);
+        label_DeviceID->setObjectName(QStringLiteral("label_DeviceID"));
+        horizontalLayout->addWidget(label_DeviceID);
+
+        comboBox_DeviceID = new QComboBox(Capture);
+        comboBox_DeviceID->setObjectName(QStringLiteral("comboBox_DeviceID"));
+        horizontalLayout->addWidget(comboBox_DeviceID);
+
         label = new QLabel(Capture);
         label->setObjectName(QStringLiteral("label"));
 
@@ -113,7 +130,6 @@ private: // ui
         LogTextEdit->setReadOnly (true);
         gridLayout->addWidget(splitter, 1, 0, 1, 1);
 
-
         retranslateUi(Capture);
 
         QMetaObject::connectSlotsByName(Capture);
@@ -123,6 +139,7 @@ private: // ui
     {
         Capture->setWindowTitle(QApplication::translate("Capture", "Capture", 0));
         label->setText(QApplication::translate("Capture", "Port", 0));
+        label_DeviceID->setText(QApplication::translate("Capture", "DeviceID", 0));
         pushButton->setText(QApplication::translate("Capture", "StartRead", 0));
         pushButton_Clear->setText(QApplication::translate("Capture", "Clear", 0));
     } // retranslateUi
@@ -130,7 +147,9 @@ private: // ui
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
     QLabel *label;
+    QLabel *label_DeviceID;
     QComboBox *comboBox;
+    QComboBox *comboBox_DeviceID;
     QPushButton *pushButton;
     QPushButton *pushButton_setpara;
     QPushButton *pushButton_settime;

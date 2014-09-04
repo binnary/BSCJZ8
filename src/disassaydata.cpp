@@ -24,7 +24,7 @@ DisAssayData::DisAssayData(QDialog *parent) :
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->select();
 
-    //    stream << "PRAGMA table_info ('" << "DeviceInfo" << "')";
+    //stream << "PRAGMA table_info ('" << "DeviceInfo" << "')";
     QSqlQuery query;
     //QString sql;
     //QTextStream stream(&sql);
@@ -44,20 +44,17 @@ DisAssayData::DisAssayData(QDialog *parent) :
         }
     }
     query.exec("SELECT MAX(AssayTime), MIN(AssayTime) FROM AssayData");
-    if(query.next ()){
-        qDebug() <<"Time=" << query.value ("MIN(AssayTime)").toString ();
-        qDebug() <<"Time=" << query.value ("MAX(AssayTime)").toString ();
-
+    if(query.next ()) {
         ui->dateTimeEdit_Start->setDateTime(
-                     QDateTime::fromString (
-                        query.value ("MIN(AssayTime)").toString (),
-                                     QString("yyyy/M/d/mm:ss"))
-                    );
+            QDateTime::fromString (
+                query.value ("MIN(AssayTime)").toString (),
+                QString("yyyy/M/d/mm:ss"))
+        );
         ui->dateTimeEdit_End->setDateTime(
-                     QDateTime::fromString (
-                        query.value ("MAX(AssayTime)").toString (),
-                                     QString("yyyy/M/d/mm:ss"))
-                    );
+            QDateTime::fromString (
+                query.value ("MAX(AssayTime)").toString (),
+                QString("yyyy/M/d/mm:ss"))
+        );
     }
 
     connect(ui->checkBox_DevIndex,
@@ -65,9 +62,9 @@ DisAssayData::DisAssayData(QDialog *parent) :
             this,
             SLOT(FilterQuery()));
     connect(ui->comboBox_DevIndex,
-           SIGNAL(currentIndexChanged(QString)),
-           this,
-           SLOT(FilterQuery(QString)));
+            SIGNAL(currentIndexChanged(QString)),
+            this,
+            SLOT(FilterQuery(QString)));
     connect(ui->checkBox_StartEndDate,
             SIGNAL(clicked()),
             this,
@@ -85,13 +82,13 @@ DisAssayData::DisAssayData(QDialog *parent) :
             this,
             SLOT(FilterQuery()));
     connect(ui->comboBox_PipeIndexStart,
-           SIGNAL(currentIndexChanged(QString)),
-           this,
-           SLOT(FilterQuery(QString)));
-   connect(ui->comboBox_PipeIndexEnd,
-           SIGNAL(currentIndexChanged(QString)),
-           this,
-           SLOT(FilterQuery(QString)));
+            SIGNAL(currentIndexChanged(QString)),
+            this,
+            SLOT(FilterQuery(QString)));
+    connect(ui->comboBox_PipeIndexEnd,
+            SIGNAL(currentIndexChanged(QString)),
+            this,
+            SLOT(FilterQuery(QString)));
     connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()),Qt::QueuedConnection);
     connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()),Qt::QueuedConnection);
 }
@@ -105,12 +102,12 @@ DisAssayData::~DisAssayData()
 void DisAssayData::dateTimeChanged(const QDateTime &dateTime)
 {
 //   dateTime = dateTime;
-   FilterQuery ();
+    FilterQuery ();
 }
 void DisAssayData::FilterQuery(const QString &index)
 {
 //   index = index;
-   FilterQuery ();
+    FilterQuery ();
 }
 void DisAssayData::FilterQuery()
 {
@@ -120,8 +117,8 @@ void DisAssayData::FilterQuery()
     }
     //TODO filter by datetime
     //filter = ui->dateTimeEdit_Start->
-    if (ui->checkBox_StartEndDate->isChecked ()){
-        if(filter.size ()){
+    if (ui->checkBox_StartEndDate->isChecked ()) {
+        if(filter.size ()) {
             filter+= QString(" and ");
         }
         filter += QString ("AssayTime>='") +
@@ -131,7 +128,7 @@ void DisAssayData::FilterQuery()
                   QString("'");
     }
     if (ui->checkBox_PipeIndex->isChecked ()) {
-        if(filter.size ()){
+        if(filter.size ()) {
             filter+= QString(" and ");
         }
         filter += QString("PipeID>='") +

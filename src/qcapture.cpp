@@ -13,6 +13,9 @@
 #include <QDebug>
 #include <QSqlError>
 #include <QMessageBox>
+#include <QMenu>
+#include "setting.h"
+#include "qprotocol.h"
 QCapture::QCapture(QWidget *parent) :
     QWidget(parent),
     mAutoScroll(false),
@@ -38,16 +41,29 @@ QCapture::QCapture(QWidget *parent) :
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->database ().exec ("DELETE FROM temp");
     mModel->select();
-    connect(&timer, SIGNAL(timeout()), this, SLOT(DebugInfo ()));
+
+    QSqlQuery query;
+    query.exec("SELECT DeviceID FROM DeviceInfo");
+    while(query.next ()) {
+        comboBox_DeviceID->addItem (query.value ("DeviceID").toString ());
+    }
+    qDebug() << Setting::GetInstance ().GetValue ("DeviceID").toString ();
+    comboBox_DeviceID->setCurrentText (Setting::GetInstance ().GetValue ("DeviceID").toString ());
+    connect(comboBox_DeviceID, SIGNAL(currentTextChanged(QString)), this, SLOT(DeviceIDChanged(QString)));
+
     connect(MainTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(AutoScroll()));
     connect(pushButton, SIGNAL(toggled(bool)), this, SLOT(ToggledCapture(bool)), Qt::AutoConnection);
     connect(pushButton_Clear, SIGNAL(clicked()), this, SLOT(ClearData()));
     connect(LogTextEdit, SIGNAL(textChanged()), this, SLOT(LogTextEditAutoScroll()));
-
     connect(&LogFile::GetInstance (), SIGNAL(LogChanged(QString)), this, SLOT(LogChanged(QString)));
 
-    connect(&timer, SIGNAL(timeout()), this, SLOT(DebugInfo()));
-//    timer.start (100);
+//  connect(&mTimer, SIGNAL(timeout()), this, SLOT(DebugInfo()));
+//    connect(&mTimer, SIGNAL(timeout()), this, SLOT(DebugInfo ()));
+//  mTtimer.start (100);
+//    QMenu *menu = LogTextEdit->createStandardContextMenu ();
+//    QAction *actionAbout = new QAction(LogTextEdit);
+//    actionAbout->setObjectName(QStringLiteral("actionAbout"));
+//    menu->addAction(actionAbout);
 }
 
 QCapture::~QCapture()
@@ -56,10 +72,15 @@ QCapture::~QCapture()
     mModel->database ().exec ("DELETE FROM temp;vacuum");
     delete mModel;
 }
+void QCapture::DeviceIDChanged(const QString &text)
+{
+    Setting::GetInstance ().SetKeyInfo ("DeviceID", text);
+}
 void QCapture::LogChanged(const QString &text)
 {
-   LogText += text;
-   LogTextEdit->setText (LogText);
+//   LogText += text;
+//   LogTextEdit->setText (LogText);
+    LogTextEdit->append (text);
 }
 
 void QCapture::LogTextEditAutoScroll()
@@ -77,14 +98,18 @@ void QCapture::ClearData()
 }
 void QCapture::ToggledCapture(bool toggled)
 {
-    qDebug() <<toggled;
     if (toggled) {
         Start();
         comboBox->setEnabled (false);
+        comboBox_DeviceID->setEnabled (false);
         pushButton->setText (QObject::tr("Stop Read"));
     } else {
         Stop();
+        if(mTimer.isActive ()) {
+            mTimer.stop ();
+        }
         comboBox->setEnabled (true);
+        comboBox_DeviceID->setEnabled (true);
         pushButton->setText (QObject::tr("Start Read"));
     }
 }
@@ -139,7 +164,7 @@ void QCapture::DebugInfo ()
            << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
            << CO2 << "," << CO << ")";
     query.exec(sql);
-    timer.start (500);
+    mTimer.start (500);
 }
 void QCapture::Stop ()
 {
@@ -149,24 +174,17 @@ void QCapture::Stop ()
         return;
     }
     mPort->exit (0);
-    //if (mPort->isRunning ()){
-    //    mPort->terminate ();
-    //}
-//    disconnect ()
     delete mPort;
     mPort = NULL;
 }
 void QCapture::UpdateData(QList<MeasureVal_t> data)
 {
-//    qDebug() << data;
     foreach(MeasureVal_t var, data) {
         InsterOneItem (var);
     }
-    qDebug() << Q_FUNC_INFO;
 }
 void QCapture::Start ()
 {
-    qDebug()<< "Qcapture::Start";
     QString port = comboBox->currentText ();
     if (mPort) {
         qWarning() << "Port " << mPort->GetPortInfo ().portName ()<< " is exist";
@@ -188,6 +206,7 @@ void QCapture::Start ()
                              );
     }
     connect (mPort, SIGNAL(PackagePaserDone(QList<MeasureVal_t>)), this, SLOT(UpdateData(QList<MeasureVal_t>)));
+    connect (mPort, SIGNAL(ACK()), this, SLOT(ReceiveACK()));
     connect(pushButton_eraseall, SIGNAL(clicked()), this, SLOT(SendCmdEraseAll()));
     connect(pushButton_setpara, SIGNAL(clicked()), this, SLOT(SendCmdSetPara()));
     connect(pushButton_settime, SIGNAL(clicked()), this, SLOT(SendCmdSetTime()));
@@ -242,20 +261,60 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
            << CO2 << "," << CO << ")";
     query.exec(sql);
 }
+void QCapture::ReceiveACK()
+{
+    if (mTimer.isActive ()) {
+        mTimer.stop ();
+    }
+    pushButton_setpara->setEnabled (true);
+    pushButton_settime->setEnabled (true);
+    pushButton_eraseall->setEnabled (true);
+    pushButton_Clear->setEnabled (true);
+    qWarning() << "Receive ACK";
+}
+void QCapture::PrepareWaitACK()
+{
+    pushButton_setpara->setEnabled (false);
+    pushButton_settime->setEnabled (false);
+    pushButton_eraseall->setEnabled (false);
+    pushButton_Clear->setEnabled (false);
+
+    mWaitAckTime= 10;
+    qDebug() << "Wait for ACK, TimeOut is " << mWaitAckTime << "S";
+    connect(&mTimer, SIGNAL(timeout()), this, SLOT(WaitACK()));
+    mTimer.start (1000);
+}
+void QCapture::WaitACK()
+{
+    if ((--mWaitAckTime) >= 0) {
+        qDebug() << "Wait for ACK, TimeOut is " <<mWaitAckTime << "S";
+        mTimer.start(1000);
+    } else {
+        pushButton_setpara->setEnabled (true);
+        pushButton_settime->setEnabled (true);
+        pushButton_eraseall->setEnabled (true);
+        pushButton_Clear->setEnabled (true);
+        if (mTimer.isActive ()) {
+            mTimer.stop ();
+        }
+    }
+}
 void QCapture::SendCmdSetTime ()
 {
-    QProtocol pro;
     QDateTime start=QDateTime::currentDateTime ();
-    mPort->Write(pro.makeCmdSetTime (0, start));//, end));
+    mPort->Write(mProtocol.makeCmdSetTime (0, start));//, end));
+    PrepareWaitACK();
 }
 void QCapture::SendCmdSetPara()
 {
-    QProtocol pro;
-    QByteArray data("");
-    mPort->Write (pro.makeCmdSetParam (0,data));
+    Settings_t set = Setting::GetInstance ().GetSettingsT ();
+    QByteArray data((char*)&set, sizeof(Settings_t));
+    mPort->Write (mProtocol.makeCmdSetParam (0,data));
+    PrepareWaitACK();
 }
 void QCapture::SendCmdEraseAll()
 {
-    QProtocol pro;
-    mPort->Write (pro.makeCmdEraseAll (0));
+    mPort->Write (mProtocol.makeCmdEraseAll (0));
+    PrepareWaitACK();
 }
+

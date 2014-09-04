@@ -1,16 +1,15 @@
 #include <QApplication>
 #include <QDebug>
-#include "mainwindow.h"
-#include "norwegianwoodstyle.h"
 #include <QStyleFactory>
 #include <QMessageBox>
-#include "qlog.h"
-#include <dbopt/dbopt.h>
-#include <setting.h>
 #include <QTranslator>
 #include <QTextCodec>
 #include <QFont>
-#include <setting.h>
+#include "dbopt.h"
+#include "qlog.h"
+#include "setting.h"
+#include "mainwindow.h"
+#include "norwegianwoodstyle.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,10 +17,10 @@ int main(int argc, char *argv[])
 
     QTranslator *translator = new QTranslator(NULL);
     QString language = Setting::GetInstance ().GetValue ("LANGUAGE").toString ();
-    if (translator->load (language)){
+    if (translator->load (language)) {
         a.installTranslator (translator);
     }
-     //NorwegianWood Windows WindowsXP Fusion WindowsVista
+    //NorwegianWood Windows WindowsXP Fusion WindowsVista
     QApplication::setStyle(QStyleFactory::create("Windows"));
     QApplication::setStyle(("Fusion"));
     QApplication::setStyle(QStyleFactory::create("WindowsXP"));
