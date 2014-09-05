@@ -52,7 +52,7 @@ void LogFile::Write(QtMsgType type, const QMessageLogContext &context, const QSt
     msg.trimmed ();
     QString log;
     log = QTime::currentTime ().toString ("[hh:mm:ss.zzz]");
-//    mLog += log;
+    mLog += log;
     switch(type) {
     case QtDebugMsg:
         log += QString("Debug: ");
@@ -76,7 +76,7 @@ void LogFile::Write(QtMsgType type, const QMessageLogContext &context, const QSt
 
     log.trimmed ();
     stream << log << "\r\n";
-    mLog = log + QString("\r\n");
+    mLog += msg + QString("\n");
     emit LogChanged (mLog);
     mFile.flush ();
 }

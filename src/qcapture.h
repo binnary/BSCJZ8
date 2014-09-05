@@ -16,9 +16,11 @@
 #include <QTableWidget>
 #include <QTreeWidget>
 #include <QTextEdit>
+#include <QSerialPort>
 #include <QSqlTableModel>
 #include <QMap>
-#include "qhostpaser.h"
+#include "setting.h"
+#include "qprotocol.h"
 
 class QCapture : public QWidget
 {
@@ -40,19 +42,25 @@ public slots:
     void SendCmdEraseAll();
     void SendCmdSetPara();
     void SendCmdSetTime();
+    void SendCmdUpload();
     void WaitACK();
     void ReceiveACK();
+    void CanReceiveData();
     void DeviceIDChanged(const QString &text);
 private:
     void PrepareWaitACK();
+    quint8 CurrentDevID(){
+       return Setting::GetInstance ().GetValue ("DeviceID").toInt ();
+    }
+    bool PaserPackage(QByteArray &Package, bool fcs=true);
 private:
     bool mAutoScroll;
 //    QTimer mTimer;
     int mWaitAckTime;
     QSqlTableModel *mModel;
     bool mIsStarted;
-    QMap<QString, QHostPaser *> mListPort;
-    QHostPaser *mPort;
+    QByteArray *mRecvData;
+    QSerialPort *mPort;
     QProtocol mProtocol;
 private: // ui
     void setupUi(QWidget *Capture)
@@ -87,6 +95,13 @@ private: // ui
         pushButton->setObjectName(QStringLiteral("pushButton"));
         pushButton->setCheckable (true);
         horizontalLayout->addWidget(pushButton);
+
+        pushButton_upload = new QPushButton(Capture);
+        pushButton_upload->setObjectName(QStringLiteral("pushButton_setPara"));
+        pushButton_upload->setText(QApplication::translate("Capture", "UpLoad", 0));
+        pushButton_upload->setEnabled (false);
+        connect(pushButton, SIGNAL(toggled(bool)), pushButton_upload, SLOT(setEnabled(bool)));
+        horizontalLayout->addWidget(pushButton_upload);
 
         pushButton_setpara = new QPushButton(Capture);
         pushButton_setpara->setObjectName(QStringLiteral("pushButton_setPara"));
@@ -140,7 +155,7 @@ private: // ui
         Capture->setWindowTitle(QApplication::translate("Capture", "Capture", 0));
         label->setText(QApplication::translate("Capture", "Port", 0));
         label_DeviceID->setText(QApplication::translate("Capture", "DeviceID", 0));
-        pushButton->setText(QApplication::translate("Capture", "StartRead", 0));
+        pushButton->setText(QApplication::translate("Capture", "Open Device", 0));
         pushButton_Clear->setText(QApplication::translate("Capture", "Clear", 0));
     } // retranslateUi
 
@@ -151,6 +166,7 @@ private: // ui
     QComboBox *comboBox;
     QComboBox *comboBox_DeviceID;
     QPushButton *pushButton;
+    QPushButton *pushButton_upload;
     QPushButton *pushButton_setpara;
     QPushButton *pushButton_settime;
     QPushButton *pushButton_eraseall;

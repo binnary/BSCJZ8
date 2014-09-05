@@ -31,7 +31,6 @@ SRCPATH +=src/print
 SRCPATH +=src/export
 SRCPATH +=src/dbopt
 SRCPATH +=src/log
-SRCPATH +=src/serial
 SRCPATH +=src/protocol
 SRCPATH +=src/style
 
@@ -60,7 +59,6 @@ SOURCES += \
     src/dbopt/dbopt.cpp \
     src/log/qlog.cpp \
     src/protocol/qprotocol.cpp \
-    src/serial/qhostpaser.cpp \
     src/setting.cpp \
     src/devparamconfig.cpp \
     src/qloading.cpp
@@ -79,17 +77,14 @@ HEADERS  += \
     src/qabout.h \
     src/dbopt/dbopt.h \
     src/protocol/qprotocol.h \
-    src/serial/qhostpaser.h \
     src/setting.h \
     src/devparamconfig.h \
     src/qloading.h
 
 win32 {
     SOURCES +=\
-    src/comcfg.cpp \
-    src/serial/qserial.cpp
+    src/comcfg.cpp
     HEADERS +=\
-    src/serial/qserial.h \
     src/comcfg.h
 }
 

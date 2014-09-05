@@ -397,23 +397,23 @@ bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
         qWarning() << "Package check failed, skip this Package";
         return false;
     }
-    if (QProtocol::CMD_SET_PARAM == Package.at (3)) {
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        qDebug() << "Set Param";
+    if (QProtocol::CMD_SET_PARAM == Package.at (3)){
+         mPort->write(pro.makeCmdACK (Package.at(2)));
+         qDebug() << "Set Param";
     }
-    if (QProtocol::CMD_SET_TIME == Package.at (3)) {
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        qDebug() << "Set Time";
+    if (QProtocol::CMD_SET_TIME == Package.at (3)){
+         mPort->write(pro.makeCmdACK (Package.at(2)));
+         qDebug() << "Set Time";
     }
-    if (QProtocol::CMD_ERASE_ALL == Package.at (3)) {
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        qDebug() << "Erase all";
+    if (QProtocol::CMD_ERASE_ALL == Package.at (3)){
+         mPort->write(pro.makeCmdACK (Package.at(2)));
+         qDebug() << "Erase all";
     }
     if (QProtocol::CMD_UPLOAD == Package.at(3)) { //CMD
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        //debug();
-        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-                                            mProtocol.makeUploadResp (5)));
+         mPort->write(pro.makeCmdACK (Package.at(2)));
+         //debug();
+         mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+                                mProtocol.makeUploadResp (5)));
         qDebug() << "Resquest Upload";
 
     }
