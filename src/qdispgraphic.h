@@ -68,6 +68,7 @@ private:
     void InitCurve(QString name, QColor color);
     void InitPlot();
 public slots:
+    void FilterQuery();
     void printFunc();
     void exportpdf();
     void DevIdChange(QString index);

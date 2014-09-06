@@ -64,7 +64,7 @@ DisAssayData::DisAssayData(QDialog *parent) :
     connect(ui->comboBox_DevIndex,
             SIGNAL(currentIndexChanged(QString)),
             this,
-            SLOT(FilterQuery(QString)));
+            SLOT(FilterQuery()));
     connect(ui->checkBox_StartEndDate,
             SIGNAL(clicked()),
             this,
@@ -72,11 +72,11 @@ DisAssayData::DisAssayData(QDialog *parent) :
     connect(ui->dateTimeEdit_Start,
             SIGNAL(dateTimeChanged(QDateTime)),
             this,
-            SLOT(dateTimeChanged(QDateTime)));
+            SLOT(FilterQuery()));
     connect(ui->dateTimeEdit_End,
             SIGNAL(dateTimeChanged(QDateTime)),
             this,
-            SLOT(dateTimeChanged(QDateTime)));
+            SLOT(FilterQuery()));
     connect(ui->checkBox_PipeIndex,
             SIGNAL(clicked()),
             this,
@@ -84,11 +84,11 @@ DisAssayData::DisAssayData(QDialog *parent) :
     connect(ui->comboBox_PipeIndexStart,
             SIGNAL(currentIndexChanged(QString)),
             this,
-            SLOT(FilterQuery(QString)));
+            SLOT(FilterQuery()));
     connect(ui->comboBox_PipeIndexEnd,
             SIGNAL(currentIndexChanged(QString)),
             this,
-            SLOT(FilterQuery(QString)));
+            SLOT(FilterQuery()));
     connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()),Qt::QueuedConnection);
     connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()),Qt::QueuedConnection);
 }
@@ -99,16 +99,16 @@ DisAssayData::~DisAssayData()
     delete mModel;
 }
 
-void DisAssayData::dateTimeChanged(const QDateTime &dateTime)
-{
-//   dateTime = dateTime;
-    FilterQuery ();
-}
-void DisAssayData::FilterQuery(const QString &index)
-{
-//   index = index;
-    FilterQuery ();
-}
+//void DisAssayData::dateTimeChanged(const QDateTime &dateTime)
+//{
+////   dateTime = dateTime;
+//    FilterQuery ();
+//}
+//void DisAssayData::FilterQuery(const QString &index)
+//{
+////   index = index;
+//    FilterQuery ();
+//}
 void DisAssayData::FilterQuery()
 {
     QString filter;

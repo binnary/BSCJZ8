@@ -260,7 +260,7 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
 
     time = QDateTime::currentDateTime ();
     DeviceId = QString::number(qrand()%10);
-    AssayTime = time.toString ("yyyy/M/d/mm:ss");
+    AssayTime = time.toString ("yyyy/M/d/hh:mm");
     PipeType = QString::number(val.pipe_type);
     Pressure = QString::number (val.abs_press);
     Comment  = QString::number(qrand()%90);
@@ -437,10 +437,10 @@ bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
     if (QProtocol::CMD_UPLOAD == Package.at(3)) { //CMD
         mPort->write(pro.makeCmdACK (Package.at(2)));
         //debug();
-//        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-//                                            mProtocol.makeUploadResp (qrand()%5)));
-        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-        //                                    mProtocol.makeUploadResp (qrand()%5)));
+        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+                                            mProtocol.makeUploadResp (qrand()%5)));
+        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+                                            mProtocol.makeUploadResp (qrand()%5)));
         //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
         //                                    mProtocol.makeUploadResp (qrand()%5)));
         //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,

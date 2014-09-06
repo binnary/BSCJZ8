@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>956</width>
+    <width>1051</width>
     <height>537</height>
    </rect>
   </property>
@@ -15,9 +15,9 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="label_DevIndex">
+      <widget class="QCheckBox" name="checkBox_DevIndex">
        <property name="text">
         <string>Device ID</string>
        </property>
@@ -27,9 +27,9 @@
       <widget class="QComboBox" name="comboBox_DevIndex"/>
      </item>
      <item>
-      <widget class="QLabel" name="label_StartEndTime">
+      <widget class="QCheckBox" name="checkBox_StartEndDate">
        <property name="text">
-        <string>Date</string>
+        <string>DateTime</string>
        </property>
       </widget>
      </item>
@@ -37,6 +37,13 @@
       <widget class="QDateTimeEdit" name="dateTimeEdit_Start">
        <property name="displayFormat">
         <string>yyyy年M月d日</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>&lt;-&gt;</string>
        </property>
       </widget>
      </item>
@@ -56,6 +63,13 @@
      </item>
      <item>
       <widget class="QComboBox" name="comboBox_PipeIndexStart"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>&lt;-&gt;</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QComboBox" name="comboBox_PipeIndexEnd"/>
@@ -100,20 +114,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_Print">
+      <widget class="QPushButton" name="pushButton_print">
        <property name="text">
         <string>Print</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

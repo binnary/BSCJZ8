@@ -18,5 +18,6 @@
         <file>images/about.png</file>
         <file>images/loading.png</file>
         <file>images/settings.png</file>
+        <file>images/preferences-system.ico</file>
     </qresource>
 </RCC>

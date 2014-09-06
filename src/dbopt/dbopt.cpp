@@ -52,6 +52,22 @@ bool CreateDefaultDb()
                 CO2         REAL             DEFAULT ( 0 ),\
                 CO          REAL             DEFAULT ( 0 ) \
             )");
+     QString SettingsTable("CREATE TABLE Settings ( \
+                DeviceID    NVARCHAR( 6 )  NOT NULL,\
+                MeasureType VARCHAR        NOT NULL, \
+                Param_A     VARCHAR        NOT NULL \
+                                           DEFAULT ( 0.0 ),\
+                Param_B     VARCHAR        NOT NULL\
+                                           DEFAULT ( 0.0 ),\
+                Param_C     VARCHAR        NOT NULL\
+                                           DEFAULT ( 1 ),\
+                Param_D     VARCHAR        NOT NULL\
+                                           DEFAULT ( 0.0 ),\
+                MInterval   INT            NOT NULL\
+                                           DEFAULT ( 255 ),\
+                SInterval   INT            NOT NULL\
+                                           DEFAULT ( 255 )\
+            )");
 
     QSqlQuery query;
     if(!query.exec (AssayDataTable)) {
@@ -67,6 +83,10 @@ bool CreateDefaultDb()
         return false;
     }
     if (!query.exec (DeviceINfoTable)) {
+        qDebug() << query.lastError ();
+        return false;
+    }
+    if (!query.exec (SettingsTable)) {
         qDebug() << query.lastError ();
         return false;
     }

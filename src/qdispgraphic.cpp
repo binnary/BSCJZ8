@@ -45,13 +45,61 @@ QDispgraphic::QDispgraphic(QWidget *parent) :
             ui->comboBox_PipeIndexStart->addItem (value);
         }
     }
+    query.exec("SELECT MAX(AssayTime), MIN(AssayTime) FROM AssayData");
+    if(query.next ()) {
+        ui->dateTimeEdit_Start->setDateTime(
+            QDateTime::fromString (
+                query.value ("MIN(AssayTime)").toString (),
+                QString("yyyy/M/d/mm:ss"))
+        );
+        ui->dateTimeEdit_End->setDateTime(
+            QDateTime::fromString (
+                query.value ("MAX(AssayTime)").toString (),
+                QString("yyyy/M/d/mm:ss"))
+        );
+    }
     DevIdChange (ui->comboBox_DevIndex->currentText ());
-    connect(ui->comboBox, SIGNAL(currentIndexChanged(QString)),
-            this, SLOT(DisplayChange(QString)),Qt::QueuedConnection);
-
-    connect(ui->comboBox_DevIndex, SIGNAL(currentIndexChanged(QString)),
-            this, SLOT(DevIdChange(QString)),Qt::QueuedConnection);
-    connect(ui->pushButton_Print, SIGNAL(clicked()), this, SLOT(printFunc()));
+    connect(ui->checkBox_DevIndex,
+            SIGNAL(clicked()),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->comboBox_DevIndex,
+            SIGNAL(currentIndexChanged(QString)),
+            this,
+            SLOT(DevIdChange(QString)));
+    connect(ui->checkBox_StartEndDate,
+            SIGNAL(clicked()),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->dateTimeEdit_End,
+            SIGNAL(dateTimeChanged(QDateTime)),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->dateTimeEdit_Start,
+            SIGNAL(dateTimeChanged(QDateTime)),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->checkBox_PipeIndex,
+            SIGNAL(clicked()),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->comboBox_PipeIndexStart,
+            SIGNAL(currentTextChanged(QString)),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->comboBox_PipeIndexEnd,
+            SIGNAL(currentTextChanged(QString)),
+            this,
+            SLOT(FilterQuery()));
+    connect(ui->comboBox,
+            SIGNAL(currentIndexChanged(QString)),
+            this,
+            SLOT(DisplayChange(QString)),
+            Qt::QueuedConnection);
+    connect(ui->pushButton_print,
+            SIGNAL(clicked()),
+            this,
+            SLOT(printFunc()));
 }
 QDispgraphic::~QDispgraphic()
 {
@@ -164,16 +212,19 @@ void QDispgraphic::queryData(QString name)
 void QDispgraphic::DisplayChange(QString index)
 {
     qDebug() << index;
-    queryData (index);
+//    queryData (index);
+    FilterQuery ();
 }
 void QDispgraphic::DevIdChange(QString index)
 {
+    qDebug() <<index;
 //    qDebug() << index;
-    QString filter("DeviceId= ");
-    filter += index;
-    mModel->setFilter (filter);
-    mModel->select ();
-    queryData (ui->comboBox->currentText ());
+    //QString filter("DeviceId= ");
+    //filter += index;
+    //mModel->setFilter (filter);
+    //mModel->select ();
+    //queryData (ui->comboBox->currentText ());
+    FilterQuery ();
 }
 
 void QDispgraphic::queryData(QString X, QString Y)
@@ -220,4 +271,41 @@ void QDispgraphic::InitCurve(QString name, QColor color)
     curve->setZ( curve->z() - 2 );
     curve->attach(ui->qwtPlot);
     mCurveList.push_back (curve);
+}
+void QDispgraphic::FilterQuery()
+{
+    QString filter;
+    if (ui->checkBox_DevIndex->isChecked ()) {
+        filter = QString("DeviceId ='") + ui->comboBox_DevIndex->currentText ()+ "'";
+    }
+    //TODO filter by datetime
+    //filter = ui->dateTimeEdit_Start->
+    if (ui->checkBox_StartEndDate->isChecked ()) {
+        if(filter.size ()) {
+            filter+= QString(" and ");
+        }
+        filter += QString ("AssayTime>='") +
+                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/M/d/hh:mm:ss")+
+                  QString("' and AssayTime<='") +
+                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/M/d/hh:mm:ss") +
+                  QString("'");
+    }
+    if (ui->checkBox_PipeIndex->isChecked ()) {
+        if(filter.size ()) {
+            filter+= QString(" and ");
+        }
+        filter += QString("PipeID>='") +
+                  ui->comboBox_PipeIndexStart->currentText ()+
+                  "' and PipeID<='" +
+                  ui->comboBox_PipeIndexEnd->currentText ()+
+                  QString("'");
+    }
+    QString GraphicLable;
+    GraphicLable =QString("X-->\n") + ui->comboBox->currentText () +QString(" Filter: ") +filter;
+
+    ui->qwtPlot->setAxisTitle( QwtPlot::xBottom, GraphicLable );
+    qDebug() <<  filter;
+    mModel->setFilter(filter);
+    mModel->select ();
+    queryData (ui->comboBox->currentText ());
 }

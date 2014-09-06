@@ -105,3 +105,4 @@ RESOURCES += \
     res.qrc
 TRANSLATIONS += \
     language/lang_CN.ts
+RC_FILE = BSCJZ8.rc

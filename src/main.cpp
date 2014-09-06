@@ -20,12 +20,16 @@ int main(int argc, char *argv[])
     if (translator->load (language)) {
         a.installTranslator (translator);
     }
+
+    QIcon icon;
+    icon.addFile(QStringLiteral(":/images/preferences-system.png"), QSize(), QIcon::Normal, QIcon::Off);
+    a.setWindowIcon (icon);
     //NorwegianWood Windows WindowsXP Fusion WindowsVista
 //    QApplication::setStyle(QStyleFactory::create("Windows"));
 //    QApplication::setStyle(("Fusion"));
-    QApplication::setStyle(QStyleFactory::create("WindowsXP"));
+//    QApplication::setStyle(QStyleFactory::create("WindowsXP"));
 //    QApplication::setStyle(QStyleFactory::create("WindowsVista"));
-//    QApplication::setStyle(QStyleFactory::create("Fusion"));
+    QApplication::setStyle(QStyleFactory::create("Fusion"));
 //    QApplication::setStyle(new NorwegianWoodStyle);
 #ifndef QT_DEBUG
     qInstallMessageHandler(MessageOutput);
