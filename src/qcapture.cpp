@@ -17,7 +17,6 @@
 QCapture::QCapture(QWidget *parent) :
     QWidget(parent),
     mAutoScroll(false),
-    mIsStarted(false),
     mRecvData(new QByteArray("")),
     mPort(NULL)
 {
@@ -60,13 +59,7 @@ QCapture::QCapture(QWidget *parent) :
     connect(LogTextEdit, SIGNAL(textChanged()), this, SLOT(LogTextEditAutoScroll()));
     connect(&LogFile::GetInstance (), SIGNAL(LogChanged(QString)), this, SLOT(LogChanged(QString)));
 
-//  connect(&mTimer, SIGNAL(timeout()), this, SLOT(DebugInfo()));
-//    connect(&mTimer, SIGNAL(timeout()), this, SLOT(DebugInfo ()));
-//  mTtimer.start (100);
-//    QMenu *menu = LogTextEdit->createStandardContextMenu ();
-//    QAction *actionAbout = new QAction(LogTextEdit);
-//    actionAbout->setObjectName(QStringLiteral("actionAbout"));
-//    menu->addAction(actionAbout);
+//    mTimerIdMap[UPDATE_COMPORT_1000] = startTimer (UPDATE_COMPORT_1000);
 }
 
 QCapture::~QCapture()
@@ -87,6 +80,30 @@ QCapture::~QCapture()
         delete mRecvData;
         mRecvData = NULL;
     }
+}
+void QCapture::timerEvent(QTimerEvent *event)
+{
+  qDebug() << event->timerId ();
+  if (event->timerId () == mTimerIdMap[UPDATE_COMPORT_1000]){
+     QList<QSerialPortInfo> info = QSerialPortInfo::availablePorts ();
+     QList<QSerialPortInfo>::iterator it;
+     for(it= info.begin (); it!=info.end (); ++it) {
+         if (comboBox->findText (((QSerialPortInfo)*it).portName ()) < 0){
+             comboBox->addItem (((QSerialPortInfo)*it).portName ());
+         }
+     }
+     //for(int i=0; i < comboBox->count (); ++i){
+     //    bool isFound = true;
+     //    for(it= info.begin (); it!=info.end (); ++it) {
+     //        if ((((QSerialPortInfo)*it).portName () == comboBox->itemText (i)) >= 0){
+     //            isFound =  false;
+     //        }
+     //    }
+     //    if (!isFound){
+     //        comboBox->removeItem (i);
+     //    }
+     //}
+  }
 }
 void QCapture::DeviceIDChanged(const QString &text)
 {
@@ -342,7 +359,15 @@ void QCapture::SendCmdEraseAll()
 
 void QCapture::SendCmdUpload()
 {
-    mPort->write (mProtocol.makeCmdUpload (CurrentDevID ()));
+//QDateTime::fromString
+    Setting &set = Setting::GetInstance ();
+    QDate StartDate = QDate::fromString (
+                set.GetValue ("/UpLoad/StartDate").toString (),
+                QString("yyyy/M/d"));
+    QDate EndDate = QDate::fromString (
+                set.GetValue ("/UpLoad/EndDate").toString (),
+                QString("yyyy/M/d"));
+    mPort->write (mProtocol.makeCmdUpload (CurrentDevID (),StartDate, EndDate));
 }
 void QCapture::CanReceiveData()
 {
@@ -391,7 +416,7 @@ void QCapture::CanReceiveData()
 bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
 {
     QProtocol pro;
-//    qDebug() << "PACKAGE:" << pro.DumpArray (Package);
+    qDebug() << "PACKAGE:" << pro.DumpArray (Package);
     if (!fcs) {
         mPort->write(pro.makeCmdNACK (Package.at(2)));
         qWarning() << "Package check failed, skip this Package";
@@ -412,16 +437,25 @@ bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
     if (QProtocol::CMD_UPLOAD == Package.at(3)) { //CMD
         mPort->write(pro.makeCmdACK (Package.at(2)));
         //debug();
-        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-                                            mProtocol.makeUploadResp (5)));
+//        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+//                                            mProtocol.makeUploadResp (qrand()%5)));
+        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+        //                                    mProtocol.makeUploadResp (qrand()%5)));
+        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+        //                                    mProtocol.makeUploadResp (qrand()%5)));
+        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+        //                                    mProtocol.makeUploadResp (qrand()%5)));
+        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
+        //                                    mProtocol.makeUploadResp (qrand()%5)));
         qDebug() << "Resquest Upload";
 
     }
     if (QProtocol::CMD_UPLOAD_RESP == Package.at(3)) { //CMD
+        mPort->write(pro.makeCmdACK (Package.at(2)));
         QList<MeasureVal_t> resp =
             mProtocol.PaserRespCmdUpload (Package.mid(4));
         UpdateData(resp);
-        qDebug() << "Upload Resp";
+        qDebug() << "Upload Resp " << resp.size ();
     }
     if (QProtocol::CMD_ACK == Package.at(3)) { //CMD
         qDebug() << "Recv ACK";

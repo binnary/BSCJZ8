@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QDoubleValidator>
 #include <QIntValidator>
+#include "setting.h"
 
 static QString gList[MAX_MTYPE] = {"CO", "O2", "PRESS_ABS", "PRESS_SFC", "FLOW", "CO2", "CH4", "TEMP"};
 DevParamConfig::DevParamConfig(QWidget *parent) :
@@ -38,7 +39,17 @@ DevParamConfig::DevParamConfig(QWidget *parent) :
 
     connect (ui->comboBox_DevId, SIGNAL(currentTextChanged(QString)), this, SLOT(DeviceIdChanged(QString)));
     connect (ui->comboBox_ParamType, SIGNAL(currentTextChanged(QString)), this, SLOT(MeasureTypeChange(QString)));
-    connect(ui->pushButton_Modfiy, SIGNAL(clicked()), this, SLOT(Modify()));
+    connect(ui->dateEdit_EndDate, SIGNAL(dateChanged(QDate)), this, SLOT(EndDateChange(QDate)));
+    connect(ui->dateEdit_StartDate, SIGNAL(dateChanged(QDate)), this, SLOT(StartDateChange(QDate)));
+    connect(ui->pushButton_OK, SIGNAL(clicked()), this, SLOT(Modify()));
+
+    ui->dateEdit_EndDate->setDate (QDate::fromString (
+                                       Setting::GetInstance ().GetValue("/UpLoad/EndDate").toString (),
+                                      QString("yyyy/M/d")));
+    ui->dateEdit_StartDate->setDate (QDate::fromString (
+                                       Setting::GetInstance ().GetValue("/UpLoad/StartDate").toString (),
+                                      QString("yyyy/M/d")));
+//    connect(ui->pushButton_Modfiy, SIGNAL(clicked()), this, SLOT(Modify()));
     UpdateUi();
 }
 
@@ -47,6 +58,14 @@ DevParamConfig::~DevParamConfig()
     delete ui;
 }
 
+void DevParamConfig::StartDateChange(const QDate &date)
+{
+    Setting::GetInstance ().SetKeyInfo ("/UpLoad/StartDate", date.toString ("yyyy/M/d"));
+}
+void DevParamConfig::EndDateChange(const QDate &date)
+{
+    Setting::GetInstance ().SetKeyInfo ("/UpLoad/EndDate", date.toString ("yyyy/M/d"));
+}
 void DevParamConfig::DeviceIdChanged(const QString &text)
 {
     mPrevDevId = text;

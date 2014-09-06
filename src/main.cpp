@@ -21,11 +21,11 @@ int main(int argc, char *argv[])
         a.installTranslator (translator);
     }
     //NorwegianWood Windows WindowsXP Fusion WindowsVista
-    QApplication::setStyle(QStyleFactory::create("Windows"));
-    QApplication::setStyle(("Fusion"));
+//    QApplication::setStyle(QStyleFactory::create("Windows"));
+//    QApplication::setStyle(("Fusion"));
     QApplication::setStyle(QStyleFactory::create("WindowsXP"));
-    QApplication::setStyle(QStyleFactory::create("WindowsVista"));
-    QApplication::setStyle(QStyleFactory::create("Fusion"));
+//    QApplication::setStyle(QStyleFactory::create("WindowsVista"));
+//    QApplication::setStyle(QStyleFactory::create("Fusion"));
 //    QApplication::setStyle(new NorwegianWoodStyle);
 #ifndef QT_DEBUG
     qInstallMessageHandler(MessageOutput);

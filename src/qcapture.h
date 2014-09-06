@@ -26,11 +26,15 @@ class QCapture : public QWidget
 {
     Q_OBJECT
 public:
+    enum {
+       UPDATE_COMPORT_1000=1000,
+    }TimerID;
     explicit QCapture(QWidget *parent = 0);
     ~QCapture();
     void Start();
     void Stop();
     void InsterOneItem(MeasureVal_t &val);
+    virtual void timerEvent(QTimerEvent *event);
 public slots:
     void DebugInfo ();
     void LogChanged(const QString &text);
@@ -55,10 +59,10 @@ private:
     bool PaserPackage(QByteArray &Package, bool fcs=true);
 private:
     bool mAutoScroll;
-//    QTimer mTimer;
+    //Map<timer interval, timerid>
+    QMap<int, int> mTimerIdMap;
     int mWaitAckTime;
     QSqlTableModel *mModel;
-    bool mIsStarted;
     QByteArray *mRecvData;
     QSerialPort *mPort;
     QProtocol mProtocol;

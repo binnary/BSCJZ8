@@ -22,6 +22,8 @@ public slots:
     void DeviceIdChanged(const QString &text);
     void MeasureTypeChange(const QString &text);
     Settings_t GetSettingsT(int DeviceID);
+    void StartDateChange(const QDate &date);
+    void EndDateChange(const QDate &date);
 private:
     void _Modify(QString DeviceID, QString MeasureType);
     Ui::DevParamConfig *ui;

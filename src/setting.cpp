@@ -6,6 +6,7 @@
 #include <QTextCodec>
 #include <QStringList>
 #include <QSqlQuery>
+#include <QDate>
 
 static QString gList[MAX_MTYPE] = {"CO", "O2", "PRESS_ABS", "PRESS_SFC", "FLOW", "CO2", "CH4", "TEMP"};
 Setting::Setting(QObject *parent) :
@@ -47,6 +48,8 @@ void Setting::ReInitDefault()
     //    mSetting->setValue (gList[i]+"/PARAM_D", 0.0);
     //}
     mSetting->setValue ("DeviceID", "0");
+    mSetting->setValue ("/UpLoad/StartDate", QDate::currentDate ().toString ("yyyy/M/d"));
+    mSetting->setValue ("/UpLoad/EndDate", QDate::currentDate ().toString ("yyyy/M/d"));
     mSetting->sync ();
 }
 
