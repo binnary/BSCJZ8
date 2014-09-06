@@ -17,7 +17,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TRANSLATIONS += lang_CN.ts\
                 lang_EN.ts
 
-TARGET = Platform
+TARGET = BSCJZ8 
 TEMPLATE = app  qwt
 PLUGINSPATH +=./
 #QWT setting
