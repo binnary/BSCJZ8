@@ -9,6 +9,7 @@
 #include <QtConcurrent>
 #include <QProgressDialog>
 #include <QFileDialog>
+#include <QPrintDialog>
 DisAssayData::DisAssayData(QDialog *parent) :
     QDialog(parent),
     mTableName("AssayData"),
@@ -198,7 +199,6 @@ void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileNa
     }
     qDebug() << sql;
     query.exec (sql);
-
     while(query.next ()) {
         if((row++)%100==0) {
             emit signalCount (row);
@@ -220,6 +220,7 @@ void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileNa
     html.push_back (_html);
     if (IsPrint) {
         emit ExportHtmlDone(_html);
+
     } else {
         ExportObject expobj(this);
         emit setDlgText (QObject::tr("Export Data to file"));
@@ -312,7 +313,11 @@ void DisAssayData::print()
     dlg.setRange (0,recordCount);
     connect (this, SIGNAL(signalCount(int)),&dlg,SLOT(setValue(int)));
     connect(this,SIGNAL(setDlgText(QString)), &dlg, SLOT(setLabelText(QString)));
-    dlg.exec ();
+    if (dlg.exec ()== QProgressDialog::Rejected){
+        future.cancel ();
+        future.waitForFinished ();
+    }
+
 }
 void DisAssayData::PrintToDevice(const QString &html)
 {

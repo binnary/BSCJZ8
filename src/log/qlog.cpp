@@ -52,13 +52,17 @@ void LogFile::Write(QtMsgType type, const QMessageLogContext &context, const QSt
     msg.trimmed ();
     QString log;
     log = QTime::currentTime ().toString ("[hh:mm:ss.zzz]");
-    mLog += log;
+    mLog = log;
     switch(type) {
     case QtDebugMsg:
         log += QString("Debug: ");
         break;
     case QtWarningMsg:
         log += QString("Warning: ");
+        if (msg.size ()){
+          mLog += msg;
+          emit LogChanged (mLog);
+        }
         break;
     case QtCriticalMsg:
         log += QString("Critical: ");
@@ -73,11 +77,8 @@ void LogFile::Write(QtMsgType type, const QMessageLogContext &context, const QSt
     log +=QString(context.function) + QString(":");
     log +=QString::number (context.line)+ QString(":");
     log += msg;
-
     log.trimmed ();
     stream << log << "\r\n";
-    mLog += msg + QString("\n");
-    emit LogChanged (mLog);
     mFile.flush ();
 }
 

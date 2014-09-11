@@ -47,7 +47,6 @@ qwtAddLibrary(qwt)
 SOURCES += \
     src/main.cpp\
     src/mainwindow.cpp \
-    src/qlogin.cpp \
     src/qdispgraphic.cpp \
     src/deviceinfo.cpp \
     src/disassaydata.cpp \
@@ -66,7 +65,6 @@ SOURCES += \
 HEADERS  += \
     src/mainwindow.h \
     src/log/qlog.h \
-    src/qlogin.h \
     src/qdispgraphic.h \
     src/deviceinfo.h \
     src/disassaydata.h \
@@ -91,7 +89,6 @@ win32 {
 FORMS    += \
     ui/mainwindow.ui \
     ui/comcfg.ui \
-    ui/qlogin.ui \
     ui/qdispgraphic.ui \
     ui/DeviceInfo.ui \
     ui/disassaydata.ui \

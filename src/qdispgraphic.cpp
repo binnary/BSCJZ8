@@ -112,9 +112,9 @@ QDispgraphic::~QDispgraphic()
     if(mMarkerMax) {
         delete mMarkerMax;
     }
-    if(mMarkerMin) {
-        delete mMarkerMin;
-    }
+//    if(mMarkerMin) {
+//        delete mMarkerMin;
+//    }
     if(mGrid) {
         delete mGrid;
     }

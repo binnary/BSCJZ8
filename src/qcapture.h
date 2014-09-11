@@ -33,7 +33,7 @@ public:
     ~QCapture();
     void Start();
     void Stop();
-    void InsterOneItem(MeasureVal_t &val);
+    void InsterOneItem(quint8 DeviceID, MeasureVal_t &val);
     virtual void timerEvent(QTimerEvent *event);
 public slots:
     void DebugInfo ();
@@ -42,7 +42,7 @@ public slots:
     void AutoScroll();
     void ToggledCapture(bool toggled);
     void ClearData();
-    void UpdateData(QList<MeasureVal_t> data);
+    void UpdateData(quint8 DeviceID, QList<MeasureVal_t> data);
     void SendCmdEraseAll();
     void SendCmdSetPara();
     void SendCmdSetTime();

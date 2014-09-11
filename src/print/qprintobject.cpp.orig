@@ -25,8 +25,7 @@ QPrintObject::QPrintObject(QObject *parent)
       mBottomMargin(15.0), mSpacing(5.0),
       mHeaderSize(0.0), mHeaderRule(0.5), mHeaderText(QString()),
       mFooterSize(0.0), mFooterRule(0.5), mFooterText(QString()),
-      mDateFormat()
-//    ,mFooterAndHeader(new QTextDocument(this))
+      mDateFormat(),mFooterAndHeader(new QTextDocument(this))
 {
     if (parent) mParent = qobject_cast<QWidget*>(parent);
 
@@ -459,19 +458,16 @@ void QPrintObject::print(const QTextDocument *document,
 
     QPainter painter(mPrinter);
     if (!painter.isActive ()) return;
-    QFuture<void> future = QtConcurrent::run(this,
-                      static_cast<void(QPrintObject::*)(QPrinter*, QPainter*)>(&QPrintObject::print),
-                      mPrinter, &painter);
+    QtConcurrent::run(this,
+                           static_cast<void(QPrintObject::*)(QPrinter*, QPainter*)>(&QPrintObject::print),
+                           mPrinter, &painter);
     QProgressDialog dlg;
     dlg.setLabelText (QObject::tr("Printing...."));
-    dlg.setCancelButton (NULL);
     connect (this, SIGNAL(setPags(int,int)),&dlg,SLOT(setRange(int,int)));
     connect (this, SIGNAL(setCurrentPagsNumber(int)),&dlg, SLOT(setValue(int)));
     connect(this,SIGNAL(setLabelText(QString)), &dlg, SLOT(setLabelText(QString)));
-    if (dlg.exec ()== QProgressDialog::Rejected){
-        future.cancel ();
-        future.waitForFinished ();
-    }
+    dlg.exec ();
+
     delete mTempDoc;
     mTempDoc = 0;
 }
@@ -634,7 +630,7 @@ void QPrintObject::print(QPrinter *printer, QPainter *painter)
         ascending = false;
     }
 
-    emit setPags(0, doccopies);
+     emit setPags(0, doccopies);
 
     // loop through and print pages
 //    QPainter painter(printer);
@@ -657,7 +653,7 @@ void QPrintObject::print(QPrinter *printer, QPainter *painter)
                 }
                 // print page
                 paintPage(painter, mTempDoc, pagenum);
-                if (pc < pagecopies-1) {
+                if (pc < pagecopies-1){
                     printer->newPage();
                 }
             }
@@ -756,28 +752,28 @@ void QPrintObject::paintPage(QPainter *painter,
 
 void QPrintObject::DocdrawContents(QRectF rect, QString text,QPainter *painter,bool IsHeader)
 {
-    QTextDocument doc;
-    QRectF clip(0, 0, rect.width(), rect.height());
-    doc.setUseDesignMetrics(true);
-    doc.setHtml(text);
-    doc.documentLayout()->setPaintDevice(painter->device());
-    doc.setPageSize(rect.size());
-    if (IsHeader) {
-        // align text to bottom
-        double newtop = clip.bottom() - doc.size().height();
-        clip.setHeight(doc.size().height());
-        painter->translate(0, newtop);
-    }
-    doc.drawContents(painter, clip);
-    //mFooterAndHeader->setUseDesignMetrics(true);
-    //mFooterAndHeader->setHtml(text);
-    //mFooterAndHeader->documentLayout()->setPaintDevice(painter->device());
-    //mFooterAndHeader->setPageSize(rect.size());
-    //if (IsHeader){
-    //    // align text to bottom
-    //    double newtop = clip.bottom() - mFooterAndHeader->size().height();
-    //    clip.setHeight(mFooterAndHeader->size().height());
-    //    painter->translate(0, newtop);
-    //}
-    //mFooterAndHeader->drawContents(painter, clip);
+   QTextDocument doc;
+   QRectF clip(0, 0, rect.width(), rect.height());
+   doc.setUseDesignMetrics(true);
+   doc.setHtml(text);
+   doc.documentLayout()->setPaintDevice(painter->device());
+   doc.setPageSize(rect.size());
+   if (IsHeader){
+       // align text to bottom
+       double newtop = clip.bottom() - doc.size().height();
+       clip.setHeight(doc.size().height());
+       painter->translate(0, newtop);
+   }
+   doc.drawContents(painter, clip);
+   //mFooterAndHeader->setUseDesignMetrics(true);
+   //mFooterAndHeader->setHtml(text);
+   //mFooterAndHeader->documentLayout()->setPaintDevice(painter->device());
+   //mFooterAndHeader->setPageSize(rect.size());
+   //if (IsHeader){
+   //    // align text to bottom
+   //    double newtop = clip.bottom() - mFooterAndHeader->size().height();
+   //    clip.setHeight(mFooterAndHeader->size().height());
+   //    painter->translate(0, newtop);
+   //}
+   //mFooterAndHeader->drawContents(painter, clip);
 }

@@ -97,24 +97,29 @@ private:
     QRectF contentRect(QPaintDevice *device);
     QRectF headerRect(QPaintDevice *device);
     QRectF footerRect(QPaintDevice *device);
-
+public slots:
     // paint specific page
     void paintPage(QPainter *painter,
                    QTextDocument *document,
                    int pagenum);
+    void DocdrawContents(QRectF rect, QString text, QPainter *painter, bool IsHeader);
 signals:
-    void setPags(quint32 Pags);
-    void setCurrentPagsNumber(quint32 pag);
+    void setPags(int min,int max);
+    void setCurrentPagsNumber(int pag);
+    void setLabelText(const QString &text);
+    void TriggerdrawContents(QRectF rect, QString text, QPainter *painter, bool IsHeader);
 
 private slots:
     // common print routine
-    void print(QPrinter *printer);
+//    void print(QPrinter *printer);
+    void print(QPrinter *printer, QPainter *painter);
 
 private:
     QWidget *mParent;
     QPrinter *mPrinter;
 
     QTextDocument *mTempDoc;
+//    QTextDocument  *mFooterAndHeader;
 
     double mLeftMargin;
     double mRightMargin;

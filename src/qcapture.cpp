@@ -221,10 +221,10 @@ void QCapture::Stop ()
     delete mPort;
     mPort = NULL;
 }
-void QCapture::UpdateData(QList<MeasureVal_t> data)
+void QCapture::UpdateData(quint8 DeviceID, QList<MeasureVal_t> data)
 {
     foreach(MeasureVal_t var, data) {
-        InsterOneItem (var);
+        InsterOneItem (DeviceID, var);
     }
 }
 void QCapture::Start ()
@@ -262,14 +262,14 @@ void QCapture::Start ()
         return;
     }
 }
-void QCapture::InsterOneItem(MeasureVal_t &val)
+void QCapture::InsterOneItem(quint8 DeviceID, MeasureVal_t &val)
 {
     QDateTime time;
     QString  DeviceId, AssayTime, PipeId, PipeType;
     QString SfcPressure, AbsPressure,Ch4,O2,CO2,CO, Temperature;
 
     time = QDateTime::currentDateTime ();
-    DeviceId = QString::number(qrand()%10);
+    DeviceId = QString::number(DeviceID);
     AssayTime = time.toString ("yyyy/M/d/hh:mm:ss");
     PipeType = QString::number(val.pipe_type);
     PipeId = QString::number(val.pipe_num);
@@ -306,8 +306,10 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
            << PipeType << ","  << PipeId  << "," << SfcPressure << "," <<AbsPressure << ","
            << Temperature << "," << Ch4 << "," << O2 << "," << CO2 << ","
            << CO <<")";
-    qDebug() << sql;
-    query.exec(sql);
+    if(!query.exec(sql)){
+        qDebug() << sql;
+        qDebug()<< "Exec sql failed, Error Info:" << query.lastError ().text ();
+    }
 }
 void QCapture::ReceiveACK()
 {
@@ -388,7 +390,7 @@ void QCapture::CanReceiveData()
     if (!temp.size ()) {
         return;
     }
-//    qDebug() << "H<--D:"<< pro.DumpArray (temp);
+    qDebug() << "H<--D:"<< pro.DumpArray (temp);
     mRecvData->append(temp);
 //  qDebug() <<"RecvData:" << mProtocol.DumpArray (*mRecvData);
 // PACKAGE=STX+LEN+ADDR+CMD+DATA+FCS
@@ -425,7 +427,7 @@ void QCapture::CanReceiveData()
 bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
 {
     QProtocol pro;
-    qDebug() << "PACKAGE:" << pro.DumpArray (Package);
+    qWarning() << "PACKAGE:" << pro.DumpArray (Package);
     if (!fcs) {
         mPort->write(pro.makeCmdNACK (Package.at(2)));
         qWarning() << "Package check failed, skip this Package";
@@ -456,18 +458,18 @@ bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
         //                                    mProtocol.makeUploadResp (qrand()%5)));
         //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
         //                                    mProtocol.makeUploadResp (qrand()%5)));
-        qDebug() << "Resquest Upload";
+        qWarning() << "Resquest Upload";
 
     }
     if (QProtocol::CMD_UPLOAD_RESP == Package.at(3)) { //CMD
         mPort->write(pro.makeCmdACK (Package.at(2)));
         QList<MeasureVal_t> resp =
             mProtocol.PaserRespCmdUpload (Package.mid(4));
-        UpdateData(resp);
-        qDebug() << "Upload Resp " << resp.size ();
+        UpdateData(Package.at(2), resp);
+        qWarning() << "Upload Resp " << resp.size ();
     }
     if (QProtocol::CMD_ACK == Package.at(3)) { //CMD
-        qDebug() << "Recv ACK";
+        qWarning() << "Recv ACK";
     }
     return true;
 }

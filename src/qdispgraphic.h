@@ -81,7 +81,7 @@ private:
     QList<DispCurve*> mCurveList;
     QSqlTableModel *mModel;
     QwtPlotMarker *mMarkerMax;
-    QwtPlotMarker *mMarkerMin;
+//    QwtPlotMarker *mMarkerMin;
     QwtPlotGrid *mGrid;
 };
 
