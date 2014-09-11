@@ -102,6 +102,10 @@ private:
     void paintPage(QPainter *painter,
                    QTextDocument *document,
                    int pagenum);
+signals:
+    void setPags(quint32 Pags);
+    void setCurrentPagsNumber(quint32 pag);
+
 private slots:
     // common print routine
     void print(QPrinter *printer);

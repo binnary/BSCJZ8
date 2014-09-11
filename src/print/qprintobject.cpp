@@ -599,6 +599,7 @@ void QPrintObject::print(QPrinter *printer)
         pagecopies = 1;
     }
 
+    emit setPags(pagecopies);
     // get page range
     int firstpage = printer->fromPage();
     int lastpage = printer->toPage();
@@ -622,6 +623,7 @@ void QPrintObject::print(QPrinter *printer)
                            QPainter::TextAntialiasing |
                            QPainter::SmoothPixmapTransform, true);
     for (int dc=0; dc<doccopies; dc++) {
+        emit setCurrentPagsNumber(dc);
         int pagenum = firstpage;
         while (true) {
             for (int pc=0; pc<pagecopies; pc++) {

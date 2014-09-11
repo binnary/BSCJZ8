@@ -1,5 +1,6 @@
 #include "qcapture.h"
 #include "qlog.h"
+#include "dbopt.h"
 #include "ui_capture.h"
 #include "QDebug"
 #include <QAbstractTableModel>
@@ -39,8 +40,17 @@ QCapture::QCapture(QWidget *parent) :
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->database ().exec ("DELETE FROM temp");
     mModel->select();
-
+    for (int i=0; i <mModel->columnCount (); i++){
+//    GetFriendNameByTableColum(QString TableColum)
+       mModel->setHeaderData (i, Qt::Horizontal,
+                  GetFriendNameByTableColum(
+                      mModel->headerData (i,Qt::Horizontal).toString ()));
+    }
     QSqlQuery query;
+    //query.exec("SELECT DeviceID FROM DeviceInfo");
+    //while(query.next ()) {
+    //    comboBox_DeviceID->addItem (query.value ("DeviceID").toString ());
+    //}
     query.exec("SELECT DeviceID FROM DeviceInfo");
     while(query.next ()) {
         comboBox_DeviceID->addItem (query.value ("DeviceID").toString ());

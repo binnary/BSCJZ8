@@ -16,7 +16,11 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QTranslator *translator = new QTranslator(NULL);
+#ifdef QT_DEBUG
+    QString language("E:\\Qt\\Platform\\lang_CN.qm");
+#else
     QString language = Setting::GetInstance ().GetValue ("LANGUAGE").toString ();
+#endif
     if (translator->load (language)) {
         a.installTranslator (translator);
     }

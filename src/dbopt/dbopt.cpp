@@ -6,6 +6,19 @@
 #include <QSqlError>
 #include <QDebug>
 #include <QSqlQuery>
+QString GetFriendNameByTableColum(QString TableColum)
+{
+  QString sql;
+  QSqlQuery query;
+  sql = QString("SELECT * FROM FriendlyName WHERE Name='") + TableColum +QString("'");
+//  qDebug() << sql;
+  query.exec(sql);
+  if(query.next ()){
+//     qDebug() << query.value ("FriendlyName").toString ();
+     return query.value ("FriendlyName").toString ();
+  }
+  return QString("");
+}
 bool CreateDefaultDb()
 {
     QString DeviceINfoTable("CREATE TABLE DeviceInfo ( \

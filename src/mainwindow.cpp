@@ -36,13 +36,13 @@ void MainWindow::InitTabWidget()
 {
     mtabWidget = new QTabWidget(this);
     mCapture = new QCapture();
-    mtabWidget->addTab (mCapture, "Capture");
+    mtabWidget->addTab (mCapture, QObject::tr("Capture"));
     mDisAssayData = new DisAssayData();
-    mtabWidget->addTab (mDisAssayData, "DisAssayData");
+    mtabWidget->addTab (mDisAssayData, QObject::tr("DisAssayData"));
     mDispGraphic = new QDispgraphic ();
-    mtabWidget->addTab (mDispGraphic, "DisGraphic");
+    mtabWidget->addTab (mDispGraphic, QObject::tr("DisGraphic"));
     mDevInfo = new DeviceInfo();
-    mtabWidget->addTab (mDevInfo, "DeviceInfo");
+    mtabWidget->addTab (mDevInfo, QObject::tr("DeviceInfo"));
     setCentralWidget (mtabWidget);
 }
 void MainWindow::TabWidgetIndexChange(int index)

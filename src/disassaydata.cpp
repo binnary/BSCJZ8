@@ -2,6 +2,7 @@
 #include "exportobject.h"
 #include "ui_disassaydata.h"
 #include "exportobject.h"
+#include "dbopt.h"
 #include <QTextStream>
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -23,6 +24,11 @@ DisAssayData::DisAssayData(QDialog *parent) :
     mModel->setTable(mTableName);
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->select();
+    for (int i=0; i <mModel->columnCount (); i++){
+       mModel->setHeaderData (i, Qt::Horizontal,
+                  GetFriendNameByTableColum(
+                      mModel->headerData (i,Qt::Horizontal).toString ()));
+    }
 
     //stream << "PRAGMA table_info ('" << "DeviceInfo" << "')";
     QSqlQuery query;
@@ -89,6 +95,7 @@ DisAssayData::DisAssayData(QDialog *parent) :
             SIGNAL(currentIndexChanged(QString)),
             this,
             SLOT(FilterQuery()));
+    connect(this,SIGNAL(ExportHtmlDone(QString)), this, SLOT(PrintToDevice(QString)));
     connect(ui->pushButton_print, SIGNAL(clicked()), this, SLOT(print()),Qt::QueuedConnection);
     connect(ui->pushButton_Export, SIGNAL(clicked()), this, SLOT(ExportExcel()),Qt::QueuedConnection);
 }
@@ -99,16 +106,6 @@ DisAssayData::~DisAssayData()
     delete mModel;
 }
 
-//void DisAssayData::dateTimeChanged(const QDateTime &dateTime)
-//{
-////   dateTime = dateTime;
-//    FilterQuery ();
-//}
-//void DisAssayData::FilterQuery(const QString &index)
-//{
-////   index = index;
-//    FilterQuery ();
-//}
 void DisAssayData::FilterQuery()
 {
     QString filter;
@@ -188,7 +185,7 @@ QString DisAssayData::ExportToDocumentHeader()
     header += "</tr>\n";
     return header;
 }
-void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileName)
+void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileName, bool IsPrint)
 {
     /// split <=0 no split split >=0 split export file
     QString _html= ExportToDocumentHeader ();
@@ -221,17 +218,20 @@ void DisAssayData::ExportToDocument(QStringList &html, int Split, QString fileNa
     }
     _html += QString("</table>");
     html.push_back (_html);
-    ExportObject expobj(this);
-    emit setDlgText (QObject::tr("Export Data to file"));
-    expobj.ExportExcel (html, fileName);
-    emit setDlgText (QObject::tr("Export Data to file done"));
+    if (IsPrint){
+        emit ExportHtmlDone(_html);
+    }else{
+        ExportObject expobj(this);
+        emit setDlgText (QObject::tr("Export Data to file"));
+        expobj.ExportExcel (html, fileName);
+        emit setDlgText (QObject::tr("Export Data to file done"));
+    }
     emit signalCount (row);
     return ;
 }
 void DisAssayData::ExportToDocument(QString &html)
 {
     int col,row=0;
-//  qDebug() <<"rowcount=" << mModel->rowCount () << "col=" <<mModel->columnCount ();
     while((row++) <mModel->rowCount ()) {
         if((row)%100==0) {
             emit signalCount (row);
@@ -278,8 +278,8 @@ void DisAssayData::ExportExcel()
                                    "All Files (*)"));
     QStringList html;
     QFuture<void> future = QtConcurrent::run(this,
-                           static_cast<void(DisAssayData::*)(QStringList &, int, QString)>(&DisAssayData::ExportToDocument),
-                           html, 10000, fileName);
+                           static_cast<void(DisAssayData::*)(QStringList &, int, QString,bool)>(&DisAssayData::ExportToDocument),
+                           html, 10000, fileName, false);
     QProgressDialog dlg(this);
     dlg.setLabelText (QObject::tr("Prepare Data...."));
     dlg.setRange (0,recordCount);
@@ -288,6 +288,33 @@ void DisAssayData::ExportExcel()
     dlg.exec ();
 }
 void DisAssayData::print()
+{
+    int recordCount = 0;
+    //query all data
+    QString sql;
+    sql = QString("SELECT COUNT(*) FROM ") + mTableName;
+    if (mModel->filter ().size ()) {
+        sql += " WHERE " +mModel->filter ();
+    }
+    qDebug() << sql;
+    QSqlQuery query;
+    query.exec (sql);
+    while(query.next ()) {
+//        qDebug() << query.value ("count(*)").toString ();
+        recordCount = query.value("count(*)").toInt ();
+    }
+    QStringList html;
+    QFuture<void> future = QtConcurrent::run(this,
+                           static_cast<void(DisAssayData::*)(QStringList &, int, QString, bool)>(&DisAssayData::ExportToDocument),
+                           html, 0, QString(""), true);
+    QProgressDialog dlg(this);
+    dlg.setLabelText (QObject::tr("Prepare Data...."));
+    dlg.setRange (0,recordCount);
+    connect (this, SIGNAL(signalCount(int)),&dlg,SLOT(setValue(int)));
+    connect(this,SIGNAL(setDlgText(QString)), &dlg, SLOT(setLabelText(QString)));
+    dlg.exec ();
+}
+void DisAssayData::PrintToDevice(const QString &html)
 {
     QString headertext =
         "<table width=\"100%\">"
@@ -298,17 +325,13 @@ void DisAssayData::print()
         "</table>";
 
     QString footertext = "<p align=\"right\"><strong>&page;</strong></p>";
-
     QPrintObject printobj(this);
-    QString html;
     QTextDocument doc;
-    ExportToDocument(html);
     doc.setHtml (html);
     printobj.setHeaderSize(10);
     printobj.setFooterSize(10);
     printobj.setDateFormat("MMMM dd yyyy");
-    printobj.setHeaderText(headertext.arg("temp"));
+    printobj.setHeaderText(headertext.arg("BSCJZ8"));
     printobj.setFooterText(footertext);
-    QString tmp("example print");
     printobj.print(&doc);
 }
