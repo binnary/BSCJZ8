@@ -78,17 +78,17 @@
       <widget class="QComboBox" name="comboBox">
        <item>
         <property name="text">
-         <string>Flux</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Ch4</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Pressure</string>
+         <string>AbsPressure</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SfcPressure</string>
         </property>
        </item>
        <item>

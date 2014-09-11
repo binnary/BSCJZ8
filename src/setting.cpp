@@ -38,7 +38,7 @@ void Setting::ReInitDefault()
     SetComInfo (temp);
 
     //language config
-    SetKeyInfo("LANGUAGE", "language/lang_CH.qm");
+    SetKeyInfo("LANGUAGE", "language/lang_CN.qm");
 
     //Device config
     //for(int i=0; i < MAX_MTYPE; ++i){

@@ -588,7 +588,7 @@
     </message>
     <message>
         <location filename="ui/qabout.ui" line="20"/>
-        <location filename="src/mainwindow.cpp" line="112"/>
+        <location filename="src/mainwindow.cpp" line="114"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -606,7 +606,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="88"/>
+        <location filename="src/mainwindow.cpp" line="90"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -658,17 +658,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="ui/qdispgraphic.ui" line="81"/>
-        <source>Flux</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="86"/>
         <source>Ch4</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="ui/qdispgraphic.ui" line="86"/>
+        <source>AbsPressure</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="ui/qdispgraphic.ui" line="91"/>
-        <source>Pressure</source>
+        <source>SfcPressure</source>
+        <oldsource>Pressure</oldsource>
         <translation></translation>
     </message>
     <message>
@@ -697,7 +698,7 @@ p, li { white-space: pre-wrap; }
         <translation>打印</translation>
     </message>
     <message>
-        <location filename="src/qdispgraphic.cpp" line="164"/>
+        <location filename="src/qdispgraphic.cpp" line="189"/>
         <source> -- </source>
         <translation></translation>
     </message>
@@ -751,8 +752,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="src/dbopt/dbopt.cpp" line="124"/>
-        <location filename="src/dbopt/dbopt.cpp" line="135"/>
+        <location filename="src/dbopt/dbopt.cpp" line="139"/>
+        <location filename="src/dbopt/dbopt.cpp" line="150"/>
         <source>Platform Db Failed</source>
         <translation>打开数据库失败</translation>
     </message>
@@ -823,7 +824,7 @@ p, li { white-space: pre-wrap; }
         <translation>设备信息</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="101"/>
+        <location filename="src/mainwindow.cpp" line="103"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -846,6 +847,11 @@ p, li { white-space: pre-wrap; }
         <location filename="src/qcapture.cpp" line="247"/>
         <source>Can not found port</source>
         <translation>不能找到端口</translation>
+    </message>
+    <message>
+        <location filename="src/qdispgraphic.cpp" line="229"/>
+        <source>Range(</source>
+        <translation>数值范围(</translation>
     </message>
 </context>
 </TS>

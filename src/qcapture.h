@@ -27,8 +27,8 @@ class QCapture : public QWidget
     Q_OBJECT
 public:
     enum {
-       UPDATE_COMPORT_1000=1000,
-    }TimerID;
+        UPDATE_COMPORT_1000=1000,
+    } TimerID;
     explicit QCapture(QWidget *parent = 0);
     ~QCapture();
     void Start();
@@ -53,8 +53,9 @@ public slots:
     void DeviceIDChanged(const QString &text);
 private:
     void PrepareWaitACK();
-    quint8 CurrentDevID(){
-       return Setting::GetInstance ().GetValue ("DeviceID").toInt ();
+    quint8 CurrentDevID()
+    {
+        return Setting::GetInstance ().GetValue ("DeviceID").toInt ();
     }
     bool PaserPackage(QByteArray &Package, bool fcs=true);
 private:

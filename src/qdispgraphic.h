@@ -5,6 +5,8 @@
 #include "qwt_plot_curve.h"
 #include "qwt_plot_magnifier.h"
 #include <qwt_plot_canvas.h>
+#include "qwt_plot_marker.h"
+#include "qwt_plot_grid.h"
 #include <QList>
 #include <QSqlTableModel>
 
@@ -78,6 +80,9 @@ private:
     Ui::QDispgraphic *ui;
     QList<DispCurve*> mCurveList;
     QSqlTableModel *mModel;
+    QwtPlotMarker *mMarkerMax;
+    QwtPlotMarker *mMarkerMin;
+    QwtPlotGrid *mGrid;
 };
 
 #endif // QDISPGRAPHIC_H

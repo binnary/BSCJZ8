@@ -40,11 +40,11 @@ QCapture::QCapture(QWidget *parent) :
     mModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     mModel->database ().exec ("DELETE FROM temp");
     mModel->select();
-    for (int i=0; i <mModel->columnCount (); i++){
+    for (int i=0; i <mModel->columnCount (); i++) {
 //    GetFriendNameByTableColum(QString TableColum)
-       mModel->setHeaderData (i, Qt::Horizontal,
-                  GetFriendNameByTableColum(
-                      mModel->headerData (i,Qt::Horizontal).toString ()));
+        mModel->setHeaderData (i, Qt::Horizontal,
+                               GetFriendNameByTableColum(
+                                   mModel->headerData (i,Qt::Horizontal).toString ()));
     }
     QSqlQuery query;
     //query.exec("SELECT DeviceID FROM DeviceInfo");
@@ -93,27 +93,27 @@ QCapture::~QCapture()
 }
 void QCapture::timerEvent(QTimerEvent *event)
 {
-  qDebug() << event->timerId ();
-  if (event->timerId () == mTimerIdMap[UPDATE_COMPORT_1000]){
-     QList<QSerialPortInfo> info = QSerialPortInfo::availablePorts ();
-     QList<QSerialPortInfo>::iterator it;
-     for(it= info.begin (); it!=info.end (); ++it) {
-         if (comboBox->findText (((QSerialPortInfo)*it).portName ()) < 0){
-             comboBox->addItem (((QSerialPortInfo)*it).portName ());
-         }
-     }
-     //for(int i=0; i < comboBox->count (); ++i){
-     //    bool isFound = true;
-     //    for(it= info.begin (); it!=info.end (); ++it) {
-     //        if ((((QSerialPortInfo)*it).portName () == comboBox->itemText (i)) >= 0){
-     //            isFound =  false;
-     //        }
-     //    }
-     //    if (!isFound){
-     //        comboBox->removeItem (i);
-     //    }
-     //}
-  }
+    qDebug() << event->timerId ();
+    if (event->timerId () == mTimerIdMap[UPDATE_COMPORT_1000]) {
+        QList<QSerialPortInfo> info = QSerialPortInfo::availablePorts ();
+        QList<QSerialPortInfo>::iterator it;
+        for(it= info.begin (); it!=info.end (); ++it) {
+            if (comboBox->findText (((QSerialPortInfo)*it).portName ()) < 0) {
+                comboBox->addItem (((QSerialPortInfo)*it).portName ());
+            }
+        }
+        //for(int i=0; i < comboBox->count (); ++i){
+        //    bool isFound = true;
+        //    for(it= info.begin (); it!=info.end (); ++it) {
+        //        if ((((QSerialPortInfo)*it).portName () == comboBox->itemText (i)) >= 0){
+        //            isFound =  false;
+        //        }
+        //    }
+        //    if (!isFound){
+        //        comboBox->removeItem (i);
+        //    }
+        //}
+    }
 }
 void QCapture::DeviceIDChanged(const QString &text)
 {
@@ -169,7 +169,7 @@ void QCapture::DebugInfo ()
 
     time = QDateTime::currentDateTime ();
     DeviceId = QString::number(qrand()%10);
-    AssayTime = time.toString ("yyyy/M/d/mm:ss");
+    AssayTime = time.toString ("yyyy/M/d/hh:mm:ss");
     PipeType = QString::number(qrand()%10);
     Pressure = QString::number(qrand()%90);
     Comment  = QString::number(qrand()%90);
@@ -266,21 +266,20 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
 {
     QDateTime time;
     QString  DeviceId, AssayTime, PipeId, PipeType;
-    QString Flux, Ch4,Pressure, Comment,LTime,O2,CO2,CO;
+    QString SfcPressure, AbsPressure,Ch4,O2,CO2,CO, Temperature;
 
     time = QDateTime::currentDateTime ();
     DeviceId = QString::number(qrand()%10);
-    AssayTime = time.toString ("yyyy/M/d/hh:mm");
+    AssayTime = time.toString ("yyyy/M/d/hh:mm:ss");
     PipeType = QString::number(val.pipe_type);
-    Pressure = QString::number (val.abs_press);
-    Comment  = QString::number(qrand()%90);
     PipeId = QString::number(val.pipe_num);
-    LTime = QString::number(qrand()%90);
-    Flux  = QString::number(val.temperature);
+    AbsPressure = QString::number (val.abs_press);
+    SfcPressure = QString::number (val.sfc_press);
     Ch4 = QString::number(val.CH4);
     O2  = QString::number(val.O2);
     CO2 = QString::number(val.CO2);
     CO  = QString::number(val.CO);
+    Temperature = QString::number (val.temperature);
 
     int row = mModel->rowCount ();
     mModel->insertRow (row);
@@ -288,11 +287,10 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
     mModel->setData (mModel->index (row,1), AssayTime);
     mModel->setData (mModel->index (row,2), PipeId);
     mModel->setData (mModel->index (row,3), PipeType);
-    mModel->setData (mModel->index (row,4), Flux);
-    mModel->setData (mModel->index (row,5), Ch4);
-    mModel->setData (mModel->index (row,6), Pressure);
-    mModel->setData (mModel->index (row,7), Comment);
-    mModel->setData (mModel->index (row,8), LTime);
+    mModel->setData (mModel->index (row,4), SfcPressure);
+    mModel->setData (mModel->index (row,5), AbsPressure);
+    mModel->setData (mModel->index (row,6), Temperature);
+    mModel->setData (mModel->index (row,6), Ch4);
     mModel->setData (mModel->index (row,9), O2);
     mModel->setData (mModel->index (row,10), CO2);
     mModel->setData (mModel->index (row,11), CO);
@@ -302,12 +300,13 @@ void QCapture::InsterOneItem(MeasureVal_t &val)
     QSqlQuery query;
     QString sql;
     QTextStream stream(&sql);
-    stream << "Insert into AssayData(DeviceId, AssayTime, PipeId, PipeType, "
-           << "Flux, Ch4,Pressure,Comment,LjTime,O2,CO2,CO) values("
+    stream << "Insert into AssayData(DeviceID, AssayTime, PipeType, PipeId,  "
+           << "SfcPressure, AbsPressure,Temperature,Ch4,O2,CO2,CO) values("
            << DeviceId << ",'"  << AssayTime<< "',"
-           << PipeId << ","  << PipeType  << "," << Pressure << "," <<Comment << ","
-           << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
-           << CO2 << "," << CO << ")";
+           << PipeType << ","  << PipeId  << "," << SfcPressure << "," <<AbsPressure << ","
+           << Temperature << "," << Ch4 << "," << O2 << "," << CO2 << ","
+           << CO <<")";
+    qDebug() << sql;
     query.exec(sql);
 }
 void QCapture::ReceiveACK()
@@ -372,11 +371,11 @@ void QCapture::SendCmdUpload()
 //QDateTime::fromString
     Setting &set = Setting::GetInstance ();
     QDate StartDate = QDate::fromString (
-                set.GetValue ("/UpLoad/StartDate").toString (),
-                QString("yyyy/M/d"));
+                          set.GetValue ("/UpLoad/StartDate").toString (),
+                          QString("yyyy/M/d"));
     QDate EndDate = QDate::fromString (
-                set.GetValue ("/UpLoad/EndDate").toString (),
-                QString("yyyy/M/d"));
+                        set.GetValue ("/UpLoad/EndDate").toString (),
+                        QString("yyyy/M/d"));
     mPort->write (mProtocol.makeCmdUpload (CurrentDevID (),StartDate, EndDate));
 }
 void QCapture::CanReceiveData()

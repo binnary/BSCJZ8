@@ -45,10 +45,10 @@ DevParamConfig::DevParamConfig(QWidget *parent) :
 
     ui->dateEdit_EndDate->setDate (QDate::fromString (
                                        Setting::GetInstance ().GetValue("/UpLoad/EndDate").toString (),
-                                      QString("yyyy/M/d")));
+                                       QString("yyyy/M/d")));
     ui->dateEdit_StartDate->setDate (QDate::fromString (
-                                       Setting::GetInstance ().GetValue("/UpLoad/StartDate").toString (),
-                                      QString("yyyy/M/d")));
+                                         Setting::GetInstance ().GetValue("/UpLoad/StartDate").toString (),
+                                         QString("yyyy/M/d")));
 //    connect(ui->pushButton_Modfiy, SIGNAL(clicked()), this, SLOT(Modify()));
     UpdateUi();
 }
