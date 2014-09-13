@@ -79,22 +79,25 @@ public:
     enum CMD{
         CMD_ACK=0x06,
         CMD_ACK_ERR=0x07,
-        CMD_UPLOAD=0x10,
-        CMD_UPLOAD_RESP=0x11,
+        CMD_UPLOAD_QUERY=0x10,
+        CMD_UPLOAD=0x11,
         CMD_ERASE_ALL=0x12,
         CMD_SET_TIME=0x13,
         CMD_SET_PARAM=0x15,
+        CMD_UNKNOW,
     };
+//        CMD_UPLOAD_RESP=0x11,
     void TestSelf();
     QByteArray makePackage(quint8 Addr, quint8 Cmd, QByteArray data=QByteArray(""));
     QByteArray makeCmdEraseAll(quint8 Addr=0);
     QByteArray makeCmdSetParam(quint8 Addr=0, QByteArray settings= QByteArray(""));
     QByteArray makeCmdSetTime(quint8 Addr=0, QDateTime datetime=QDateTime::currentDateTime());
-    QByteArray makeCmdACK(quint8 Addr=0);
+    QByteArray makeCmdACK(quint8 Cmd, quint8 Addr=0);
     QByteArray PaseraCmdACK(QByteArray data);
-    QByteArray makeCmdNACK(quint8 Addr=0);
+    QByteArray makeCmdNACK(quint8 Cmd,quint8 Addr=0);
     QByteArray makeCmdUpload(quint8 Addr=0, QDate start=QDate::currentDate(), QDate end=QDate::currentDate());
-    QByteArray makeUploadResp(quint8 PackageLen);
+    QByteArray makeCmdUploadQuery(quint8 Addr=0, QDate start=QDate::currentDate(), QDate end=QDate::currentDate());
+    QByteArray makeUploadResp(quint8 PackageLen,quint32 PackageNumber=0 );
     QList<MeasureVal_t> PaserRespCmdUpload(QByteArray data);
     quint8 makeFCS(QByteArray data);
     quint8 makeFCS(char data[]);

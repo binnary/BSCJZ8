@@ -114,7 +114,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="comboBox_ParamType"/>
+              <widget class="QComboBox" name="comboBox_ParamType">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -128,7 +132,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_ParamA"/>
+              <widget class="QLineEdit" name="lineEdit_ParamA">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -142,7 +150,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_ParamB"/>
+              <widget class="QLineEdit" name="lineEdit_ParamB">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -156,7 +168,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_ParamC"/>
+              <widget class="QLineEdit" name="lineEdit_ParamC">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -170,7 +186,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_ParamD"/>
+              <widget class="QLineEdit" name="lineEdit_ParamD">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -204,7 +224,7 @@
         <item>
          <widget class="QLineEdit" name="lineEdit_MeasureInterTime">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>

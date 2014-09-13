@@ -30,7 +30,7 @@ public slots:
     void displayGraphic();
     void Capture();
     void About();
-    void TabWidgetIndexChange(int index);
+//    void TabWidgetIndexChange(int index);
 private:
     Ui::MainWindow *ui;
     QAction *exitAct;

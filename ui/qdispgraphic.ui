@@ -14,12 +14,15 @@
    <string>Display Graphic</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QCheckBox" name="checkBox_DevIndex">
        <property name="text">
         <string>Device ID</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -36,7 +39,7 @@
      <item>
       <widget class="QDateTimeEdit" name="dateTimeEdit_Start">
        <property name="displayFormat">
-        <string>yyyy年M月d日</string>
+        <string>yyyy/M/d/hh:mm</string>
        </property>
       </widget>
      </item>
@@ -50,7 +53,7 @@
      <item>
       <widget class="QDateTimeEdit" name="dateTimeEdit_End">
        <property name="displayFormat">
-        <string>yyyy年M月d日</string>
+        <string>yyyy/M/d/hh:mm</string>
        </property>
       </widget>
      </item>
@@ -75,45 +78,6 @@
       <widget class="QComboBox" name="comboBox_PipeIndexEnd"/>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox">
-       <item>
-        <property name="text">
-         <string>Ch4</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>AbsPressure</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>SfcPressure</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Temperature</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>CO</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>CO2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>O2</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="pushButton_print">
        <property name="text">
         <string>Print</string>
@@ -135,7 +99,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="0" colspan="2">
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -160,6 +124,73 @@
       <bool>true</bool>
      </property>
     </widget>
+   </item>
+   <item row="2" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_Config">
+       <property name="text">
+        <string>Config </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Max</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="spinBox_Max">
+       <property name="minimum">
+        <double>-99999.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>99999.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.200000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Min</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="spinBox_Min">
+       <property name="minimum">
+        <double>-99999.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>99999.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.200000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

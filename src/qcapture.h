@@ -19,6 +19,7 @@
 #include <QSerialPort>
 #include <QSqlTableModel>
 #include <QMap>
+#include <QMutex>
 #include "setting.h"
 #include "qprotocol.h"
 
@@ -28,37 +29,69 @@ class QCapture : public QWidget
 public:
     enum {
         UPDATE_COMPORT_1000=1000,
+        WAIT_ACK_TIMEOUT=3000,
+        WAIT_UPLOAD_PACKAGE=4000,
     } TimerID;
+    typedef enum {
+        STATUS_NONE=0,
+        STATUS_WAIT_SETPARAM_ACK,
+        STATUS_WAIT_SETTIME_ACK,
+        STATUS_WAIT_ERASEALL_ACK,
+        STATUS_WAIT_ACK,
+        STATUS_WAIT_PREPARE_UPLOAD,
+        STATUS_WAIT_UPLOAD_QUERY,
+    }Status_enum;
     explicit QCapture(QWidget *parent = 0);
     ~QCapture();
     void Start();
     void Stop();
     void InsterOneItem(quint8 DeviceID, MeasureVal_t &val);
     virtual void timerEvent(QTimerEvent *event);
+    void ReceiveACK(quint32 Cmd, bool isReceiveAck);
 public slots:
-    void DebugInfo ();
+//    void DebugInfo ();
     void LogChanged(const QString &text);
     void LogTextEditAutoScroll();
     void AutoScroll();
     void ToggledCapture(bool toggled);
+    void ToggledCmdUpload(bool toggled);
     void ClearData();
     void UpdateData(quint8 DeviceID, QList<MeasureVal_t> data);
     void SendCmdEraseAll();
     void SendCmdSetPara();
     void SendCmdSetTime();
     void SendCmdUpload();
-    void WaitACK();
-    void ReceiveACK();
+//    void WaitACK();
     void CanReceiveData();
     void DeviceIDChanged(const QString &text);
 private:
-    void PrepareWaitACK();
+    bool HostPaserPackage (QByteArray &Package, bool fcs);
+    bool ClientPaserPackage (QByteArray &Package, bool fcs);
+   void RemoveTimer(int timeridIdKey);
+   void InsertTimer(int timeridIdKey);
+    void PrepareWaitACK(Status_enum status);
     quint8 CurrentDevID()
     {
         return Setting::GetInstance ().GetValue ("DeviceID").toInt ();
     }
+    bool SelfTest()
+    {
+        if (Setting::GetInstance ().GetValue ("SelfTest").toInt () == 1){
+            return true;
+        }
+        return false;
+    }
     bool PaserPackage(QByteArray &Package, bool fcs=true);
+    void SetStatus(Status_enum status){
+        mMutex.lock ();
+        mStatus = status;
+        mMutex.unlock ();
+    }
+    Status_enum GetStatus(){return mStatus;}
 private:
+    Status_enum mStatus;
+    QMutex mMutex;
+    int mDataPackageCount;
     bool mAutoScroll;
     //Map<timer interval, timerid>
     QMap<int, int> mTimerIdMap;
@@ -105,6 +138,7 @@ private: // ui
         pushButton_upload->setObjectName(QStringLiteral("pushButton_setPara"));
         pushButton_upload->setText(QApplication::translate("Capture", "UpLoad", 0));
         pushButton_upload->setEnabled (false);
+        pushButton_upload->setCheckable (true);
         connect(pushButton, SIGNAL(toggled(bool)), pushButton_upload, SLOT(setEnabled(bool)));
         horizontalLayout->addWidget(pushButton_upload);
 
@@ -131,10 +165,17 @@ private: // ui
 
         pushButton_Clear = new QPushButton(Capture);
         pushButton_Clear->setObjectName(QStringLiteral("pushButton_Clear"));
-        connect(pushButton, SIGNAL(toggled(bool)), pushButton_Clear, SLOT(setEnabled(bool)));
-        pushButton_Clear->setEnabled (false);
+//        connect(pushButton, SIGNAL(toggled(bool)), pushButton_Clear, SLOT(setEnabled(bool)));
+//        pushButton_Clear->setEnabled (false);
 
         horizontalLayout->addWidget(pushButton_Clear);
+#ifdef QT_DEBUG
+        pushButton_Host = new QPushButton(Capture);
+        pushButton_Host->setObjectName(QStringLiteral("pushButton_Host"));
+        pushButton_Host->setText(QApplication::translate("Capture", "Toggle Host", 0));
+        pushButton_Host->setCheckable (true);
+        horizontalLayout->addWidget(pushButton_Host);
+#endif
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -176,6 +217,9 @@ private: // ui
     QPushButton *pushButton_settime;
     QPushButton *pushButton_eraseall;
     QPushButton *pushButton_Clear;
+#ifdef QT_DEBUG
+    QPushButton *pushButton_Host;
+#endif
     QSpacerItem *horizontalSpacer;
     QTreeView   *MainTreeView;
     QTreeView   *LogTreeView;

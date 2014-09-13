@@ -4,6 +4,7 @@
 #include "qwt_plot.h"
 #include "qwt_plot_curve.h"
 #include "qwt_plot_magnifier.h"
+#include <qwt_plot_picker.h>
 #include <qwt_plot_canvas.h>
 #include "qwt_plot_marker.h"
 #include "qwt_plot_grid.h"
@@ -76,12 +77,16 @@ public slots:
     void DevIdChange(QString index);
     void DisplayChange(QString index);
     void legendChecked( const QVariant &itemInfo, bool on );
+    void MaxMarkervalueChanged(double value);
+    void MinMarkervalueChanged(double value);
+    void ConfigParamLevel();
 private:
     Ui::QDispgraphic *ui;
     QList<DispCurve*> mCurveList;
     QSqlTableModel *mModel;
     QwtPlotMarker *mMarkerMax;
-//    QwtPlotMarker *mMarkerMin;
+    QwtPlotMarker *mMarkerMin;
+    QwtPlotPicker *mPicker;
     QwtPlotGrid *mGrid;
 };
 

@@ -179,9 +179,9 @@ QString DisAssayData::ExportToDocumentHeader()
 
     query.exec(sql);
     while(query.next ()) { //setheader
-        header += "<th bgcolor=\"lightgray\"><font size=\"+1\"><b><i>";
+        header += "<th bgcolor=\"lightgray\">";
         header += query.value ("name").toString ();
-        header += "</i></b></font></th>\n";
+        header += "</th>\n";
     }
     header += "</tr>\n";
     return header;

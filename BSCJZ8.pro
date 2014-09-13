@@ -60,7 +60,8 @@ SOURCES += \
     src/protocol/qprotocol.cpp \
     src/setting.cpp \
     src/devparamconfig.cpp \
-    src/qloading.cpp
+    src/qloading.cpp \
+    src/paramlevelconfig.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -77,7 +78,8 @@ HEADERS  += \
     src/protocol/qprotocol.h \
     src/setting.h \
     src/devparamconfig.h \
-    src/qloading.h
+    src/qloading.h \
+    src/paramlevelconfig.h
 
 win32 {
     SOURCES +=\
@@ -96,7 +98,8 @@ FORMS    += \
     ui/AddNewDev.ui \
     ui/qabout.ui \
     ui/devparamconfig.ui \
-    ui/qloading.ui
+    ui/qloading.ui \
+    ui/paramlevelconfig.ui
 
 RESOURCES += \
     res.qrc

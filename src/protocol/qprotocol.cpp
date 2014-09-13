@@ -15,68 +15,38 @@ QByteArray QProtocol::makeDate(QDate date)
     return ArrayDate;
 }
 
-QByteArray QProtocol::makeCmdACK(quint8 Addr)
+QByteArray QProtocol::makeCmdACK(quint8 Cmd, quint8 Addr)
 {
-//   STX, 0x03, 0x00, 0x6, FCS
-    return makePackage (Addr, CMD_ACK);
-   // QByteArray Ack("");
-   // Ack.append(STX);
-   // Ack.append(0x03);/// setpage ack;
-   // Ack.append(Addr);
-   // Ack.append(CMD_ACK);
-   // Ack.append(makeFCS(Ack)) ;
-   // return Ack;
+//   STX, 0x03, 0x00, 0x6,data, FCS
+    char cdata = 0;
+    QByteArray data((char*)&Cmd, 1);
+    data.append (cdata);
+    return makePackage (Addr, CMD_ACK, data);
 }
-QByteArray QProtocol::makeCmdNACK(quint8 Addr)
+QByteArray QProtocol::makeCmdNACK(quint8 Cmd, quint8 Addr)
 {
-    return makePackage (Addr, CMD_ACK_ERR);
-    //QByteArray NAck("");
-    //NAck.append(STX);
-    //NAck.append(0x03);/// setpage ack;
-    //NAck.append(Addr);
-    //NAck.append((quint8)CMD_ACK_ERR);
-    //NAck.append(makeFCS(NAck)) ;
-    //return NAck;
+    QByteArray data("");
+    data.append (Cmd);
+    data.append (1);
+    return makePackage (Addr, CMD_ACK_ERR, data);
 }
 //STX + LEN + ADDR + 0x11 + 参数 +  FCS
 QByteArray QProtocol::makeCmdUpload(quint8 Addr, QDate start, QDate end)
 {
-//    QByteArray ("");
-    //QByteArray Astart= makeDate(start);
-    //QByteArray Aend= makeDate(end);
     return makePackage(Addr, CMD_UPLOAD, makeDate(start)+makeDate(end));
-    //cmd.append(STX);
-    //cmd.append(3+Astart.size()+Aend.size());
-    //cmd.append(Addr);
-    //cmd.append((quint8)CMD_UPLOAD);
-    //cmd.append(Astart);
-    //cmd.append(Aend);
-    //cmd.append(makeFCS(cmd));
-    //return cmd;
+}
+QByteArray QProtocol::makeCmdUploadQuery(quint8 Addr, QDate start, QDate end)
+{
+    return makePackage(Addr, CMD_UPLOAD_QUERY, makeDate(start)+makeDate(end));
 }
 QByteArray QProtocol::makeCmdEraseAll(quint8 Addr)
 {
 //    STX + LEN + ADDR + CMD_ERASE_ALL+ FCS
     return makePackage(Addr, CMD_ERASE_ALL);//, QByteArray(""));
-    //QByteArray cmd("");
-    //cmd.append(STX);
-    //cmd.append(0x03);
-    //cmd.append(Addr);
-    //cmd.append((quint8)CMD_ERASE_ALL);
-    //cmd.append(makeFCS(cmd));
-    //return cmd;
 }
 QByteArray QProtocol::makeCmdSetParam(quint8 Addr, QByteArray settings)
 {
     return makePackage(Addr, CMD_SET_PARAM, settings);
-   // QByteArray cmd("");
-   // cmd.append(STX);
-   // cmd.append(3+settings.size());
-   // cmd.append(Addr);
-   // cmd.append(CMD_SET_PARAM);
-   // cmd.append(settings);
-   // cmd.append(makeFCS(cmd));
-   // return cmd;
 }
 QByteArray QProtocol::makePackage(quint8 Addr, quint8 Cmd, QByteArray data)
 {
@@ -102,14 +72,6 @@ QByteArray QProtocol::makeCmdSetTime(quint8 Addr, QDateTime datetime)
    time_t.mday = date.day();
    time_t.mon = date.month();
    return makePackage (Addr, CMD_SET_TIME, QByteArray((char*)&time_t, sizeof(Time_t)));
-  // QByteArray cmd("");
-  // cmd.append(STX);
-  // cmd.append(sizeof(Time_t)+3);
-  // cmd.append(Addr);
-  // cmd.append((quint8)CMD_SET_TIME);
-  // cmd.append(QByteArray((char*)&time_t, sizeof(Time_t)));
-  // cmd.append(makeFCS(cmd));
-  // return cmd;
 }
 
 quint8 QProtocol::makeFCS(QByteArray data)
@@ -129,9 +91,9 @@ quint8 QProtocol::makeFCS(char data[])
     }
     return fcs;
 }
-QByteArray QProtocol::makeUploadResp(quint8 PackageLen)
+QByteArray QProtocol::makeUploadResp(quint8 PackageLen, quint32 PackageNumber)
 {
-    QByteArray data;
+    QByteArray data((char*)&PackageNumber, sizeof(PackageNumber));
     for (quint8 i=0; i < PackageLen; ++i){
         MeasureVal_t temp;
         memset(&temp, 0, sizeof(MeasureVal_t));

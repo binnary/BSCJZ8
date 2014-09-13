@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //        mtabWidget->setCurrentIndex (3);
 //    }
     InitTabWidget();
-    connect(mtabWidget, SIGNAL(currentChanged(int)), this, SLOT(TabWidgetIndexChange(int)));
+//    connect(mtabWidget, SIGNAL(currentChanged(int)), this, SLOT(TabWidgetIndexChange(int)));
     connect(ui->actionSetting, SIGNAL(triggered()), this, SLOT(Setting()));
 
 }
@@ -45,12 +45,12 @@ void MainWindow::InitTabWidget()
     mtabWidget->addTab (mDevInfo, QObject::tr("DeviceInfo"));
     setCentralWidget (mtabWidget);
 }
-void MainWindow::TabWidgetIndexChange(int index)
-{
-    mCapture->update ();
-    (index == 1) ? mCapture->Start (): mCapture->Stop ();
-    (index == 2) ? mCapture->Start (): mCapture->Stop ();
-}
+//void MainWindow::TabWidgetIndexChange(int index)
+//{
+//    //mCapture->update ();
+//    //(index == 1) ? mCapture->Start (): mCapture->Stop ();
+//    //(index == 2) ? mCapture->Start (): mCapture->Stop ();
+//}
 void MainWindow::Capture()
 {
     mtabWidget->setCurrentIndex (0);

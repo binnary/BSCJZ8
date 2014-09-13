@@ -17,6 +17,7 @@
 #include <QMenu>
 QCapture::QCapture(QWidget *parent) :
     QWidget(parent),
+    mDataPackageCount(0),
     mAutoScroll(false),
     mRecvData(new QByteArray("")),
     mPort(NULL)
@@ -41,27 +42,27 @@ QCapture::QCapture(QWidget *parent) :
     mModel->database ().exec ("DELETE FROM temp");
     mModel->select();
     for (int i=0; i <mModel->columnCount (); i++) {
-//    GetFriendNameByTableColum(QString TableColum)
         mModel->setHeaderData (i, Qt::Horizontal,
                                GetFriendNameByTableColum(
                                    mModel->headerData (i,Qt::Horizontal).toString ()));
     }
     QSqlQuery query;
-    //query.exec("SELECT DeviceID FROM DeviceInfo");
-    //while(query.next ()) {
-    //    comboBox_DeviceID->addItem (query.value ("DeviceID").toString ());
-    //}
     query.exec("SELECT DeviceID FROM DeviceInfo");
     while(query.next ()) {
         comboBox_DeviceID->addItem (query.value ("DeviceID").toString ());
     }
-    qDebug() << Setting::GetInstance ().GetValue ("DeviceID").toString ();
+    if (comboBox_DeviceID->findText (
+                Setting::GetInstance ().GetValue ("DeviceID").toString ()
+            ) < 0) {
+        Setting::GetInstance ().SetKeyInfo ("DeviceID", comboBox_DeviceID->currentText ());
+    }
     comboBox_DeviceID->setCurrentText (Setting::GetInstance ().GetValue ("DeviceID").toString ());
     connect(comboBox_DeviceID, SIGNAL(currentTextChanged(QString)), this, SLOT(DeviceIDChanged(QString)));
 
     connect(MainTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(AutoScroll()));
     connect(pushButton, SIGNAL(toggled(bool)), this, SLOT(ToggledCapture(bool)), Qt::AutoConnection);
-    connect(pushButton_upload, SIGNAL(clicked()), this, SLOT(SendCmdUpload()));
+    connect(pushButton_upload, SIGNAL(toggled(bool)), this, SLOT(ToggledCmdUpload(bool)), Qt::AutoConnection);
+//    connect(pushButton_upload, SIGNAL(clicked()), this, SLOT(SendCmdUpload()));
     connect(pushButton_setpara, SIGNAL(clicked()), this, SLOT(SendCmdSetPara()));
     connect(pushButton_settime, SIGNAL(clicked()), this, SLOT(SendCmdSetTime()));
     connect(pushButton_eraseall, SIGNAL(clicked()), this, SLOT(SendCmdEraseAll()));
@@ -93,7 +94,14 @@ QCapture::~QCapture()
 }
 void QCapture::timerEvent(QTimerEvent *event)
 {
-    qDebug() << event->timerId ();
+    qDebug() << "Timer event: " <<event->timerId ();
+    if (event->timerId () == mTimerIdMap[WAIT_ACK_TIMEOUT]) {
+        ReceiveACK (QProtocol::CMD_UNKNOW,false);
+    }
+    if (event->timerId () == mTimerIdMap[WAIT_UPLOAD_PACKAGE]) {
+        qDebug() << "Wait Up Load Package Timeout";
+        RemoveTimer (WAIT_UPLOAD_PACKAGE);
+    }
     if (event->timerId () == mTimerIdMap[UPDATE_COMPORT_1000]) {
         QList<QSerialPortInfo> info = QSerialPortInfo::availablePorts ();
         QList<QSerialPortInfo>::iterator it;
@@ -149,82 +157,59 @@ void QCapture::ToggledCapture(bool toggled)
         pushButton->setText (QObject::tr("Close Device"));
     } else {
         Stop();
-        //if(mTimer.isActive ()) {
-        //    mTimer.stop ();
-        //}
         comboBox->setEnabled (true);
         comboBox_DeviceID->setEnabled (true);
         pushButton->setText (QObject::tr("Open Device"));
+    }
+}
+
+void QCapture::ToggledCmdUpload(bool toggled)
+{
+    if (toggled) {
+        Setting &set = Setting::GetInstance ();
+        QDate StartDate = QDate::fromString (
+                              set.GetValue ("/UpLoad/StartDate").toString (),
+                              QString("yyyy/M/d"));
+        QDate EndDate = QDate::fromString (
+                            set.GetValue ("/UpLoad/EndDate").toString (),
+                            QString("yyyy/M/d"));
+        mPort->write (mProtocol.makeCmdUploadQuery(CurrentDevID (),StartDate, EndDate));
+        PrepareWaitACK(STATUS_WAIT_UPLOAD_QUERY);
+    } else {
+        QByteArray data;
+        data.append ((quint8)QProtocol::CMD_UPLOAD);
+        data.append (2);
+        mPort->write (mProtocol.makePackage(CurrentDevID (),QProtocol::CMD_ACK,
+                                            data));
     }
 }
 void QCapture::AutoScroll()
 {
     mAutoScroll =!mAutoScroll ;
 }
-void QCapture::DebugInfo ()
-{
-    QDateTime time;
-    QString  DeviceId, AssayTime, PipeId, PipeType;
-    QString Flux, Ch4,Pressure, Comment,LTime,O2,CO2,CO;
-
-    time = QDateTime::currentDateTime ();
-    DeviceId = QString::number(qrand()%10);
-    AssayTime = time.toString ("yyyy/M/d/hh:mm:ss");
-    PipeType = QString::number(qrand()%10);
-    Pressure = QString::number(qrand()%90);
-    Comment  = QString::number(qrand()%90);
-    PipeId = QString::number(qrand()%10);
-    LTime = QString::number(qrand()%90);
-    Flux  = QString::number(qrand()%50);
-    Ch4 = QString::number(qrand()%90);
-    O2  = QString::number(qrand()%90);
-    CO2 = QString::number(qrand()%90);
-    CO  = QString::number(qrand()%90);
-
-    int row = mModel->rowCount ();
-    mModel->insertRow (row);
-    mModel->setData (mModel->index (row,0), DeviceId);
-    mModel->setData (mModel->index (row,1), AssayTime);
-    mModel->setData (mModel->index (row,2), PipeId);
-    mModel->setData (mModel->index (row,3), PipeType);
-    mModel->setData (mModel->index (row,4), Flux);
-    mModel->setData (mModel->index (row,5), Ch4);
-    mModel->setData (mModel->index (row,6), Pressure);
-    mModel->setData (mModel->index (row,7), Comment);
-    mModel->setData (mModel->index (row,8), LTime);
-    mModel->setData (mModel->index (row,9), O2);
-    mModel->setData (mModel->index (row,10), CO2);
-    mModel->setData (mModel->index (row,11), CO);
-    mModel->submitAll ();
-    MainTreeView->scrollToBottom ();
-
-    QSqlQuery query;
-    QString sql;
-    QTextStream stream(&sql);
-    stream << "Insert into AssayData(DeviceId, AssayTime, PipeId, PipeType, "
-           << "Flux, Ch4,Pressure,Comment,LjTime,O2,CO2,CO) values("
-           << DeviceId << ",'"  << AssayTime<< "',"
-           << PipeId << ","  << PipeType  << "," << Pressure << "," <<Comment << ","
-           << LTime << "," << Flux << "," << Ch4 << "," << O2 << ","
-           << CO2 << "," << CO << ")";
-    query.exec(sql);
-//    mTimer.start (500);
-}
 void QCapture::Stop ()
 {
-//    qDebug()<< "Qcapture::stop";
-//    QString port = comboBox->currentText ();
     if (!mPort) {
         return;
     }
-//    mPort->exit (0);
     delete mPort;
     mPort = NULL;
 }
 void QCapture::UpdateData(quint8 DeviceID, QList<MeasureVal_t> data)
 {
+    int leavePackages = mDataPackageCount - data.size ();
     foreach(MeasureVal_t var, data) {
         InsterOneItem (DeviceID, var);
+    }
+
+    if (leavePackages < 0 ) {
+        qWarning() << "Receive Larger package";
+    } else if(leavePackages == 0) {
+//           pushButton_upload->toggled (false);
+    } else {
+        qWarning() <<QObject::tr("Receive Package ") << data.size ()
+                   << QObject::tr(", Remainder ") << leavePackages
+                   << QObject::tr(" Package for Receive");
     }
 }
 void QCapture::Start ()
@@ -247,9 +232,6 @@ void QCapture::Start ()
                               QObject::tr("Can not found port")
                              );
     }
-    //connect (mPort, SIGNAL(PackagePaserDone(QList<MeasureVal_t>)), this, SLOT(UpdateData(QList<MeasureVal_t>)));
-    //connect (mPort, SIGNAL(ACK()), this, SLOT(ReceiveACK()), Qt::QueuedConnection);
-    connect(mPort, SIGNAL(readyRead()), this, SLOT(CanReceiveData()));
 
     Setting &set = Setting::GetInstance ();
     mPort->setBaudRate(set.GetValue ("COM/Baud").toInt(),QSerialPort::AllDirections);
@@ -257,6 +239,9 @@ void QCapture::Start ()
     mPort->setParity((QSerialPort::Parity)set.GetValue ("COM/Parity").toInt ());
     mPort->setStopBits((QSerialPort::StopBits)set.GetValue ("COM/Stop").toInt ());
     mPort->setFlowControl((QSerialPort::FlowControl)set.GetValue ("COM/Flow").toInt ());
+
+    connect(mPort, SIGNAL(readyRead()), this, SLOT(CanReceiveData()));
+
     if (!mPort->open (QSerialPort::ReadWrite)) {
         qDebug() << "Open Port failed";
         return;
@@ -270,7 +255,13 @@ void QCapture::InsterOneItem(quint8 DeviceID, MeasureVal_t &val)
 
     time = QDateTime::currentDateTime ();
     DeviceId = QString::number(DeviceID);
-    AssayTime = time.toString ("yyyy/M/d/hh:mm:ss");
+    AssayTime = QString("%1/%2/%3/%4:%5:%6")
+                .arg(val.cp_time.year+2000)
+                .arg(val.cp_time.mon)
+                .arg(val.cp_time.mday)
+                .arg(val.cp_time.hour)
+                .arg(val.cp_time.min)
+                .arg(val.cp_time.sec);
     PipeType = QString::number(val.pipe_type);
     PipeId = QString::number(val.pipe_num);
     AbsPressure = QString::number (val.abs_press);
@@ -306,66 +297,96 @@ void QCapture::InsterOneItem(quint8 DeviceID, MeasureVal_t &val)
            << PipeType << ","  << PipeId  << "," << SfcPressure << "," <<AbsPressure << ","
            << Temperature << "," << Ch4 << "," << O2 << "," << CO2 << ","
            << CO <<")";
-    if(!query.exec(sql)){
+    if(!query.exec(sql)) {
         qDebug() << sql;
         qDebug()<< "Exec sql failed, Error Info:" << query.lastError ().text ();
     }
 }
-void QCapture::ReceiveACK()
+void QCapture::ReceiveACK(quint32 Cmd, bool isReceiveAck)
 {
-    //if (mTimer.isActive ()) {
-    //    mTimer.stop ();
-    //}
+    QString log;
     pushButton_setpara->setEnabled (true);
     pushButton_settime->setEnabled (true);
     pushButton_eraseall->setEnabled (true);
     pushButton_Clear->setEnabled (true);
-    qDebug() << "Receive ACK";
-}
-void QCapture::PrepareWaitACK()
-{
-    // pushButton_setpara->setEnabled (false);
-    // pushButton_settime->setEnabled (false);
-    // pushButton_eraseall->setEnabled (false);
-    // pushButton_Clear->setEnabled (false);
-
-//    mWaitAckTime= 10;
-//    qDebug() << "Wait for ACK, TimeOut is " << mWaitAckTime << "S";
-//    connect(&mTimer, SIGNAL(timeout()), this, SLOT(WaitACK()), Qt::QueuedConnection);
-//    mTimer.start (1000);
-}
-void QCapture::WaitACK()
-{
-    if ((--mWaitAckTime) >= 0) {
-        qDebug() << "Wait for ACK, TimeOut is " <<mWaitAckTime << "S";
-//        mTimer.start(1000);
-    } else {
-        pushButton_setpara->setEnabled (true);
-        pushButton_settime->setEnabled (true);
-        pushButton_eraseall->setEnabled (true);
-        pushButton_Clear->setEnabled (true);
-        //if (mTimer.isActive ()) {
-        //    mTimer.stop ();
-        //}
+    pushButton_upload->setEnabled (true);
+    switch(Cmd) {
+    case QProtocol::CMD_SET_PARAM:
+        log = QObject::tr("Set Param");
+        break;
+    case QProtocol::CMD_SET_TIME:
+        log = QObject::tr("Set Time");
+        break;
+    case QProtocol::CMD_ERASE_ALL:
+        log = QObject::tr("Erase All Device Data");
+        break;
+    case QProtocol::CMD_UPLOAD_QUERY:
+        log = QObject::tr("Receive UPLoad Query");
+        break;
+    case QProtocol::CMD_UPLOAD:
+        log = QObject::tr("Upload done");
+        if (pushButton_upload->isChecked ()) {
+            pushButton_upload->toggle ();
+        }
+    default:
+        break;
     }
+    if (isReceiveAck) {
+        log += QObject::tr(" OK") ;
+    } else {
+        log += QObject::tr(" Failed") ;
+    }
+    RemoveTimer (WAIT_ACK_TIMEOUT);
+    qWarning() << log;
 }
+void QCapture::InsertTimer(int timerIdKey)
+{
+    mMutex.lock();
+    if (mTimerIdMap.find(timerIdKey) != mTimerIdMap.end ()) {
+        killTimer (mTimerIdMap[timerIdKey]);
+        mTimerIdMap.remove (timerIdKey);
+        qDebug() << "Timer is exist, first remove it";
+    }
+    mTimerIdMap[timerIdKey] = startTimer (timerIdKey);
+    mMutex.unlock();
+}
+void QCapture::RemoveTimer(int timerIdKey)
+{
+    mMutex.lock();
+    if (mTimerIdMap.find(timerIdKey) != mTimerIdMap.end ()) {
+        killTimer (mTimerIdMap[timerIdKey]);
+        mTimerIdMap.remove (timerIdKey);
+    }
+    mMutex.unlock();
+}
+void QCapture::PrepareWaitACK(Status_enum status)
+{
+    mStatus = status;
+    pushButton_upload->setEnabled (false);
+    pushButton_setpara->setEnabled (false);
+    pushButton_settime->setEnabled (false);
+    pushButton_eraseall->setEnabled (false);
+    pushButton_Clear->setEnabled (false);
+    InsertTimer(WAIT_ACK_TIMEOUT);
+}
+
 void QCapture::SendCmdSetTime ()
 {
     QDateTime start=QDateTime::currentDateTime ();
-    mPort->write(mProtocol.makeCmdSetTime (CurrentDevID (), start));//, end));
-    PrepareWaitACK();
+    mPort->write(mProtocol.makeCmdSetTime (CurrentDevID (), start));
+    PrepareWaitACK(STATUS_WAIT_SETTIME_ACK);
 }
 void QCapture::SendCmdSetPara()
 {
     Settings_t set = Setting::GetInstance ().GetSettingsT ();
     QByteArray data((char*)&set, sizeof(Settings_t));
     mPort->write (mProtocol.makeCmdSetParam (CurrentDevID (),data));
-    PrepareWaitACK();
+    PrepareWaitACK(STATUS_WAIT_SETTIME_ACK);
 }
 void QCapture::SendCmdEraseAll()
 {
     mPort->write (mProtocol.makeCmdEraseAll (CurrentDevID()));
-    PrepareWaitACK();
+    PrepareWaitACK(STATUS_WAIT_ERASEALL_ACK);
 }
 
 void QCapture::SendCmdUpload()
@@ -379,18 +400,19 @@ void QCapture::SendCmdUpload()
                         set.GetValue ("/UpLoad/EndDate").toString (),
                         QString("yyyy/M/d"));
     mPort->write (mProtocol.makeCmdUpload (CurrentDevID (),StartDate, EndDate));
+    PrepareWaitACK(STATUS_WAIT_PREPARE_UPLOAD);
 }
 void QCapture::CanReceiveData()
 {
     QByteArray Package("");
     QByteArray temp("");
-    QProtocol pro;
+    QProtocol mProtocol;
 
     temp =  mPort->readAll ();
     if (!temp.size ()) {
         return;
     }
-    qDebug() << "H<--D:"<< pro.DumpArray (temp);
+//    qDebug() << "H<--D:"<< mProtocol.DumpArray (temp);
     mRecvData->append(temp);
 //  qDebug() <<"RecvData:" << mProtocol.DumpArray (*mRecvData);
 // PACKAGE=STX+LEN+ADDR+CMD+DATA+FCS
@@ -424,52 +446,122 @@ void QCapture::CanReceiveData()
         mRecvData->clear ();
     }
 }
-bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
+bool QCapture::HostPaserPackage (QByteArray &Package, bool fcs)
 {
-    QProtocol pro;
-    qWarning() << "PACKAGE:" << pro.DumpArray (Package);
+    qWarning() << "Host PACKAGE:" << mProtocol.DumpArray (Package);
     if (!fcs) {
-        mPort->write(pro.makeCmdNACK (Package.at(2)));
+        mPort->write(mProtocol.makeCmdNACK (Package.at(3), Package.at(2)));
         qWarning() << "Package check failed, skip this Package";
         return false;
     }
-    if (QProtocol::CMD_SET_PARAM == Package.at (3)) {
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        qDebug() << "Set Param";
+    switch(Package.at(3)) {
+    case QProtocol::CMD_ACK: {
+        ReceiveACK (Package.at(4),true);
+        break;
     }
-    if (QProtocol::CMD_SET_TIME == Package.at (3)) {
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        qDebug() << "Set Time";
+    case QProtocol::CMD_UPLOAD_QUERY: {
+        //STX＋LEN+ ADDR + 0x11 + DATA(4 Byte) + FCS
+        mDataPackageCount = Package.mid (4).toUInt ();
+        memcpy(&mDataPackageCount, Package.mid(4).data(), sizeof(mDataPackageCount));
+        ReceiveACK (Package.at(3),true);
+        qWarning() << "Prepare Receive Package Count is " << mDataPackageCount;
+        if (mDataPackageCount !=0) {
+            SendCmdUpload();
+        } else if (0xFFFFFFFF == mDataPackageCount) {
+            qWarning() << "Device ERROR";
+        }
+        break;
     }
-    if (QProtocol::CMD_ERASE_ALL == Package.at (3)) {
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        qDebug() << "Erase all";
-    }
-    if (QProtocol::CMD_UPLOAD == Package.at(3)) { //CMD
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        //debug();
-        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-                                            mProtocol.makeUploadResp (qrand()%5)));
-        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-                                            mProtocol.makeUploadResp (qrand()%5)));
-        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-        //                                    mProtocol.makeUploadResp (qrand()%5)));
-        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-        //                                    mProtocol.makeUploadResp (qrand()%5)));
-        //mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD_RESP,
-        //                                    mProtocol.makeUploadResp (qrand()%5)));
-        qWarning() << "Resquest Upload";
-
-    }
-    if (QProtocol::CMD_UPLOAD_RESP == Package.at(3)) { //CMD
-        mPort->write(pro.makeCmdACK (Package.at(2)));
-        QList<MeasureVal_t> resp =
-            mProtocol.PaserRespCmdUpload (Package.mid(4));
+    case QProtocol::CMD_UPLOAD: {
+        QList<MeasureVal_t> resp = mProtocol.PaserRespCmdUpload (Package.mid(8));
+        quint32 PackageNumber;
+        memcpy(&PackageNumber, Package.mid(4), sizeof(PackageNumber));
+        mPort->write(mProtocol.makeCmdACK (Package.at(3), Package.at(2)));
         UpdateData(Package.at(2), resp);
-        qWarning() << "Upload Resp " << resp.size ();
+        qWarning() << "Receive Package, PackageNumber " << PackageNumber << "PackageCount " << resp.size ();
+        break;
     }
-    if (QProtocol::CMD_ACK == Package.at(3)) { //CMD
-        qWarning() << "Recv ACK";
+    default: {
+        qWarning() << "Unkow package id " << QString::number (Package.at (3));
+        break;
+    }
+    }
+
+    return true;
+}
+bool QCapture::ClientPaserPackage (QByteArray &Package, bool fcs)
+{
+    static int CurrentPackageNumber = 0;
+    qWarning() << "Client PACKAGE:" << mProtocol.DumpArray (Package);
+    if (!fcs) {
+        mPort->write(mProtocol.makeCmdNACK (Package.at(3), Package.at(2)));
+        qWarning() << "Package check failed, skip this Package";
+        return false;
+    }
+    switch(Package.at(3)) {
+    case QProtocol::CMD_SET_PARAM: {
+        qDebug() << "Set Param";
+        mPort->write(mProtocol.makeCmdACK (Package.at(3),Package.at (2)));
+        break;
+    }
+    case QProtocol::CMD_SET_TIME: {
+        qDebug() << "Set Time";
+        mPort->write(mProtocol.makeCmdACK (Package.at(3),Package.at (2)));
+        break;
+    }
+    case QProtocol::CMD_ERASE_ALL: {
+        qDebug() << "Erase all";
+        mPort->write(mProtocol.makeCmdACK (Package.at(3),Package.at (2)));
+        break;
+    }
+    case QProtocol::CMD_UPLOAD_QUERY: {
+        CurrentPackageNumber = 0;
+        mDataPackageCount = qrand()%20;
+        if (mDataPackageCount==0) mDataPackageCount = 9;
+        QByteArray data((char*)&mDataPackageCount, sizeof(quint32));
+        data =mProtocol.makePackage (Package.at(2), (quint8)QProtocol::CMD_UPLOAD_QUERY, data);
+        mPort->write(data);
+        break;
+    }
+    case QProtocol::CMD_UPLOAD: {
+        mPort->write(mProtocol.makePackage (CurrentDevID (), QProtocol::CMD_UPLOAD,
+                                            mProtocol.makeUploadResp(5,CurrentPackageNumber)));
+        CurrentPackageNumber +=1;
+        qWarning() << "Receive Reuqest Upload";
+        break;
+    }
+    case QProtocol::CMD_ACK: {
+//                0x2 0x5 0x1 0x6 0x11 0x0
+        if (Package.at(4) != QProtocol::CMD_UPLOAD) {
+            break;
+        }
+        if (Package.at (5) == 2) {
+            qWarning() << "All Data Upload";
+            break;
+        }
+        qWarning() << "mDataPackageCount=" << mDataPackageCount;
+        qWarning() << "CurrentPackageNumber=" << CurrentPackageNumber;
+        if(mDataPackageCount - CurrentPackageNumber >= 0) {
+            mPort->write(mProtocol.makePackage (
+                             CurrentDevID (), QProtocol::CMD_UPLOAD,
+                             mProtocol.makeUploadResp(5,CurrentPackageNumber)));
+            CurrentPackageNumber +=1;
+        }
+        if (mDataPackageCount == CurrentPackageNumber) {
+            mPort->write(mProtocol.makeCmdACK (QProtocol::CMD_UPLOAD,Package.at (2)));
+        }
+        break;
+    }
     }
     return true;
+}
+bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
+{
+
+#ifdef QT_DEBUG
+    if (pushButton_Host->isChecked ()) {
+        return ClientPaserPackage (Package, fcs);
+    }
+#endif
+    return HostPaserPackage (Package, fcs);
 }

@@ -50,6 +50,8 @@ void Setting::ReInitDefault()
     mSetting->setValue ("DeviceID", "0");
     mSetting->setValue ("/UpLoad/StartDate", QDate::currentDate ().toString ("yyyy/M/d"));
     mSetting->setValue ("/UpLoad/EndDate", QDate::currentDate ().toString ("yyyy/M/d"));
+
+    mSetting->setValue ("SelfTest", 0);
     mSetting->sync ();
 }
 

@@ -91,13 +91,13 @@ void DeviceInfo::DbAdd()
     }
     mModel->setData(mModel->index(rowNum,0), dev.ui->lineEdit_devId->text ());
 //  mModel->setData(mModel->index(rowNum,0), dev.ui->comboBox_devType->currentText ());
-    mModel->setData(mModel->index(rowNum,1), dev.ui->comboBox_devType->currentText());
-    mModel->setData(mModel->index(rowNum,2), dev.ui->comboBox_PipeIdType->currentText ());
+    mModel->setData(mModel->index(rowNum,1), dev.ui->comboBox_PipeIdType->currentText());
+//    mModel->setData(mModel->index(rowNum,2), dev.ui->comboBox_PipeIdType->currentText ());
     QString checkable("0");
-    if (dev.ui->checkBox_Resizeable->isChecked ()) {
-        checkable = "1";
-    }
-    mModel->setData(mModel->index(rowNum,3), checkable);
+    //if (dev.ui->checkBox_Resizeable->isChecked ()) {
+    //    checkable = "1";
+    //}
+    //mModel->setData(mModel->index(rowNum,3), checkable);
     DbModify();
     mModel->select ();
 }
@@ -131,7 +131,7 @@ void DeviceInfo::DbModify()
         mModel->database().commit();
     } else {
         mModel->database().rollback();
-        QMessageBox::warning(this, QObject::tr("tableMode"),
+        QMessageBox::warning(this, QObject::tr("Add Device To DB Failed"),
                              QObject::tr("Db Error: %1").arg(mModel->lastError ().text ()));
     }
 }

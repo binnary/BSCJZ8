@@ -39,6 +39,9 @@
      </item>
      <item>
       <widget class="QComboBox" name="comboBox_devType">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <item>
         <property name="text">
          <string>CJZ70</string>
@@ -70,7 +73,7 @@
      <item>
       <widget class="QLineEdit" name="lineEdit_devId">
        <property name="text">
-        <string>1003</string>
+        <string>1</string>
        </property>
       </widget>
      </item>
@@ -87,24 +90,22 @@
      </item>
      <item>
       <widget class="QComboBox" name="comboBox_PipeIdType">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
        <item>
         <property name="text">
-         <string>6 Bit</string>
+         <string>DN25</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>8 Bit</string>
+         <string>DN50</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>10 Bit</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>15 Bit</string>
+         <string>DN300</string>
         </property>
        </item>
       </widget>
@@ -115,6 +116,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QCheckBox" name="checkBox_Resizeable">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Resizeable Pipe</string>
        </property>
