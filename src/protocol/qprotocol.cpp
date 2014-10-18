@@ -9,9 +9,9 @@ QProtocol::QProtocol(QObject *parent) :
 QByteArray QProtocol::makeDate(QDate date)
 {
     QByteArray ArrayDate("");
-    ArrayDate.append((quint8)(date.year()-2000));
-    ArrayDate.append((quint8)date.month());
     ArrayDate.append((quint8)date.day());
+    ArrayDate.append((quint8)date.month());
+    ArrayDate.append((quint8)(date.year()-2000));
     return ArrayDate;
 }
 

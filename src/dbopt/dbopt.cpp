@@ -25,10 +25,10 @@ QString GetTableColumByFriendName(QString FirendName)
   QString sql;
   QSqlQuery query;
   sql = QString("SELECT * FROM FriendlyName WHERE FriendlyName='") + FirendName + QString("'");
-  qDebug() << sql;
+//  qDebug() << sql;
   query.exec(sql);
   if(query.next ()){
-     qDebug() << query.value ("Name").toString ();
+//     qDebug() << query.value ("Name").toString ();
      return query.value ("Name").toString ();
   }
   return QString("");

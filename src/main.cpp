@@ -50,6 +50,8 @@ int main(int argc, char *argv[])
     a.setFont(font);
 
     MainWindow w;
+    w.setWindowState (Qt::WindowFullScreen);
+    w.setWindowState (Qt::WindowMaximized);
     w.show();
 
     return a.exec();

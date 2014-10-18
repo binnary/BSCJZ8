@@ -55,12 +55,12 @@ DisAssayData::DisAssayData(QDialog *parent) :
         ui->dateTimeEdit_Start->setDateTime(
             QDateTime::fromString (
                 query.value ("MIN(AssayTime)").toString (),
-                QString("yyyy/M/d/hh:mm:ss"))
+                QString("yyyy/MM/dd/hh:mm:ss"))
         );
         ui->dateTimeEdit_End->setDateTime(
             QDateTime::fromString (
                 query.value ("MAX(AssayTime)").toString (),
-                QString("yyyy/M/d/hh:mm:ss"))
+                QString("yyyy/MM/dd/hh:mm:ss"))
         );
     }
 
@@ -120,9 +120,9 @@ void DisAssayData::FilterQuery()
             filter+= QString(" and ");
         }
         filter += QString ("AssayTime>='") +
-                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/M/d/hh:mm:ss")+
+                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/MM/dd/hh:mm:ss")+
                   QString("' and AssayTime<='") +
-                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/M/d/hh:mm:ss") +
+                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/MM/dd/hh:mm:ss") +
                   QString("'");
     }
     if (ui->checkBox_PipeIndex->isChecked ()) {
@@ -150,7 +150,7 @@ void DisAssayData::DebugInfo ()
     int count = 100;
     while((count--)>=0) {
         stream << "Insert into AssayData (DeviceId, AssayTime, PipeId, PipeType, Ch4) values(1,'"
-               << time.toString ("yyyy/M/d/hh:mm:ss") << "',0,00," << qrand()%1000 << ")";
+               << time.toString ("yyyy/MM/dd/hh:mm:ss") << "',0,00," << qrand()%1000 << ")";
         query.exec(sql);
         sql.clear ();
     }
@@ -164,7 +164,7 @@ void DisAssayData::UpdateDate ()
     QDateTime time;
     time = QDateTime::currentDateTime ();
     stream << "Insert into AssayData (DeviceId, AssayTime, PipeId, PipeType, Ch4) values("
-           <<qrand()%10 << ",'"<< time.toString ("yyyy/M/d/hh:mm:ss") << "',0,00," << qrand()%1000 << ")";
+           <<qrand()%10 << ",'"<< time.toString ("yyyy/MM/dd/hh:mm:ss") << "',0,00," << qrand()%1000 << ")";
     query.exec(sql);
     mModel->select();
 }
@@ -313,7 +313,7 @@ void DisAssayData::print()
     dlg.setRange (0,recordCount);
     connect (this, SIGNAL(signalCount(int)),&dlg,SLOT(setValue(int)));
     connect(this,SIGNAL(setDlgText(QString)), &dlg, SLOT(setLabelText(QString)));
-    if (dlg.exec ()== QProgressDialog::Rejected){
+    if (dlg.exec ()== QProgressDialog::Rejected) {
         future.cancel ();
         future.waitForFinished ();
     }

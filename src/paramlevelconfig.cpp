@@ -12,6 +12,7 @@
                  QString(#name)+ \
                  QString("'"); \
     query.exec(name);
+
 #define UpDateUi(name) \
     QString name= QString("SELECT * FROM FriendlyName WHERE Name='")+ #name +QString("'");\
     query.exec(name); \

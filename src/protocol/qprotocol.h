@@ -22,7 +22,7 @@ typedef struct{
 }Time_t;
 
 typedef struct{
-    quint8  magic_code;
+    quint16  magic_code;
     Time_t cp_time;    //capture time
     quint16  pipe_type; //管道类型
     quint16  pipe_num; //管道编号
@@ -78,7 +78,7 @@ public:
     }FSM;
     enum CMD{
         CMD_ACK=0x06,
-        CMD_ACK_ERR=0x07,
+        CMD_ACK_ERR=0x06,
         CMD_UPLOAD_QUERY=0x10,
         CMD_UPLOAD=0x11,
         CMD_ERASE_ALL=0x12,

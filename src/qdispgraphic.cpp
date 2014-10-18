@@ -1,16 +1,4 @@
 #include "qdispgraphic.h"
-#include <qwt_plot_layout.h>
-#include <qwt_plot_curve.h>
-#include <qwt_picker_machine.h>
-#include <qwt_scale_draw.h>
-#include <qwt_scale_widget.h>
-#include <qwt_legend.h>
-#include <qwt_symbol.h>
-#include <qwt_legend_label.h>
-#include <qwt_plot_canvas.h>
-#include <qwt_plot_panner.h>
-#include <qwt_plot_magnifier.h>
-#include <qwt_plot_zoomer.h>
 #include "paramlevelconfig.h"
 #include "ui_qdispgraphic.h"
 #include "dbopt.h"
@@ -20,14 +8,17 @@
 #include <QSqlQuery>
 #include  <QPrinter>
 #include <QPrintDialog>
-#include <qwt_plot_renderer.h>
+
 QDispgraphic::QDispgraphic(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QDispgraphic),
     mMarkerMax(NULL),
     mMarkerMin(NULL),
     mPicker(NULL),
-    mGrid(NULL)
+    mGrid(NULL),
+    mScaleDraw(NULL),
+    mScaleEngine(NULL),
+    mDisPlot(NULL),mPanner(NULL)
 {
     ui->setupUi(this);
     mModel = new QSqlTableModel();
@@ -37,7 +28,6 @@ QDispgraphic::QDispgraphic(QWidget *parent) :
     InitPlot ();
     InitCurve("Ch4", Qt::black);
     queryData("Ch4");
-//    queryData("AssayTime","Ch4");
 
     QSqlQuery query;
     query.exec("SELECT * from AssayData");
@@ -59,23 +49,21 @@ QDispgraphic::QDispgraphic(QWidget *parent) :
         ui->dateTimeEdit_Start->setDateTime(
             QDateTime::fromString (
                 query.value ("MIN(AssayTime)").toString (),
-                QString("yyyy/M/d/hh:mm:ss"))
+                QString("yyyy/MM/dd/hh:mm:ss"))
         );
         ui->dateTimeEdit_End->setDateTime(
             QDateTime::fromString (
                 query.value ("MAX(AssayTime)").toString (),
-                QString("yyyy/M/d/hh:mm:ss"))
+                QString("yyyy/MM/dd/hh:mm:ss"))
         );
     }
     query.exec("SELECT * from FriendlyName");
-    while(query.next ()){
-        qDebug() << query.value ("RangeMax").toString ().size ();
-        qDebug() <<query.value ("RangeMin").toString ().size ();
-        if (query.value ("RangeMax").toString ().size ()){
+    while(query.next ()) {
+        if (query.value ("RangeMax").toString ().size ()) {
             ui->comboBox->addItem (query.value ("FriendlyName").toString ());
         }
     }
-    DevIdChange (ui->comboBox_DevIndex->currentText ());
+    FilterQuery();
     connect(ui->checkBox_DevIndex,
             SIGNAL(clicked()),
             this,
@@ -83,7 +71,7 @@ QDispgraphic::QDispgraphic(QWidget *parent) :
     connect(ui->comboBox_DevIndex,
             SIGNAL(currentIndexChanged(QString)),
             this,
-            SLOT(DevIdChange(QString)));
+            SLOT(FilterQuery()));
     connect(ui->checkBox_StartEndDate,
             SIGNAL(clicked()),
             this,
@@ -149,6 +137,9 @@ QDispgraphic::~QDispgraphic()
     if(mGrid) {
         delete mGrid;
     }
+    if(mPanner) {
+        delete mPanner;
+    }
 }
 
 void QDispgraphic::InitPlot()
@@ -169,12 +160,12 @@ void QDispgraphic::InitPlot()
 //    canvas->setPalette(canvasPalette);
     canvas->setPalette( palette ());
     ui->qwtPlot->setCanvas( canvas );
+
     // panning with the left mouse button
-    ( void ) new QwtPlotPanner( canvas );
+    mPanner =  new QwtPlotPanner( canvas );
 
     // zoom in/out with the wheel
-    //    ( void ) new QwtPlotMagnifier( canvas );
-    ( void ) new DisPlotMagnifier( canvas );
+    mDisPlot = new DisPlotMagnifier( canvas );
 
     ui->qwtPlot->setAxisTitle( QwtPlot::xBottom, "X-->" );
     ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0,20);
@@ -184,16 +175,7 @@ void QDispgraphic::InitPlot()
 
     ui->qwtPlot->setAxisTitle( QwtPlot::yLeft, "Y-->" );
     ui->qwtPlot->setAxisScale( QwtPlot::yLeft, 0, 1000);
-    //    QwtPlotZoomer* zoomer = new QwtPlotZoomer( ui->qwtPlot->canvas() );
-    //    zoomer->setRubberBandPen( QColor( Qt::black ) );
-    //    zoomer->setTrackerPen( QColor( Qt::black ) );
-    //    zoomer->setMousePattern(QwtEventPattern::MouseSelect2,Qt::RightButton, Qt::ControlModifier );
-    //    zoomer->setMousePattern(QwtEventPattern::MouseSelect3,Qt::RightButton );
-    //    QwtLegend *legend = new QwtLegend;
-    //    legend->setDefaultItemMode( QwtLegendData::Checkable );
-    //    ui->qwtPlot->insertLegend( legend, QwtPlot::RightLegend );
-    //    connect( legend, SIGNAL( checked( const QVariant &, bool, int ) ),
-    //        SLOT( legendChecked( const QVariant &, bool ) ) );
+
     // grid
     mGrid = new QwtPlotGrid();
     mGrid->enableXMin( true );
@@ -218,36 +200,38 @@ void QDispgraphic::InitPlot()
     mMarkerMin->setLabelAlignment( Qt::AlignRight | Qt::AlignBottom );
     mMarkerMin->setLinePen( Qt::darkYellow, 1, Qt::SolidLine );
     mMarkerMin->attach(ui->qwtPlot);
-    mPicker = new QwtPlotPicker( QwtPlot::xBottom, QwtPlot::yLeft,
-        QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,
-        ui->qwtPlot->canvas ());
-    mPicker->setStateMachine( new QwtPickerDragPointMachine() );
-    mPicker->setRubberBandPen( QColor( Qt::green ) );
-    mPicker->setRubberBand( QwtPicker::CrossRubberBand );
-    mPicker->setTrackerPen( QColor( Qt::darkBlue ) );
+
+    //Picker
+    mPicker = new Picker(ui->qwtPlot->canvas ());
+
+    mScaleDraw = new DateScaleDraw( Qt::UTC);
+    mScaleEngine = new DateScaleEngine( Qt::UTC);
+
+    ui->qwtPlot->axisScaleDraw (QwtPlot::xBottom);
+    ui->qwtPlot->setAxisScaleDraw( QwtPlot::xBottom, mScaleDraw );
+    ui->qwtPlot->setAxisScaleEngine(QwtPlot::xBottom, mScaleEngine );
+    ui->qwtPlot->setAxisLabelAlignment( QwtPlot::xBottom, Qt::AlignLeft | Qt::AlignBottom );
+
 }
 
 void QDispgraphic::MaxMarkervalueChanged(double value)
 {
-    if(!mMarkerMax){
+    if(!mMarkerMax) {
         return;
     }
     mMarkerMax->setValue( 0.0, value);
-    //QString Lable = QObject::tr("Range(");
-    //Lable += QString::number (minY)+ QString(",") +QString::number (maxY) +QString(")");
-    //mMarkerMax->setLabel (QwtText(Lable));
 }
 void QDispgraphic::MinMarkervalueChanged(double value)
 {
-    if(!mMarkerMin){
+    if(!mMarkerMin) {
         return;
     }
     mMarkerMin->setValue( 0.0, value);
 }
 void QDispgraphic::ConfigParamLevel()
 {
-   ParamLevelConfig  config;
-   config.exec ();
+    ParamLevelConfig  config;
+    config.exec ();
 }
 void QDispgraphic::printFunc()
 {
@@ -276,36 +260,44 @@ void QDispgraphic::printFunc()
         renderer.renderTo(ui->qwtPlot, printer );
     }
 }
-void QDispgraphic::exportpdf()
-{
-
-}
 
 void QDispgraphic::queryData(QString name)
 {
     QVector<QPointF> temp;
     int maxY = 0;
     int minY = 0;
-    int Y;
     int count = 0;
-    while((count++) < mModel->rowCount ()) {
-        Y = mModel->record (count).value (name).toInt ();
-        temp.push_back (QPointF(count, Y));
+    QSqlQuery query;
+    query.exec("SELECT MAX(AssayTime), MIN(AssayTime) FROM AssayData");
+    if(query.next ()) {
+        double minAssayTime = 0;
+        double maxAssayTime = 0;
+        minAssayTime = QwtDate::toDouble(QDateTime::fromString (
+                                             query.value ("MIN(AssayTime)").toString (),"yyyy/MM/dd/hh:mm:ss")
+                                        );
+        maxAssayTime = QwtDate::toDouble (QDateTime::fromString (
+                                              query.value ("MAX(AssayTime)").toString (),"yyyy/MM/dd/hh:mm:ss")
+                                         );
+        ui->qwtPlot->setAxisScale( QwtPlot::xBottom,
+                                   minAssayTime, maxAssayTime);
+    }
+
+    while((count) < mModel->rowCount ()) {
+        double Y = mModel->record (count).value (name).toDouble ();
+        double IntX =QwtDate::toDouble (QDateTime::fromString (
+                                            mModel->record (count).value ("AssayTime").toString (),"yyyy/M/d/h:m:s"));
+        temp.push_back (QPointF(IntX, Y));
         Y >= maxY ? maxY = Y : maxY = maxY;
         Y <= minY ? minY = Y : minY = minY;
+        if (mModel->canFetchMore ()) {
+            mModel->fetchMore ();
+        }
+        count++;
     }
-    //mMarkerMax->setValue( 0.0, maxY);
-    //QString Lable = QObject::tr("Range(");
-    //Lable += QString::number (minY)+ QString(",") +QString::number (maxY) +QString(")");
-    //mMarkerMax->setLabel (QwtText(Lable));
-    //mMarkerMax->setLabelAlignment(Qt::AlignLeft);
-
-    //mMarkerMin->setValue( 0.0, minY);
-    //Lable.setText (QString("Min ") + QString::number (minY));
-    //mMarkerMin->setLabel (Lable);
-
-    ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0, count);
-    ui->qwtPlot->setAxisScale( QwtPlot::yLeft, 0, maxY*12/10);
+    ui->qwtPlot->setAxisScale( QwtPlot::yLeft,(double)minY*12.0/10.0, (double)maxY*12.0/10.0);
+    if (mDisPlot) {
+        mDisPlot->setAxisScale((double)minY*12.0/10.0, (double)maxY*12.0/10.0);
+    }
     QList<DispCurve*>::iterator it;
     for (it=mCurveList.begin (); it!=mCurveList.end (); it++) {
         if (((DispCurve*)*it)->title().text() == name) {
@@ -318,10 +310,10 @@ void QDispgraphic::queryData(QString name)
 void QDispgraphic::DisplayChange(QString index)
 {
     QString sql = QString("SELECT * FROM FriendlyName Where Name='")+
-               GetTableColumByFriendName(index) + QString("'");
+                  GetTableColumByFriendName(index) + QString("'");
     QSqlQuery query;
     query.exec(sql);
-    if (query.next ()){
+    if (query.next ()) {
         ui->spinBox_Max->setValue (query.value ("RangeMax").toDouble ());
         MaxMarkervalueChanged (query.value ("RangeMax").toDouble ());
         ui->spinBox_Min->setValue (query.value ("RangeMin").toDouble ());
@@ -329,53 +321,7 @@ void QDispgraphic::DisplayChange(QString index)
     }
     FilterQuery ();
 }
-void QDispgraphic::DevIdChange(QString index)
-{
-    qDebug() <<index;
-//    qDebug() << index;
-    //QString filter("DeviceId= ");
-    //filter += index;
-    //mModel->setFilter (filter);
-    //mModel->select ();
-    //queryData (ui->comboBox->currentText ());
-    FilterQuery ();
-}
 
-void QDispgraphic::queryData(QString X, QString Y)
-{
-    QVector<QPointF> temp;
-    int maxY = 0;
-    int IntY;
-    int count = 1;
-    uint minAssayTime = 0;
-    QSqlQuery query;
-    query.exec("SELECT MAX(AssayTime), MIN(AssayTime) FROM AssayData");
-    if(query.next ()) {
-        minAssayTime = QDateTime::fromString (
-                        query.value ("MIN(AssayTime)").toString (),"yyyy/M/d/hh:mm:ss")
-                       .toTime_t ();
-    }
-
-    while((count++) < mModel->rowCount ()) {
-        IntY = mModel->record (count).value (Y).toInt ();
-        uint IntX =QDateTime::fromString (
-                        mModel->record (count).value ("AssayTime").toString (),"yyyy/M/d/hh:mm:ss")
-                       .toTime_t ();
-                 qDebug()<< " IntX:" << IntX << " IntY:" << IntY;
-        temp.push_back (QPointF(IntX-minAssayTime,IntY));
-        IntY >= maxY ? maxY = IntY : maxY = maxY;
-    }
-    ui->qwtPlot->setAxisScale( QwtPlot::xBottom, 0, count);
-    ui->qwtPlot->setAxisScale( QwtPlot::yLeft, 0, maxY);
-    QList<DispCurve*>::iterator it;
-    for (it=mCurveList.begin (); it!=mCurveList.end (); it++) {
-        if (((DispCurve*)*it)->title().text() == "Ch4") {
-            ((DispCurve*)*it)->setSamples (temp);
-        }
-
-    }
-    ui->qwtPlot->replot ();
-}
 void QDispgraphic::legendChecked( const QVariant &itemInfo, bool on )
 {
     QwtPlotItem *plotItem = ui->qwtPlot->infoToItem( itemInfo );
@@ -406,11 +352,12 @@ void QDispgraphic::InitCurve(QString name, QColor color)
 {
     DispCurve *curve = NULL;
     curve = new DispCurve(name);
-    curve->setStyle (DispCurve::Sticks);
+//    curve->setStyle (DispCurve::Sticks);
+    curve->setStyle (DispCurve::Lines);
 //    curve->setCurveAttribute(DispCurve::Fitted);
     curve->setLegendAttribute( QwtPlotCurve::LegendShowLine );
-    curve->setSymbol( new QwtSymbol( QwtSymbol::Cross, Qt::NoBrush,
-        QPen( Qt::red ), QSize( 5, 5 ) ) );
+    curve->setSymbol( new QwtSymbol( QwtSymbol::Star2, Qt::NoBrush,
+                                     QPen( Qt::red ), QSize( 7, 7 ) ) );
     curve->setPen(color);
     curve->setZ( curve->z() - 2 );
     curve->attach(ui->qwtPlot);
@@ -428,9 +375,9 @@ void QDispgraphic::FilterQuery()
             filter+= QString(" and ");
         }
         filter += QString ("AssayTime>='") +
-                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/M/d/hh:mm:ss")+
+                  ui->dateTimeEdit_Start->dateTime().toString ("yyyy/MM/dd/hh:mm:ss")+
                   QString("' and AssayTime<='") +
-                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/M/d/hh:mm:ss") +
+                  ui->dateTimeEdit_End->dateTime().toString ("yyyy/MM/dd/hh:mm:ss") +
                   QString("'");
     }
     if (ui->checkBox_PipeIndex->isChecked ()) {
@@ -447,11 +394,9 @@ void QDispgraphic::FilterQuery()
     GraphicLable =QString("X-->\n") + ui->comboBox->currentText () +QString(" Filter: ") +filter;
 
     ui->qwtPlot->setAxisTitle( QwtPlot::xBottom, GraphicLable );
-    qDebug() <<  filter;
+    qDebug() <<"Filter:" << filter;
     mModel->setFilter(filter + QString(" ORDER BY AssayTime"));
     mModel->setFilter(filter);
     mModel->select ();
-//    queryData("AssayTime","Ch4");
-//    queryData ("AssayTime",ui->comboBox->currentText ());
     queryData (GetTableColumByFriendName(ui->comboBox->currentText ()));
 }

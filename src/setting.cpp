@@ -48,8 +48,8 @@ void Setting::ReInitDefault()
     //    mSetting->setValue (gList[i]+"/PARAM_D", 0.0);
     //}
     mSetting->setValue ("DeviceID", "0");
-    mSetting->setValue ("/UpLoad/StartDate", QDate::currentDate ().toString ("yyyy/M/d"));
-    mSetting->setValue ("/UpLoad/EndDate", QDate::currentDate ().toString ("yyyy/M/d"));
+    mSetting->setValue ("/UpLoad/StartDate", QDate::currentDate ().toString ("yyyy/MM/dd"));
+    mSetting->setValue ("/UpLoad/EndDate", QDate::currentDate ().toString ("yyyy/MM/dd"));
 
     mSetting->setValue ("SelfTest", 0);
     mSetting->sync ();

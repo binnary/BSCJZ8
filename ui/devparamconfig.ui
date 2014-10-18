@@ -196,7 +196,7 @@
         <item>
          <widget class="QDateEdit" name="dateEdit_StartDate">
           <property name="displayFormat">
-           <string>yyyy年M月d日</string>
+           <string>yyyy/MM/dd</string>
           </property>
          </widget>
         </item>
@@ -214,7 +214,7 @@
         <item>
          <widget class="QDateEdit" name="dateEdit_EndDate">
           <property name="displayFormat">
-           <string>yyyy年M月d日</string>
+           <string>yyyy/MM/dd</string>
           </property>
          </widget>
         </item>

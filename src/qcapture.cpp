@@ -149,6 +149,12 @@ void QCapture::ClearData()
 }
 void QCapture::ToggledCapture(bool toggled)
 {
+    if (!comboBox->currentText ().length ()){
+        QMessageBox::warning (this, QObject::tr("Warning"),
+                              QObject::tr("Please Select port")
+                             );
+        return;
+    }
     if (toggled) {
         mRecvData->clear ();
         Start();
@@ -169,10 +175,11 @@ void QCapture::ToggledCmdUpload(bool toggled)
         Setting &set = Setting::GetInstance ();
         QDate StartDate = QDate::fromString (
                               set.GetValue ("/UpLoad/StartDate").toString (),
-                              QString("yyyy/M/d"));
+                              QString("yyyy/MM/dd"));
         QDate EndDate = QDate::fromString (
                             set.GetValue ("/UpLoad/EndDate").toString (),
-                            QString("yyyy/M/d"));
+                            QString("yyyy/MM/dd"));
+        qDebug() << mProtocol.DumpArray (mProtocol.makeCmdUploadQuery(CurrentDevID (),StartDate, EndDate));
         mPort->write (mProtocol.makeCmdUploadQuery(CurrentDevID (),StartDate, EndDate));
         PrepareWaitACK(STATUS_WAIT_UPLOAD_QUERY);
     } else {
@@ -262,6 +269,7 @@ void QCapture::InsterOneItem(quint8 DeviceID, MeasureVal_t &val)
                 .arg(val.cp_time.hour)
                 .arg(val.cp_time.min)
                 .arg(val.cp_time.sec);
+    AssayTime = QDateTime::fromString (AssayTime,"yyyy/M/d/h:m:s").toString ("yyyy/MM/dd/hh:mm:ss");
     PipeType = QString::number(val.pipe_type);
     PipeId = QString::number(val.pipe_num);
     AbsPressure = QString::number (val.abs_press);
@@ -276,8 +284,8 @@ void QCapture::InsterOneItem(quint8 DeviceID, MeasureVal_t &val)
     mModel->insertRow (row);
     mModel->setData (mModel->index (row,0), DeviceId);
     mModel->setData (mModel->index (row,1), AssayTime);
-    mModel->setData (mModel->index (row,2), PipeId);
-    mModel->setData (mModel->index (row,3), PipeType);
+    mModel->setData (mModel->index (row,2), PipeType);
+    mModel->setData (mModel->index (row,3), PipeId);
     mModel->setData (mModel->index (row,4), SfcPressure);
     mModel->setData (mModel->index (row,5), AbsPressure);
     mModel->setData (mModel->index (row,6), Temperature);
@@ -297,6 +305,7 @@ void QCapture::InsterOneItem(quint8 DeviceID, MeasureVal_t &val)
            << PipeType << ","  << PipeId  << "," << SfcPressure << "," <<AbsPressure << ","
            << Temperature << "," << Ch4 << "," << O2 << "," << CO2 << ","
            << CO <<")";
+//    qDebug() << sql;
     if(!query.exec(sql)) {
         qDebug() << sql;
         qDebug()<< "Exec sql failed, Error Info:" << query.lastError ().text ();
@@ -395,10 +404,11 @@ void QCapture::SendCmdUpload()
     Setting &set = Setting::GetInstance ();
     QDate StartDate = QDate::fromString (
                           set.GetValue ("/UpLoad/StartDate").toString (),
-                          QString("yyyy/M/d"));
+                          QString("yyyy/MM/dd"));
     QDate EndDate = QDate::fromString (
                         set.GetValue ("/UpLoad/EndDate").toString (),
-                        QString("yyyy/M/d"));
+                        QString("yyyy/MM/dd"));
+    qDebug() << mProtocol.makeCmdUpload (CurrentDevID (),StartDate, EndDate);
     mPort->write (mProtocol.makeCmdUpload (CurrentDevID (),StartDate, EndDate));
     PrepareWaitACK(STATUS_WAIT_PREPARE_UPLOAD);
 }
@@ -412,7 +422,7 @@ void QCapture::CanReceiveData()
     if (!temp.size ()) {
         return;
     }
-//    qDebug() << "H<--D:"<< mProtocol.DumpArray (temp);
+//  qDebug() << "H<--D:"<< mProtocol.DumpArray (temp);
     mRecvData->append(temp);
 //  qDebug() <<"RecvData:" << mProtocol.DumpArray (*mRecvData);
 // PACKAGE=STX+LEN+ADDR+CMD+DATA+FCS
@@ -448,7 +458,7 @@ void QCapture::CanReceiveData()
 }
 bool QCapture::HostPaserPackage (QByteArray &Package, bool fcs)
 {
-    qWarning() << "Host PACKAGE:" << mProtocol.DumpArray (Package);
+    qDebug() << "Host PACKAGE:" << mProtocol.DumpArray (Package);
     if (!fcs) {
         mPort->write(mProtocol.makeCmdNACK (Package.at(3), Package.at(2)));
         qWarning() << "Package check failed, skip this Package";
@@ -467,7 +477,7 @@ bool QCapture::HostPaserPackage (QByteArray &Package, bool fcs)
         qWarning() << "Prepare Receive Package Count is " << mDataPackageCount;
         if (mDataPackageCount !=0) {
             SendCmdUpload();
-        } else if (0xFFFFFFFF == mDataPackageCount) {
+        } else if (0xFFFFFFFF == (uint)mDataPackageCount) {
             qWarning() << "Device ERROR";
         }
         break;
@@ -492,7 +502,7 @@ bool QCapture::HostPaserPackage (QByteArray &Package, bool fcs)
 bool QCapture::ClientPaserPackage (QByteArray &Package, bool fcs)
 {
     static int CurrentPackageNumber = 0;
-    qWarning() << "Client PACKAGE:" << mProtocol.DumpArray (Package);
+    qDebug() << "Client PACKAGE:" << mProtocol.DumpArray (Package);
     if (!fcs) {
         mPort->write(mProtocol.makeCmdNACK (Package.at(3), Package.at(2)));
         qWarning() << "Package check failed, skip this Package";
@@ -558,7 +568,7 @@ bool QCapture::ClientPaserPackage (QByteArray &Package, bool fcs)
 bool QCapture::PaserPackage(QByteArray &Package, bool fcs)
 {
 
-#ifdef QT_DEBUG
+#ifdef SELFTEST
     if (pushButton_Host->isChecked ()) {
         return ClientPaserPackage (Package, fcs);
     }

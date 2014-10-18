@@ -14,67 +14,62 @@
         <translation>设备类型</translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="44"/>
+        <location filename="ui/AddNewDev.ui" line="47"/>
         <source>CJZ70</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="49"/>
+        <location filename="ui/AddNewDev.ui" line="52"/>
         <source>CJZ7</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="54"/>
+        <location filename="ui/AddNewDev.ui" line="57"/>
         <source>CJZ4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="66"/>
+        <location filename="ui/AddNewDev.ui" line="69"/>
         <source>Device ID</source>
         <translation>设备ID</translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="73"/>
-        <source>1003</source>
-        <translation></translation>
+        <location filename="ui/AddNewDev.ui" line="76"/>
+        <source>1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="84"/>
+        <location filename="ui/AddNewDev.ui" line="98"/>
+        <source>DN25</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/AddNewDev.ui" line="103"/>
+        <source>DN50</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/AddNewDev.ui" line="108"/>
+        <source>DN300</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/AddNewDev.ui" line="87"/>
         <source>Pipe ID Type</source>
         <translation>管道类型</translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="92"/>
-        <source>6 Bit</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/AddNewDev.ui" line="97"/>
-        <source>8 Bit</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/AddNewDev.ui" line="102"/>
-        <source>10 Bit</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/AddNewDev.ui" line="107"/>
-        <source>15 Bit</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/AddNewDev.ui" line="119"/>
+        <location filename="ui/AddNewDev.ui" line="123"/>
         <source>Resizeable Pipe</source>
         <translation>重定义管道类型</translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="169"/>
+        <location filename="ui/AddNewDev.ui" line="173"/>
         <source>OK</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="ui/AddNewDev.ui" line="176"/>
+        <location filename="ui/AddNewDev.ui" line="180"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -83,7 +78,7 @@
     <name>Capture</name>
     <message>
         <location filename="ui/capture.ui" line="14"/>
-        <location filename="src/qcapture.h" line="160"/>
+        <location filename="src/qcapture.h" line="208"/>
         <source>Capture</source>
         <translation>采集</translation>
     </message>
@@ -99,42 +94,47 @@
     </message>
     <message>
         <location filename="ui/capture.ui" line="39"/>
-        <location filename="src/qcapture.h" line="164"/>
+        <location filename="src/qcapture.h" line="212"/>
         <source>Clear</source>
         <translation>清屏</translation>
     </message>
     <message>
-        <location filename="src/qcapture.h" line="106"/>
+        <location filename="src/qcapture.h" line="146"/>
         <source>UpLoad</source>
         <translation>上传</translation>
     </message>
     <message>
-        <location filename="src/qcapture.h" line="113"/>
+        <location filename="src/qcapture.h" line="154"/>
         <source>Set Param</source>
         <translation>参数设置</translation>
     </message>
     <message>
-        <location filename="src/qcapture.h" line="120"/>
+        <location filename="src/qcapture.h" line="161"/>
         <source>Set Time</source>
         <translation>设置时间</translation>
     </message>
     <message>
-        <location filename="src/qcapture.h" line="127"/>
+        <location filename="src/qcapture.h" line="168"/>
         <source>Erase All</source>
         <translation>清除设备数据</translation>
     </message>
     <message>
-        <location filename="src/qcapture.h" line="161"/>
+        <location filename="src/qcapture.h" line="182"/>
+        <source>Toggle Host</source>
+        <translation>模拟设备</translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.h" line="209"/>
         <source>Port</source>
         <translation>串口</translation>
     </message>
     <message>
-        <location filename="src/qcapture.h" line="162"/>
+        <location filename="src/qcapture.h" line="210"/>
         <source>DeviceID</source>
         <translation>设备ID</translation>
     </message>
     <message>
-        <location filename="src/qcapture.h" line="163"/>
+        <location filename="src/qcapture.h" line="211"/>
         <source>Open Device</source>
         <translation>打开设备</translation>
     </message>
@@ -351,63 +351,63 @@
         <translation>参数类型</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="64"/>
+        <location filename="ui/devparamconfig.ui" line="68"/>
         <source>Param_A</source>
         <translation>参数A</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="78"/>
+        <location filename="ui/devparamconfig.ui" line="86"/>
         <source>Param_B</source>
         <translation>参数B</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="92"/>
+        <location filename="ui/devparamconfig.ui" line="104"/>
         <source>Param_C</source>
         <translation>参数C</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="106"/>
+        <location filename="ui/devparamconfig.ui" line="122"/>
         <source>Param_D</source>
         <translation>参数D</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="133"/>
+        <location filename="ui/devparamconfig.ui" line="153"/>
         <source>Measure Inter</source>
         <translation>测量时间间隔</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="147"/>
+        <location filename="ui/devparamconfig.ui" line="167"/>
         <source>Save Data Inter</source>
         <translation>数据存储时间间隔</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="164"/>
+        <location filename="ui/devparamconfig.ui" line="184"/>
         <source>UpLoad Param Config</source>
         <translation>上传参数配置</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="172"/>
+        <location filename="ui/devparamconfig.ui" line="192"/>
         <source>Start Date</source>
         <translation>起始日期</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="179"/>
-        <location filename="ui/devparamconfig.ui" line="197"/>
-        <source>yyyy年M月d日</source>
-        <translation></translation>
+        <location filename="ui/devparamconfig.ui" line="199"/>
+        <location filename="ui/devparamconfig.ui" line="217"/>
+        <source>yyyy/MM/dd</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="190"/>
+        <location filename="ui/devparamconfig.ui" line="210"/>
         <source>End Date</source>
         <translation>截止日期</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="224"/>
+        <location filename="ui/devparamconfig.ui" line="244"/>
         <source>OK</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="ui/devparamconfig.ui" line="231"/>
+        <location filename="ui/devparamconfig.ui" line="251"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -460,37 +460,37 @@
         <translation>参数类型</translation>
     </message>
     <message>
-        <location filename="ui/DeviceInfo.ui" line="126"/>
+        <location filename="ui/DeviceInfo.ui" line="130"/>
         <source>Param_A</source>
         <translation>参数A</translation>
     </message>
     <message>
-        <location filename="ui/DeviceInfo.ui" line="140"/>
+        <location filename="ui/DeviceInfo.ui" line="148"/>
         <source>Param_B</source>
         <translation>参数B</translation>
     </message>
     <message>
-        <location filename="ui/DeviceInfo.ui" line="154"/>
+        <location filename="ui/DeviceInfo.ui" line="166"/>
         <source>Param_C</source>
         <translation>参数C</translation>
     </message>
     <message>
-        <location filename="ui/DeviceInfo.ui" line="168"/>
+        <location filename="ui/DeviceInfo.ui" line="184"/>
         <source>Param_D</source>
         <translation>参数D</translation>
     </message>
     <message>
-        <location filename="ui/DeviceInfo.ui" line="200"/>
+        <location filename="ui/DeviceInfo.ui" line="220"/>
         <source>Measure Inter</source>
         <translation>测量时间间隔</translation>
     </message>
     <message>
-        <location filename="ui/DeviceInfo.ui" line="214"/>
+        <location filename="ui/DeviceInfo.ui" line="234"/>
         <source>Save Data Inter</source>
         <translation>数据存储时间间隔</translation>
     </message>
     <message>
-        <location filename="ui/DeviceInfo.ui" line="228"/>
+        <location filename="ui/DeviceInfo.ui" line="248"/>
         <source>Modfiy</source>
         <translation>修改</translation>
     </message>
@@ -515,7 +515,7 @@
     <message>
         <location filename="ui/disassaydata.ui" line="39"/>
         <location filename="ui/disassaydata.ui" line="53"/>
-        <source>yyyy年M月d日</source>
+        <source>yyyy/MM/dd/hh:mm</source>
         <translation></translation>
     </message>
     <message>
@@ -580,11 +580,93 @@
     </message>
 </context>
 <context>
+    <name>ParamLevelConfig</name>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="14"/>
+        <source>ParamLevelConfig</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="39"/>
+        <source>Ch4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="53"/>
+        <location filename="ui/paramlevelconfig.ui" line="116"/>
+        <location filename="ui/paramlevelconfig.ui" line="192"/>
+        <location filename="ui/paramlevelconfig.ui" line="268"/>
+        <location filename="ui/paramlevelconfig.ui" line="344"/>
+        <location filename="ui/paramlevelconfig.ui" line="420"/>
+        <location filename="ui/paramlevelconfig.ui" line="496"/>
+        <location filename="ui/paramlevelconfig.ui" line="572"/>
+        <source>Max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="60"/>
+        <location filename="ui/paramlevelconfig.ui" line="136"/>
+        <location filename="ui/paramlevelconfig.ui" line="212"/>
+        <location filename="ui/paramlevelconfig.ui" line="288"/>
+        <location filename="ui/paramlevelconfig.ui" line="364"/>
+        <location filename="ui/paramlevelconfig.ui" line="440"/>
+        <location filename="ui/paramlevelconfig.ui" line="516"/>
+        <location filename="ui/paramlevelconfig.ui" line="592"/>
+        <source>Min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="102"/>
+        <source>SfcPressure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="178"/>
+        <source>AbsPressure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="254"/>
+        <source>Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="330"/>
+        <source>Flow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="406"/>
+        <source>O2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="482"/>
+        <source>CO2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="558"/>
+        <source>CO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="643"/>
+        <source>OK</source>
+        <translation type="unfinished">确认</translation>
+    </message>
+    <message>
+        <location filename="ui/paramlevelconfig.ui" line="650"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+</context>
+<context>
     <name>QAbout</name>
     <message>
         <location filename="ui/qabout.ui" line="14"/>
         <source>Dialog</source>
-        <translation></translation>
+        <translation>关于</translation>
     </message>
     <message>
         <location filename="ui/qabout.ui" line="20"/>
@@ -654,8 +736,24 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="ui/qdispgraphic.ui" line="42"/>
         <location filename="ui/qdispgraphic.ui" line="56"/>
-        <source>yyyy年M月d日</source>
+        <source>yyyy/MM/dd/hh:mm</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="ui/qdispgraphic.ui" line="133"/>
+        <source>Config </source>
+        <translation>参数门
+限配置</translation>
+    </message>
+    <message>
+        <location filename="ui/qdispgraphic.ui" line="143"/>
+        <source>Max</source>
+        <translation>最大值</translation>
+    </message>
+    <message>
+        <location filename="ui/qdispgraphic.ui" line="163"/>
+        <source>Min</source>
+        <translation>最小值</translation>
     </message>
     <message>
         <location filename="ui/qdispgraphic.ui" line="49"/>
@@ -669,48 +767,12 @@ p, li { white-space: pre-wrap; }
         <translation>管道ID</translation>
     </message>
     <message>
-        <location filename="ui/qdispgraphic.ui" line="84"/>
-        <source>Ch4</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="89"/>
-        <source>AbsPressure</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="94"/>
-        <source>SfcPressure</source>
-        <oldsource>Pressure</oldsource>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="99"/>
-        <source>Temperature</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="104"/>
-        <source>CO</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="109"/>
-        <source>CO2</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="114"/>
-        <source>O2</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/qdispgraphic.ui" line="122"/>
+        <location filename="ui/qdispgraphic.ui" line="83"/>
         <source>Print</source>
         <translation>打印</translation>
     </message>
     <message>
-        <location filename="src/qdispgraphic.cpp" line="195"/>
+        <location filename="src/qdispgraphic.cpp" line="242"/>
         <source> -- </source>
         <translation></translation>
     </message>
@@ -813,29 +875,78 @@ p, li { white-space: pre-wrap; }
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="src/qcapture.cpp" line="148"/>
+        <location filename="src/qcapture.cpp" line="157"/>
         <source>Close Device</source>
         <translation>关闭设备</translation>
     </message>
     <message>
-        <location filename="src/qcapture.cpp" line="156"/>
+        <location filename="src/qcapture.cpp" line="162"/>
         <source>Open Device</source>
         <translation>打开设备</translation>
     </message>
     <message>
-        <location filename="src/qcapture.cpp" line="245"/>
+        <location filename="src/qcapture.cpp" line="210"/>
+        <source>Receive Package </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="211"/>
+        <source>, Remainder </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="212"/>
+        <source> Package for Receive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="231"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="src/qcapture.cpp" line="246"/>
+        <location filename="src/qcapture.cpp" line="232"/>
         <source>Can not found port</source>
         <translation>不能找到端口</translation>
     </message>
     <message>
-        <location filename="src/qdispgraphic.cpp" line="235"/>
+        <location filename="src/qcapture.cpp" line="317"/>
+        <source>Set Param</source>
+        <translation>参数设置</translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="320"/>
+        <source>Set Time</source>
+        <translation>设置时间</translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="323"/>
+        <source>Erase All Device Data</source>
+        <translation>擦除设备数据</translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="326"/>
+        <source>Receive UPLoad Query</source>
+        <translation>查询设备数据</translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="329"/>
+        <source>Upload done</source>
+        <translation>数据接收完成</translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="337"/>
+        <source> OK</source>
+        <translation>成功</translation>
+    </message>
+    <message>
+        <location filename="src/qcapture.cpp" line="339"/>
+        <source> Failed</source>
+        <translation>失败</translation>
+    </message>
+    <message>
         <source>Range(</source>
-        <translation>数值范围(</translation>
+        <translation type="vanished">数值范围(</translation>
     </message>
     <message>
         <location filename="src/print/qprintobject.cpp" line="466"/>

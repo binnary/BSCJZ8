@@ -23,6 +23,9 @@
 #include "setting.h"
 #include "qprotocol.h"
 
+#ifdef QT_DEBUG
+#define  SELFTEST
+#endif
 class QCapture : public QWidget
 {
     Q_OBJECT
@@ -40,7 +43,7 @@ public:
         STATUS_WAIT_ACK,
         STATUS_WAIT_PREPARE_UPLOAD,
         STATUS_WAIT_UPLOAD_QUERY,
-    }Status_enum;
+    } Status_enum;
     explicit QCapture(QWidget *parent = 0);
     ~QCapture();
     void Start();
@@ -65,10 +68,11 @@ public slots:
     void CanReceiveData();
     void DeviceIDChanged(const QString &text);
 private:
-    bool HostPaserPackage (QByteArray &Package, bool fcs);
-    bool ClientPaserPackage (QByteArray &Package, bool fcs);
-   void RemoveTimer(int timeridIdKey);
-   void InsertTimer(int timeridIdKey);
+    bool HostPaserPackage (QByteArray &Package, bool fcs=true);
+    bool ClientPaserPackage (QByteArray &Package, bool fcs=true);
+    bool PaserPackage(QByteArray &Package, bool fcs=true);
+    void RemoveTimer(int timeridIdKey);
+    void InsertTimer(int timeridIdKey);
     void PrepareWaitACK(Status_enum status);
     quint8 CurrentDevID()
     {
@@ -76,18 +80,21 @@ private:
     }
     bool SelfTest()
     {
-        if (Setting::GetInstance ().GetValue ("SelfTest").toInt () == 1){
+        if (Setting::GetInstance ().GetValue ("SelfTest").toInt () == 1) {
             return true;
         }
         return false;
     }
-    bool PaserPackage(QByteArray &Package, bool fcs=true);
-    void SetStatus(Status_enum status){
+    void SetStatus(Status_enum status)
+    {
         mMutex.lock ();
         mStatus = status;
         mMutex.unlock ();
     }
-    Status_enum GetStatus(){return mStatus;}
+    Status_enum GetStatus()
+    {
+        return mStatus;
+    }
 private:
     Status_enum mStatus;
     QMutex mMutex;
@@ -169,7 +176,7 @@ private: // ui
 //        pushButton_Clear->setEnabled (false);
 
         horizontalLayout->addWidget(pushButton_Clear);
-#ifdef QT_DEBUG
+#ifdef SELFTEST
         pushButton_Host = new QPushButton(Capture);
         pushButton_Host->setObjectName(QStringLiteral("pushButton_Host"));
         pushButton_Host->setText(QApplication::translate("Capture", "Toggle Host", 0));
@@ -217,7 +224,7 @@ private: // ui
     QPushButton *pushButton_settime;
     QPushButton *pushButton_eraseall;
     QPushButton *pushButton_Clear;
-#ifdef QT_DEBUG
+#ifdef SELFTEST
     QPushButton *pushButton_Host;
 #endif
     QSpacerItem *horizontalSpacer;

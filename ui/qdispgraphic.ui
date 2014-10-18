@@ -39,7 +39,7 @@
      <item>
       <widget class="QDateTimeEdit" name="dateTimeEdit_Start">
        <property name="displayFormat">
-        <string>yyyy/M/d/hh:mm</string>
+        <string>yyyy/MM/dd/hh:mm</string>
        </property>
       </widget>
      </item>
@@ -53,7 +53,7 @@
      <item>
       <widget class="QDateTimeEdit" name="dateTimeEdit_End">
        <property name="displayFormat">
-        <string>yyyy/M/d/hh:mm</string>
+        <string>yyyy/MM/dd/hh:mm</string>
        </property>
       </widget>
      </item>
